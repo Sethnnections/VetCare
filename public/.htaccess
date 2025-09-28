@@ -1,0 +1,9 @@
+# public/.htaccess
+RewriteEngine On
+
+# If the request is for a valid file or directory, serve it directly
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Otherwise, forward the request to index.php
+RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
