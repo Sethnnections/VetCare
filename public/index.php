@@ -1,21 +1,20 @@
 <?php
+// Define application constants
+define('ROOT_PATH_III', dirname(__FILE__));
 
-define('CONFIG_PATH', ROOT_PATH . '/config');
+// Load configuration first
+require_once ROOT_PATH_III . '/../config/constants.php';
 
-
-
-// Load configuration
-require_once CONFIG_PATH . '/constants.php';
-
-// Load helpers
-require_once ROOT_PATH . '/utils/helpers.php';
+// Load helpers BEFORE autoloader
+require_once ROOT_PATH_III . '/../utils/helpers.php';
+require_once ROOT_PATH_III . '/../utils/database.php';
 
 // Autoload classes
 spl_autoload_register(function ($className) {
     $directories = [
-        APP_PATH . '/core/',
-        APP_PATH . '/controllers/',
-        APP_PATH . '/models/'
+        ROOT_PATH_III . '/../app/core/',
+        ROOT_PATH_III . '/../app/controllers/',
+        ROOT_PATH_III . '/../app/models/'
     ];
     
     foreach ($directories as $directory) {
