@@ -27,11 +27,12 @@
                             <i class="fas fa-angle-right"></i>Register Veterinary
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#user-management" class="nav-link">
-                            <i class="fas fa-angle-right"></i>Manage Users
-                        </a>
-                    </li>
+                <li class="sidebar-item">
+                    <a href="users.php" class="sidebar-link">
+                        <i class="flaticon-multiple-users-silhouette"></i>
+                        <span>User Management</span>
+                    </a>
+                </li>
                 </ul>
             </li>
             <li class="nav-item sidebar-nav-item">

@@ -31,4 +31,6 @@ function requireRole($allowed_roles) {
         exit();
     }
 }
+
+
 ?>

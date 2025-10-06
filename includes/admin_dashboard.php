@@ -101,6 +101,32 @@
                         </div>
                     </div>
                 </div>
+
+
+
+<!-- Add this quick action button -->
+<div class="col-md-12">
+    <div class="card">
+        <div class="card-header">
+            <h5>Quick Actions</h5>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-3">
+                    <a href="users.php" class="btn btn-primary w-100 mb-2">
+                        <i class="fas fa-users me-2"></i>Manage Users
+                    </a>
+                </div>
+                <div class="col-md-3">
+                    <a href="register_veterinary.php" class="btn btn-success w-100 mb-2">
+                        <i class="fas fa-user-plus me-2"></i>Add Veterinary
+                    </a>
+                </div>
+                <!-- Add more quick actions as needed -->
+            </div>
+        </div>
+    </div>
+</div>
                 
                 <div class="table-responsive">
                     <table class="table table-striped">
