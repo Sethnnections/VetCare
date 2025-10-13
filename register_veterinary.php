@@ -283,6 +283,7 @@ if($_POST) {
                 padding: 1.5rem;
             }
         }
+        
     </style>
 </head>
 <body>
