@@ -3,7 +3,7 @@ class User {
     protected $conn;
     protected $table_name = "users";
 
-    public $id;
+    public $user_id;
     public $username;
     public $first_name;
     public $last_name;
@@ -53,7 +53,7 @@ class User {
 
     // Check if user exists and is active
     public function emailExists() {
-        $query = "SELECT id, username, password, role, is_active 
+        $query = "SELECT user_id, username, password, role, is_active 
                  FROM " . $this->table_name . " 
                  WHERE email = ? AND is_active = 1 
                  LIMIT 0,1";
@@ -64,7 +64,7 @@ class User {
         
         if($stmt->rowCount() > 0) {
             $row = $stmt->fetch(PDO::FETCH_ASSOC);
-            $this->id = $row['id'];
+            $this->user_id= $row['user_id'];
             $this->username = $row['username'];
             $this->password = $row['password'];
             $this->role = $row['role'];
@@ -74,11 +74,11 @@ class User {
         return false;
     }
 
-    // Get user by ID
+    // Get user by user_id
     public function readOne() {
-        $query = "SELECT * FROM " . $this->table_name . " WHERE id = ? LIMIT 0,1";
+        $query = "SELECT * FROM " . $this->table_name . " WHERE user_id= ? LIMIT 0,1";
         $stmt = $this->conn->prepare($query);
-        $stmt->bindParam(1, $this->id);
+        $stmt->bindParam(1, $this->user_id);
         $stmt->execute();
         
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -103,11 +103,11 @@ class User {
     public function updateStatus() {
         $query = "UPDATE " . $this->table_name . " 
                  SET is_active = :is_active 
-                 WHERE id = :id";
+                 WHERE user_id= :user_id";
         
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(':is_active', $this->is_active);
-        $stmt->bindParam(':id', $this->id);
+        $stmt->bindParam(':user_id', $this->user_id);
         
         if($stmt->execute()) {
             return true;
@@ -129,7 +129,7 @@ public function updateProfile() {
                  phone = :phone, 
                  address = :address,
                  updated_at = CURRENT_TIMESTAMP
-             WHERE id = :id";
+             WHERE user_id= :user_id";
     
     $stmt = $this->conn->prepare($query);
     
@@ -144,7 +144,7 @@ public function updateProfile() {
     $stmt->bindParam(":last_name", $this->last_name);
     $stmt->bindParam(":phone", $this->phone);
     $stmt->bindParam(":address", $this->address);
-    $stmt->bindParam(":id", $this->id);
+    $stmt->bindParam(":user_id", $this->user_id);
     
     if($stmt->execute()) {
         return true;
@@ -153,9 +153,9 @@ public function updateProfile() {
 }
 
 public function getProfile() {
-    $query = "SELECT * FROM " . $this->table_name . " WHERE id = ? LIMIT 0,1";
+    $query = "SELECT * FROM " . $this->table_name . " WHERE user_id= ? LIMIT 0,1";
     $stmt = $this->conn->prepare($query);
-    $stmt->bindParam(1, $this->id);
+    $stmt->bindParam(1, $this->user_id);
     $stmt->execute();
     
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -180,14 +180,14 @@ public function updatePassword($new_password) {
     $query = "UPDATE " . $this->table_name . " 
              SET password = :password, 
                  updated_at = CURRENT_TIMESTAMP 
-             WHERE id = :id";
+             WHERE user_id= :user_id";
     
     $stmt = $this->conn->prepare($query);
     
     $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
     
     $stmt->bindParam(":password", $hashed_password);
-    $stmt->bindParam(":id", $this->id);
+    $stmt->bindParam(":user_id", $this->user_id);
     
     if($stmt->execute()) {
         return true;

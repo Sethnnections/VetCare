@@ -7,7 +7,7 @@ $user_id = $_SESSION['user_id'];
 
 // Initialize user object
 $user = new User($db);
-$user->id = $user_id;
+$user->user_id = $user_id;
 
 // Get user profile data
 $user->getProfile();

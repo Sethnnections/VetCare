@@ -472,7 +472,7 @@ INSERT INTO animals (client_id, name, species, breed, gender, birth_date, color,
 (1, 'Max', 'dog', 'German Shepherd', 'male', '2020-03-15', 'Black/Tan', 35.5, 'MICRO001', 'active'),
 (1, 'Luna', 'cat', 'Siamese', 'female', '2021-06-20', 'Cream', 4.2, 'MICRO002', 'active'),
 (2, 'Buddy', 'dog', 'Labrador Retriever', 'male', '2019-11-10', 'Yellow', 28.0, 'MICRO003', 'active'),
-(3, 'Mittens', 'cat', 'Domestic Shorthair', 'female', '2022-01-05', 'Tabby', 3.8, NULL, 'active');
+(2, 'Mittens', 'cat', 'Domestic Shorthair', 'female', '2022-01-05', 'Tabby', 3.8, NULL, 'active');
 
 -- Insert sample treatments
 INSERT INTO treatments (animal_id, veterinary_id, diagnosis, treatment_details, treatment_date, follow_up_date, status, cost) VALUES

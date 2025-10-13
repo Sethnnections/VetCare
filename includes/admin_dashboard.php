@@ -148,7 +148,7 @@
                             while ($row = $stmt->fetch(PDO::FETCH_ASSOC)): 
                             ?>
                             <tr>
-                                <td><?php echo $row['id']; ?></td>
+                                <td><?php echo $row['user_id']; ?></td>
                                 <td><?php echo htmlspecialchars($row['username']); ?></td>
                                 <td><?php echo htmlspecialchars($row['email']); ?></td>
                                 <td>
@@ -166,9 +166,9 @@
                                 </td>
                                 <td><?php echo date('M j, Y', strtotime($row['created_at'])); ?></td>
                                 <td>
-                                    <?php if($row['id'] != $_SESSION['user_id']): ?>
+                                    <?php if($row['user_id'] != $_SESSION['user_id']): ?>
                                     <form method="POST" action="update_status.php" class="d-inline">
-                                        <input type="hidden" name="user_id" value="<?php echo $row['id']; ?>">
+                                        <input type="hidden" name="user_id" value="<?php echo $row['user_id']; ?>">
                                         <input type="hidden" name="current_status" value="<?php echo $row['is_active']; ?>">
                                         <button type="submit" class="btn btn-sm btn-<?php echo $row['is_active'] ? 'warning' : 'success'; ?>">
                                             <?php echo $row['is_active'] ? 'Deactivate' : 'Activate'; ?>

@@ -1,7 +1,7 @@
 <?php
 class Database {
     private $host = 'localhost';
-    private $db_name = 'veterinary_system';
+    private $db_name = 'veterinary_ims';
     private $username = 'root';
     private $password = '';
     public $conn;
