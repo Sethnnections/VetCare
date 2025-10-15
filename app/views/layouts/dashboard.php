@@ -82,11 +82,10 @@
             min-height: 100vh;
         }
 
-        /* Sidebar */
+        /* Sidebar - Blue Background, White Text, Orange Icons */
         #sidebar {
             width: 260px;
-            background: white;
-            box-shadow: var(--box-shadow);
+            background: var(--primary-blue);
             transition: var(--transition);
             z-index: 1000;
             position: fixed;
@@ -114,7 +113,7 @@
         }
 
         .sidebar-menu-content .nav-link {
-            color: var(--dark-gray);
+            color: white;
             padding: 12px 20px;
             display: flex;
             align-items: center;
@@ -124,8 +123,8 @@
 
         .sidebar-menu-content .nav-link:hover,
         .sidebar-menu-content .nav-link.active {
-            background-color: rgba(253, 116, 42, 0.1);
-            color: var(--primary-red);
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
             border-left-color: var(--primary-red);
         }
 
@@ -133,10 +132,12 @@
             margin-right: 12px;
             width: 20px;
             text-align: center;
+            color: var(--primary-red); /* Orange icons */
         }
 
         .sidebar-menu-content .nav-link .float-end {
             transition: var(--transition);
+            color: white;
         }
 
         .sidebar-nav-item.active .nav-link .float-end {
@@ -144,7 +145,7 @@
         }
 
         .sub-group-menu {
-            background-color: rgba(249, 241, 213, 0.3);
+            background-color: rgba(19, 77, 96, 0.8);
             padding-left: 20px;
             display: none;
         }
@@ -156,19 +157,24 @@
         .sub-group-menu .nav-link {
             padding: 10px 15px;
             font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .sub-group-menu .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.15);
         }
 
         .sidebar-footer {
             margin-top: auto;
-            border-top: 1px solid #eee;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .logout-btn {
-            color: #dc3545 !important;
+            color: white !important;
         }
 
         .logout-btn:hover {
-            background-color: rgba(220, 53, 69, 0.1) !important;
+            background-color: rgba(220, 53, 69, 0.2) !important;
         }
 
         /* Header */
@@ -308,6 +314,7 @@
         .dropdown-item i {
             margin-right: 10px;
             width: 16px;
+            color: var(--primary-blue);
         }
 
         .dropdown-item:hover {
@@ -322,6 +329,7 @@
             padding: 20px;
             transition: var(--transition);
             width: calc(100% - 260px);
+            min-height: calc(100vh - 70px);
         }
 
         #sidebar.collapsed ~ .main-content {
@@ -331,7 +339,7 @@
 
         .page-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
@@ -393,7 +401,7 @@
         }
 
         .stat-card.success .stat-icon {
-            background-color: #28a745;
+            background-color: var(--primary-red);
         }
 
         .stat-card.danger .stat-icon {
@@ -470,6 +478,11 @@
         .action-btn i {
             font-size: 1.5rem;
             margin-bottom: 10px;
+            color: var(--primary-blue);
+        }
+
+        .action-btn:hover i {
+            color: white;
         }
 
         /* Footer */
@@ -537,12 +550,16 @@
         <!-- Sidebar Area Start Here -->
         <div class="sidebar-main sidebar-menu-one sidebar-expand-md sidebar-color" id="sidebar">
             <div class="mobile-sidebar-header d-md-none">
+                
                 <div class="header-logo">
                     <a href="<?php echo url('/dashboard'); ?>">
-                        <img src="<?php echo url('/img/logo1.png'); ?>" alt="logo">
+                        <img src="<?php echo url('/img/logo.png'); ?>" alt="logo">
                     </a>
                 </div>
             </div>
+            <a href="<?php echo url('/dashboard'); ?>">
+                        <img src="<?php echo url('/img/logo.png'); ?>" alt="logo" style="width: 200px; height: 220px; padding: 10px; margin-left: 10px;">
+                    </a>
             <div class="sidebar-menu-content">
                 <ul class="nav nav-sidebar-menu sidebar-toggle-view">
                     <li class="nav-item">
@@ -847,81 +864,16 @@
         <div class="main-content">
             <!-- Page Header -->
             <div class="page-header">
-                <h1 class="page-title">Dashboard</h1>
                 <nav aria-label="breadcrumb">
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="<?php echo url('/dashboard'); ?>">Home</a></li>
-                        <li class="breadcrumb-item active">Dashboard</li>
+                        <li class="breadcrumb-item active"><?php echo $title ?? 'Dashboard'; ?></li>
                     </ol>
                 </nav>
             </div>
 
-            <!-- Statistics Cards -->
-            <div class="stats-grid">
-                <div class="stat-card primary fade-in">
-                    <div class="stat-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">245</div>
-                        <div class="stat-label">Total Users</div>
-                    </div>
-                </div>
-                <div class="stat-card success fade-in">
-                    <div class="stat-icon">
-                        <i class="fas fa-paw"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">156</div>
-                        <div class="stat-label">Total Animals</div>
-                    </div>
-                </div>
-                <div class="stat-card danger fade-in">
-                    <div class="stat-icon">
-                        <i class="fas fa-stethoscope"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">89</div>
-                        <div class="stat-label">Total Treatments</div>
-                    </div>
-                </div>
-                <div class="stat-card info fade-in">
-                    <div class="stat-icon">
-                        <i class="fas fa-heartbeat"></i>
-                    </div>
-                    <div class="stat-content">
-                        <div class="stat-value">32</div>
-                        <div class="stat-label">Active Treatments</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Quick Actions -->
-            <div class="dashboard-card">
-                <div class="card-header">
-                    <h5 class="card-title">Quick Actions</h5>
-                </div>
-                <div class="card-body">
-                    <div class="quick-actions">
-                        <a href="<?php echo url('/users/create'); ?>" class="action-btn">
-                            <i class="fas fa-user-plus"></i>
-                            <span>Add User</span>
-                        </a>
-                        <a href="<?php echo url('/animals/create'); ?>" class="action-btn">
-                            <i class="fas fa-plus"></i>
-                            <span>Add Animal</span>
-                        </a>
-                        <a href="<?php echo url('/treatments/create'); ?>" class="action-btn">
-                            <i class="fas fa-stethoscope"></i>
-                            <span>Add Treatment</span>
-                        </a>
-                        <a href="<?php echo url('/reports'); ?>" class="action-btn">
-                            <i class="fas fa-chart-bar"></i>
-                            <span>View Reports</span>
-                        </a>
-                    </div>
-                </div>
-            </div>
+            <!-- Dynamic Content from Views -->
+            <?php echo $content ?? 'No content available'; ?>
             
             <!-- Footer -->
             <div class="footer">
