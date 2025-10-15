@@ -1,6 +1,5 @@
 <div class="container-fluid">
 
-
     <!-- Statistics Cards -->
     <div class="row">
         <div class="col-xl-4 col-md-6">
