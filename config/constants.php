@@ -1,90 +1,101 @@
 <?php
-// Database constants
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'veterinary_system');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+// Load environment variables
+$envFile = ROOT_PATH . '/.env';
+if (file_exists($envFile)) {
+    $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+    foreach ($lines as $line) {
+        if (strpos(trim($line), '#') === 0) continue; // Skip comments
+        
+        list($key, $value) = explode('=', $line, 2);
+        $key = trim($key);
+        $value = trim($value);
+        
+        if (!empty($key)) {
+            $_ENV[$key] = $value;
+            putenv("$key=$value");
+        }
+    }
+}
 
-// Define ROOT_PATH first
-define('ROOT_PATH', dirname(__DIR__));
+// Database Constants
+define('DB_HOST', $_ENV['DB_HOST'] ?? 'localhost');
+define('DB_NAME', $_ENV['DB_NAME'] ?? 'veterinary_ims');
+define('DB_USER', $_ENV['DB_USER'] ?? 'root');
+define('DB_PASS', $_ENV['DB_PASS'] ?? '');
+define('DB_CHARSET', $_ENV['DB_CHARSET'] ?? 'utf8mb4');
 
-// Application paths
-define('APP_PATH', ROOT_PATH . '/app');
-define('CONFIG_PATH', ROOT_PATH . '/config');
-define('PUBLIC_PATH', ROOT_PATH . '/public');
-define('UPLOAD_PATH', ROOT_PATH . '/uploads');
-define('LOG_PATH', ROOT_PATH . '/logs');
+// Application Constants
+define('APP_NAME', $_ENV['APP_NAME'] ?? 'Veterinary IMS');
+define('APP_URL', $_ENV['APP_URL'] ?? 'http://localhost/v-ims');
+define('BASE_URL', $_ENV['BASE_URL'] ?? '/v-ims/');
+define('DEBUG_MODE', filter_var($_ENV['DEBUG_MODE'] ?? true, FILTER_VALIDATE_BOOLEAN));
 
-// View paths
-define('VIEW_PATH', APP_PATH . '/views');
-define('CONTROLLER_PATH', APP_PATH . '/controllers');
-define('MODEL_PATH', APP_PATH . '/models');
+// Security Constants
+define('SECRET_KEY', $_ENV['SECRET_KEY'] ?? 'default-secret-key');
+define('CSRF_PROTECTION', filter_var($_ENV['CSRF_PROTECTION'] ?? true, FILTER_VALIDATE_BOOLEAN));
+define('SESSION_TIMEOUT', (int)($_ENV['SESSION_TIMEOUT'] ?? 3600));
+define('PASSWORD_MIN_LENGTH', (int)($_ENV['PASSWORD_MIN_LENGTH'] ?? 6));
 
-// Application constants
-define('APP_NAME', 'Veterinary Health Management System');
-define('APP_VERSION', '1.0.0');
-define('APP_URL', 'http://localhost/v-ims');
-define('BASE_URL', '/v-ims/');
+// File Upload Constants
+define('MAX_FILE_SIZE', (int)($_ENV['MAX_FILE_SIZE'] ?? 5242880));
+define('ALLOWED_IMAGE_TYPES', explode(',', $_ENV['ALLOWED_IMAGE_TYPES'] ?? 'jpg,jpeg,png,gif'));
+define('ALLOWED_DOC_TYPES', explode(',', $_ENV['ALLOWED_DOC_TYPES'] ?? 'pdf,doc,docx'));
+define('UPLOAD_PATH', $_ENV['UPLOAD_PATH'] ?? 'public/uploads');
 
-// User roles
+// Email Constants
+define('EMAIL_FROM', $_ENV['EMAIL_FROM'] ?? 'noreply@veterinary-system.com');
+define('EMAIL_FROM_NAME', $_ENV['EMAIL_FROM_NAME'] ?? 'Veterinary System');
+define('SMTP_HOST', $_ENV['SMTP_HOST'] ?? 'smtp.gmail.com');
+define('SMTP_PORT', (int)($_ENV['SMTP_PORT'] ?? 587));
+define('SMTP_USER', $_ENV['SMTP_USER'] ?? '');
+define('SMTP_PASS', $_ENV['SMTP_PASS'] ?? '');
+
+// SMS Constants
+define('SMS_GATEWAY_URL', $_ENV['SMS_GATEWAY_URL'] ?? '');
+define('SMS_API_KEY', $_ENV['SMS_API_KEY'] ?? '');
+
+// System Constants
+define('TIMEZONE', $_ENV['TIMEZONE'] ?? 'Africa/Blantyre');
+define('ENABLE_LOGGING', filter_var($_ENV['ENABLE_LOGGING'] ?? true, FILTER_VALIDATE_BOOLEAN));
+define('LOG_LEVEL', $_ENV['LOG_LEVEL'] ?? 'DEBUG');
+
+// Feature Flags
+define('ENABLE_REGISTRATION', filter_var($_ENV['ENABLE_REGISTRATION'] ?? true, FILTER_VALIDATE_BOOLEAN));
+define('ENABLE_EMAIL_NOTIFICATIONS', filter_var($_ENV['ENABLE_EMAIL_NOTIFICATIONS'] ?? false, FILTER_VALIDATE_BOOLEAN));
+define('ENABLE_SMS_REMINDERS', filter_var($_ENV['ENABLE_SMS_REMINDERS'] ?? false, FILTER_VALIDATE_BOOLEAN));
+
+// User Roles
 define('ROLE_ADMIN', 'admin');
 define('ROLE_VETERINARY', 'veterinary');
 define('ROLE_CLIENT', 'client');
 
-// Status constants
+// Status Constants
 define('STATUS_ACTIVE', 1);
 define('STATUS_INACTIVE', 0);
-define('STATUS_PENDING', 'pending');
 define('STATUS_COMPLETED', 'completed');
-define('STATUS_CANCELLED', 'cancelled');
 
-// Medicine types
-define('MEDICINE_ANTIBIOTIC', 'antibiotic');
-define('MEDICINE_VACCINE', 'vaccine');
-define('MEDICINE_SUPPLEMENT', 'supplement');
-define('MEDICINE_ANESTHETIC', 'anesthetic');
-
-// Treatment status
+// Treatment Status
 define('TREATMENT_ONGOING', 'ongoing');
-define('TREATMENT_COMPLETED', 'completed');
 define('TREATMENT_FOLLOW_UP', 'follow_up');
 
-// Payment methods
-define('PAYMENT_CASH', 'cash');
-define('PAYMENT_MOBILE', 'mobile_money');
-define('PAYMENT_BANK', 'bank_transfer');
+// Vaccine Status
+define('VACCINE_SCHEDULED', 'scheduled');
+define('VACCINE_COMPLETED', 'completed');
+define('VACCINE_OVERDUE', 'overdue');
 
-// Pagination
-define('RECORDS_PER_PAGE', 10);
+// Billing Status
+define('BILLING_PENDING', 'pending');
+define('BILLING_PAID', 'paid');
+define('BILLING_CANCELLED', 'cancelled');
 
-// File upload
-define('MAX_FILE_SIZE', 5 * 1024 * 1024); // 5MB
-define('ALLOWED_IMAGE_TYPES', ['jpg', 'jpeg', 'png', 'gif']);
-define('ALLOWED_DOC_TYPES', ['pdf', 'doc', 'docx']);
+// Reminder Priorities
+define('PRIORITY_LOW', 'low');
+define('PRIORITY_MEDIUM', 'medium');
+define('PRIORITY_HIGH', 'high');
+define('PRIORITY_URGENT', 'urgent');
 
-// Security
-define('SESSION_TIMEOUT', 3600); // 1 hour
-define('PASSWORD_MIN_LENGTH', 6);
-define('HASH_ALGORITHM', PASSWORD_DEFAULT);
-
-// SMS/Email settings
-define('SMS_GATEWAY_URL', 'http://sms-gateway.api');
-define('SMS_API_KEY', 'your-sms-api-key');
-define('EMAIL_FROM', 'noreply@veterinary-system.com');
-define('EMAIL_FROM_NAME', 'Veterinary System');
-
-// Date/Time formats
-define('DATE_FORMAT', 'Y-m-d');
-define('DATETIME_FORMAT', 'Y-m-d H:i:s');
-define('DISPLAY_DATE_FORMAT', 'd/m/Y');
-define('DISPLAY_DATETIME_FORMAT', 'd/m/Y H:i');
-
-// Error reporting
-define('DEBUG_MODE', true);
-define('ENABLE_LOGGING', true);
-
-// Default timezone
-date_default_timezone_set('Africa/Blantyre');
+// Set timezone
+date_default_timezone_set(TIMEZONE);
 
 // Error reporting based on debug mode
 if (DEBUG_MODE) {

@@ -1,116 +1,27 @@
 <?php
-
 class User extends Model {
     protected $table = 'users';
     protected $primaryKey = 'user_id';
     protected $fillable = [
-        'name', 'email', 'password', 'role', 'phone', 'status', 'profile_image'
+        'username', 'email', 'password', 'role', 'first_name', 'last_name', 
+        'phone', 'address', 'profile_picture', 'is_active'
     ];
     protected $hidden = ['password'];
     
-    // User properties
-    private $userId;
-    private $name;
-    private $email;
-    private $password;
-    private $role;
-    private $phone;
-    private $status;
-    private $profileImage;
-    private $createdAt;
-    private $updatedAt;
-    
-    // Getters
-    public function getUserId() {
-        return $this->userId;
+    public function __construct() {
+        parent::__construct();
     }
     
-    public function getName() {
-        return $this->name;
-    }
+    // ==================== AUTHENTICATION METHODS ====================
     
-    public function getEmail() {
-        return $this->email;
-    }
-    
-    public function getRole() {
-        return $this->role;
-    }
-    
-    public function getPhone() {
-        return $this->phone;
-    }
-    
-    public function getStatus() {
-        return $this->status;
-    }
-    
-    public function getProfileImage() {
-        return $this->profileImage;
-    }
-    
-    public function getCreatedAt() {
-        return $this->createdAt;
-    }
-    
-    public function getUpdatedAt() {
-        return $this->updatedAt;
-    }
-    
-    // Setters
-    public function setUserId($userId) {
-        $this->userId = $userId;
-    }
-    
-    public function setName($name) {
-        $this->name = sanitize($name);
-    }
-    
-    public function setEmail($email) {
-        $this->email = strtolower(sanitize($email));
-    }
-    
-    public function setPassword($password) {
-        $this->password = hashPassword($password);
-    }
-    
-    public function setRole($role) {
-        $allowedRoles = [ROLE_ADMIN, ROLE_VETERINARY, ROLE_CLIENT];
-        if (in_array($role, $allowedRoles)) {
-            $this->role = $role;
-        }
-    }
-    
-    public function setPhone($phone) {
-        $this->phone = sanitize($phone);
-    }
-    
-    public function setStatus($status) {
-        $this->status = (int)$status;
-    }
-    
-    public function setProfileImage($profileImage) {
-        $this->profileImage = sanitize($profileImage);
-    }
-    
-    public function setCreatedAt($createdAt) {
-        $this->createdAt = $createdAt;
-    }
-    
-    public function setUpdatedAt($updatedAt) {
-        $this->updatedAt = $updatedAt;
-    }
-    
-    // Business logic methods
+    /**
+     * Authenticate user with email and password
+     */
     public function authenticate($email, $password) {
         $user = $this->findBy('email', $email);
         
-        if ($user && $user['status'] == STATUS_ACTIVE) {
-            // Verify password against the stored hash
-            $sql = "SELECT password FROM {$this->table} WHERE email = :email";
-            $result = fetchOne($sql, ['email' => $email]);
-            
-            if ($result && verifyPassword($password, $result['password'])) {
+        if ($user && $user['is_active'] == 1) {
+            if (verifyPassword($password, $user['password'])) {
                 return $user;
             }
         }
@@ -118,18 +29,47 @@ class User extends Model {
         return false;
     }
     
+    /**
+     * Check if email exists and user is active
+     */
+    public function emailExists($email) {
+        $user = $this->findBy('email', $email);
+        return $user && $user['is_active'] == 1;
+    }
+    
+    /**
+     * Check if username exists
+     */
+    public function usernameExists($username) {
+        $user = $this->findBy('username', $username);
+        return $user !== false;
+    }
+    
+    // ==================== USER MANAGEMENT METHODS ====================
+    
+    /**
+     * Create new user with hashed password
+     */
     public function createUser($userData) {
         // Hash password before saving
         if (isset($userData['password'])) {
             $userData['password'] = hashPassword($userData['password']);
         }
         
-        // Set default status
-        $userData['status'] = $userData['status'] ?? STATUS_ACTIVE;
+        // Set default values
+        $userData['is_active'] = $userData['is_active'] ?? 1;
         
-        return $this->create($userData);
+        try {
+            return $this->create($userData);
+        } catch (Exception $e) {
+            logError("User creation failed: " . $e->getMessage());
+            throw $e;
+        }
     }
     
+    /**
+     * Update user information
+     */
     public function updateUser($userId, $userData) {
         // Hash password if provided
         if (isset($userData['password']) && !empty($userData['password'])) {
@@ -138,106 +78,208 @@ class User extends Model {
             unset($userData['password']);
         }
         
-        return $this->update($userId, $userData);
+        try {
+            return $this->update($userId, $userData);
+        } catch (Exception $e) {
+            logError("User update failed: " . $e->getMessage());
+            throw $e;
+        }
     }
     
+    /**
+     * Update user profile information
+     */
+    public function updateProfile($userId, $profileData) {
+        $allowedFields = ['first_name', 'last_name', 'phone', 'address', 'profile_picture'];
+        $filteredData = array_intersect_key($profileData, array_flip($allowedFields));
+        
+        return $this->update($userId, $filteredData);
+    }
+    
+    /**
+     * Change user password
+     */
     public function changePassword($userId, $currentPassword, $newPassword) {
         $user = $this->find($userId);
         if (!$user) {
             return ['success' => false, 'error' => 'User not found'];
         }
         
-        // Get current password hash
-        $sql = "SELECT password FROM {$this->table} WHERE {$this->primaryKey} = :id";
-        $result = fetchOne($sql, ['id' => $userId]);
-        
-        if (!$result || !verifyPassword($currentPassword, $result['password'])) {
+        // Verify current password
+        if (!verifyPassword($currentPassword, $user['password'])) {
             return ['success' => false, 'error' => 'Current password is incorrect'];
         }
         
+        // Validate new password
+        if (strlen($newPassword) < PASSWORD_MIN_LENGTH) {
+            return ['success' => false, 'error' => 'New password must be at least ' . PASSWORD_MIN_LENGTH . ' characters'];
+        }
+        
+        // Update password
         $hashedPassword = hashPassword($newPassword);
         $updated = $this->update($userId, ['password' => $hashedPassword]);
         
-        return [
-            'success' => $updated > 0,
-            'message' => $updated > 0 ? 'Password updated successfully' : 'Failed to update password'
-        ];
+        if ($updated) {
+            logActivity("Password changed for user ID: {$userId}");
+            return ['success' => true, 'message' => 'Password updated successfully'];
+        }
+        
+        return ['success' => false, 'error' => 'Failed to update password'];
     }
     
-    public function getUsersByRole($role) {
-        $sql = "SELECT * FROM {$this->table} WHERE role = :role AND status = :status ORDER BY name";
-        $results = fetchAll($sql, ['role' => $role, 'status' => STATUS_ACTIVE]);
-        return array_map([$this, 'hideFields'], $results);
+    /**
+     * Update last login timestamp
+     */
+    public function updateLastLogin($userId) {
+        $sql = "UPDATE {$this->table} SET last_login = NOW() WHERE {$this->primaryKey} = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$userId]);
     }
     
-    public function getActiveUsers() {
-        return $this->findAllBy('status', STATUS_ACTIVE);
-    }
+    // ==================== USER STATUS METHODS ====================
     
-    public function findAllBy($column, $value) {
-        $sql = "SELECT * FROM {$this->table} WHERE {$column} = :value ORDER BY name";
-        $results = fetchAll($sql, ['value' => $value]);
-        return array_map([$this, 'hideFields'], $results);
-    }
-    
-    public function deactivateUser($userId) {
-        return $this->update($userId, ['status' => STATUS_INACTIVE]);
-    }
-    
+    /**
+     * Activate user account
+     */
     public function activateUser($userId) {
-        return $this->update($userId, ['status' => STATUS_ACTIVE]);
+        return $this->update($userId, ['is_active' => 1]);
     }
     
+    /**
+     * Deactivate user account
+     */
+    public function deactivateUser($userId) {
+        return $this->update($userId, ['is_active' => 0]);
+    }
+    
+    /**
+     * Check if user is active
+     */
     public function isActive($userId) {
         $user = $this->find($userId);
-        return $user && $user['status'] == STATUS_ACTIVE;
+        return $user && $user['is_active'] == 1;
     }
     
+    // ==================== ROLE-BASED METHODS ====================
+    
+    /**
+     * Get users by role
+     */
+    public function getUsersByRole($role) {
+        $sql = "SELECT * FROM {$this->table} WHERE role = :role AND is_active = 1 ORDER BY first_name, last_name";
+        $results = fetchAll($sql, ['role' => $role]);
+        return array_map([$this, 'hideFields'], $results);
+    }
+    
+    /**
+     * Get all active users
+     */
+    public function getActiveUsers() {
+        $sql = "SELECT * FROM {$this->table} WHERE is_active = 1 ORDER BY first_name, last_name";
+        $results = fetchAll($sql);
+        return array_map([$this, 'hideFields'], $results);
+    }
+    
+    /**
+     * Check if user is admin
+     */
     public function isAdmin($userId) {
         $user = $this->find($userId);
         return $user && $user['role'] === ROLE_ADMIN;
     }
     
+    /**
+     * Check if user is veterinary
+     */
     public function isVeterinary($userId) {
         $user = $this->find($userId);
         return $user && $user['role'] === ROLE_VETERINARY;
     }
     
+    /**
+     * Check if user is client
+     */
     public function isClient($userId) {
         $user = $this->find($userId);
         return $user && $user['role'] === ROLE_CLIENT;
     }
     
-    public function getFullName() {
-        return $this->name;
+    // ==================== PROFILE METHODS ====================
+    
+    /**
+     * Get user profile with full details
+     */
+    public function getProfile($userId) {
+        $user = $this->find($userId);
+        if ($user) {
+            return $this->hideFields($user);
+        }
+        return false;
     }
     
-    public function getDisplayName() {
-        return $this->name . ' (' . ucfirst($this->role) . ')';
+    /**
+     * Get user's full name
+     */
+    public function getFullName($userId) {
+        $user = $this->find($userId);
+        if ($user && !empty($user['first_name']) && !empty($user['last_name'])) {
+            return trim($user['first_name'] . ' ' . $user['last_name']);
+        } elseif ($user) {
+            return $user['username'];
+        }
+        return 'Unknown User';
     }
     
-    // Validation
+    /**
+     * Get user's display name with role
+     */
+    public function getDisplayName($userId) {
+        $user = $this->find($userId);
+        if ($user) {
+            $name = $this->getFullName($userId);
+            return $name . ' (' . ucfirst($user['role']) . ')';
+        }
+        return 'Unknown User';
+    }
+    
+    // ==================== VALIDATION METHODS ====================
+    
+    /**
+     * Validate user data
+     */
     public function validate($data, $id = null) {
         $errors = [];
         
         // Required fields
-        $required = ['name', 'email', 'role'];
+        $required = ['email', 'role'];
         if (!$id) {
             $required[] = 'password';
+            $required[] = 'username';
         }
         
         $errors = array_merge($errors, validateRequired($required, $data));
         
-        // Email validation
-        if (!empty($data['email']) && !validateEmail($data['email'])) {
-            $errors['email'] = 'Invalid email format';
+        // Username validation (only for new users or if username is being changed)
+        if (!empty($data['username'])) {
+            if (strlen($data['username']) < 3) {
+                $errors['username'] = 'Username must be at least 3 characters';
+            } else {
+                $existingUser = $this->findBy('username', $data['username']);
+                if ($existingUser && (!$id || $existingUser['user_id'] != $id)) {
+                    $errors['username'] = 'Username already exists';
+                }
+            }
         }
         
-        // Check unique email
+        // Email validation
         if (!empty($data['email'])) {
-            $existingUser = $this->findBy('email', $data['email']);
-            if ($existingUser && (!$id || $existingUser['user_id'] != $id)) {
-                $errors['email'] = 'Email already exists';
+            if (!validateEmail($data['email'])) {
+                $errors['email'] = 'Invalid email format';
+            } else {
+                $existingUser = $this->findBy('email', $data['email']);
+                if ($existingUser && (!$id || $existingUser['user_id'] != $id)) {
+                    $errors['email'] = 'Email already exists';
+                }
             }
         }
         
@@ -247,8 +289,10 @@ class User extends Model {
         }
         
         // Password validation
-        if (!empty($data['password']) && strlen($data['password']) < PASSWORD_MIN_LENGTH) {
-            $errors['password'] = 'Password must be at least ' . PASSWORD_MIN_LENGTH . ' characters';
+        if (!empty($data['password'])) {
+            if (strlen($data['password']) < PASSWORD_MIN_LENGTH) {
+                $errors['password'] = 'Password must be at least ' . PASSWORD_MIN_LENGTH . ' characters';
+            }
         }
         
         // Role validation
@@ -260,54 +304,74 @@ class User extends Model {
         return $errors;
     }
     
-    // Search users
+    // ==================== SEARCH & STATISTICS ====================
+    
+    /**
+     * Search users by term
+     */
     public function searchUsers($term) {
-        return $this->search($term, ['name', 'email', 'phone']);
+        $columns = ['username', 'email', 'first_name', 'last_name', 'phone'];
+        $results = $this->search($term, $columns);
+        return array_map([$this, 'hideFields'], $results);
     }
     
-    // Get user statistics
+    /**
+     * Get user statistics
+     */
     public function getStats() {
-        $stats = [
+        return [
             'total' => $this->count(),
-            'active' => $this->count(['status' => STATUS_ACTIVE]),
-            'inactive' => $this->count(['status' => STATUS_INACTIVE]),
+            'active' => $this->count(['is_active' => 1]),
+            'inactive' => $this->count(['is_active' => 0]),
             'admin' => $this->count(['role' => ROLE_ADMIN]),
             'veterinary' => $this->count(['role' => ROLE_VETERINARY]),
             'client' => $this->count(['role' => ROLE_CLIENT])
         ];
+    }
+    
+    // ==================== HELPER METHODS ====================
+    
+    /**
+     * Get all users with pagination
+     */
+    public function getAllUsers($page = 1, $perPage = 20) {
+        $offset = ($page - 1) * $perPage;
+        $users = $this->findAll($offset, $perPage);
         
-        return $stats;
-    }
-    
-    // Load user data into object properties
-    public function load($userData) {
-        if (is_array($userData)) {
-            $this->setUserId($userData['user_id'] ?? null);
-            $this->setName($userData['name'] ?? '');
-            $this->setEmail($userData['email'] ?? '');
-            $this->setRole($userData['role'] ?? '');
-            $this->setPhone($userData['phone'] ?? '');
-            $this->setStatus($userData['status'] ?? STATUS_ACTIVE);
-            $this->setProfileImage($userData['profile_image'] ?? '');
-            $this->setCreatedAt($userData['created_at'] ?? null);
-            $this->setUpdatedAt($userData['updated_at'] ?? null);
-        }
-        return $this;
-    }
-    
-    // Convert object to array
-    public function toArray() {
         return [
-            'user_id' => $this->userId,
-            'name' => $this->name,
-            'email' => $this->email,
-            'role' => $this->role,
-            'phone' => $this->phone,
-            'status' => $this->status,
-            'profile_image' => $this->profileImage,
-            'created_at' => $this->createdAt,
-            'updated_at' => $this->updatedAt
+            'data' => array_map([$this, 'hideFields'], $users),
+            'total' => $this->count(),
+            'page' => $page,
+            'per_page' => $perPage,
+            'total_pages' => ceil($this->count() / $perPage)
         ];
     }
+    
+    /**
+     * Override find to hide sensitive fields
+     */
+    public function find($id) {
+        $user = parent::find($id);
+        if ($user) {
+            return $this->hideFields($user);
+        }
+        return false;
+    }
+    
+    /**
+     * Override findBy to hide sensitive fields
+     */
+    public function findBy($column, $value) {
+        $sql = "SELECT * FROM {$this->table} WHERE {$column} = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$value]);
+        $user = $stmt->fetch();
+        
+        // Don't hide password for authentication purposes
+        if ($user && $column !== 'email') {
+            return $this->hideFields($user);
+        }
+        
+        return $user;
+    }
 }
-?>

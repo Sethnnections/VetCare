@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Page Not Found</title>
+    <title>500 - Server Error</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,7 +25,7 @@
         .error-code {
             font-size: 72px;
             font-weight: bold;
-            color: #fd742a;
+            color: #dc3545;
             margin-bottom: 10px;
         }
         .error-message {
@@ -49,9 +49,9 @@
 </head>
 <body>
     <div class="error-container">
-        <div class="error-code">404</div>
-        <div class="error-message">Page Not Found</div>
-        <p>The page you are looking for doesn't exist or has been moved.</p>
+        <div class="error-code">500</div>
+        <div class="error-message">Internal Server Error</div>
+        <p>Something went wrong on our end. Please try again later.</p>
         <a href="<?php echo Router::url('/'); ?>" class="home-link">Go Home</a>
     </div>
 </body>

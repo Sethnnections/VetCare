@@ -17,46 +17,64 @@ class Controller {
         $this->setData('title', $title);
     }
     
-    // Render view
-    protected function view($view) {
-        $viewFile = VIEW_PATH . '/' . $view . '.php';
+    // Render view with layout
+    protected function view($view, $layout = 'main') {
+        // Extract data for the view
+        extract($this->data);
         
+        // Start output buffering for view content
+        ob_start();
+        
+        // Include the view file
+        $viewFile = VIEW_PATH . '/' . $view . '.php';
         if (file_exists($viewFile)) {
-            // Extract data for the view
-            extract($this->data);
-            
-            // Start output buffering
-            ob_start();
             require_once $viewFile;
-            $content = ob_get_clean();
-            
-            // Include layout
-            require_once VIEW_PATH . '/layouts/main.php';
         } else {
-            throw new Exception("View file $viewFile not found");
+            throw new Exception("View file not found: $viewFile");
+        }
+        
+        // Get the view content
+        $content = ob_get_clean();
+        
+        // Include the layout
+        $layoutFile = VIEW_PATH . '/layouts/' . $layout . '.php';
+        if (file_exists($layoutFile)) {
+            require_once $layoutFile;
+        } else {
+            // If layout doesn't exist, just output content
+            echo $content;
         }
     }
     
     // Redirect to another URL
     protected function redirect($url) {
-        header('Location: ' . Router::url($url));
+        $baseUrl = Router::url($url);
+        header('Location: ' . $baseUrl);
         exit();
     }
     
     // Get POST data
     protected function input($key = null) {
         if ($key) {
-            return isset($_POST[$key]) ? $this->sanitize($_POST[$key]) : null;
+            return isset($_POST[$key]) ? sanitize($_POST[$key]) : null;
         }
-        return $this->sanitize($_POST);
+        return sanitize($_POST);
     }
     
     // Get GET data
     protected function get($key = null, $default = null) {
         if ($key) {
-            return isset($_GET[$key]) ? $this->sanitize($_GET[$key]) : $default;
+            return isset($_GET[$key]) ? sanitize($_GET[$key]) : $default;
         }
-        return $this->sanitize($_GET);
+        return sanitize($_GET);
+    }
+    
+    // Get files data
+    protected function files($key = null) {
+        if ($key) {
+            return isset($_FILES[$key]) ? $_FILES[$key] : null;
+        }
+        return $_FILES;
     }
     
     // Check if request is POST
@@ -100,14 +118,6 @@ class Controller {
         header('Content-Type: application/json');
         echo json_encode($data);
         exit();
-    }
-    
-    // Sanitize input data
-    private function sanitize($data) {
-        if (is_array($data)) {
-            return array_map([$this, 'sanitize'], $data);
-        }
-        return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
     }
     
     // Pagination helper

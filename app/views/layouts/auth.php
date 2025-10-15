@@ -8,20 +8,13 @@
     <!-- CSS Files from CDN -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    
-    <style>
-        /* Global styles can go here */
-    </style>
 </head>
 <body>
-    <!-- Main content from the view -->
+    <!-- Auth page content -->
     <?php echo $content ?? 'No content'; ?>
     
     <!-- JavaScript Files from CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
-    
-    <!-- Additional scripts from view -->
-    <?php echo $scripts ?? ''; ?>
 </body>
 </html>

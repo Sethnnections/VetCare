@@ -6,8 +6,6 @@ class Model {
     protected $hidden = [];
     
     protected $db;
-
-
     
     public function __construct() {
         global $database;
@@ -51,23 +49,16 @@ class Model {
     public function create($data) {
         $filteredData = array_intersect_key($data, array_flip($this->fillable));
         
-        // Sanitize all data before inserting
-        $sanitizedData = [];
-        foreach ($filteredData as $key => $value) {
-            $sanitizedData[$key] = sanitize($value);
-        }
-        
-        $columns = implode(', ', array_keys($sanitizedData));
-        $placeholders = ':' . implode(', :', array_keys($sanitizedData));
+        $columns = implode(', ', array_keys($filteredData));
+        $placeholders = ':' . implode(', :', array_keys($filteredData));
         
         $sql = "INSERT INTO {$this->table} ({$columns}) VALUES ({$placeholders})";
         $stmt = $this->db->prepare($sql);
         
         try {
-            $stmt->execute($sanitizedData);
+            $stmt->execute($filteredData);
             return $this->db->lastInsertId();
         } catch (PDOException $e) {
-            logError("Database insert error: " . $e->getMessage());
             throw new Exception("Database error: " . $e->getMessage());
         }
     }

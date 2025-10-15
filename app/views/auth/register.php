@@ -1,5 +1,4 @@
 <?php
-$this->layout = null; // No layout for standalone page
 ?>
 <!DOCTYPE html>
 <html lang="en">

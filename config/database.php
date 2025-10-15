@@ -19,44 +19,85 @@ class Database {
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
             PDO::ATTR_EMULATE_PREPARES => false,
+            PDO::ATTR_PERSISTENT => false,
         ];
         
         try {
             $this->pdo = new PDO($dsn, $this->username, $this->password, $options);
         } catch (PDOException $e) {
             $this->error = $e->getMessage();
-            throw new Exception("Database connection failed: " . $this->error);
+            logError("Database connection failed: " . $this->error);
+            throw new Exception("Database connection failed. Please check your configuration.");
         }
     }
     
     public function getConnection() {
         return $this->pdo;
     }
+    
+    public function testConnection() {
+        try {
+            $this->pdo->query("SELECT 1");
+            return true;
+        } catch (PDOException $e) {
+            return false;
+        }
+    }
 }
 
 // Global database helper functions
-// These functions are now available everywhere because helpers.php is loaded first
-
 function fetchAll($sql, $params = []) {
     global $database;
-    $stmt = $database->getConnection()->prepare($sql);
-    $stmt->execute($params);
-    return $stmt->fetchAll();
+    try {
+        $stmt = $database->getConnection()->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetchAll();
+    } catch (PDOException $e) {
+        logError("Database fetchAll error: " . $e->getMessage() . " | SQL: " . $sql);
+        throw $e;
+    }
 }
 
 function fetchOne($sql, $params = []) {
     global $database;
-    $stmt = $database->getConnection()->prepare($sql);
-    $stmt->execute($params);
-    return $stmt->fetch();
+    try {
+        $stmt = $database->getConnection()->prepare($sql);
+        $stmt->execute($params);
+        return $stmt->fetch();
+    } catch (PDOException $e) {
+        logError("Database fetchOne error: " . $e->getMessage() . " | SQL: " . $sql);
+        throw $e;
+    }
 }
 
 function execute($sql, $params = []) {
     global $database;
-    $stmt = $database->getConnection()->prepare($sql);
-    return $stmt->execute($params);
+    try {
+        $stmt = $database->getConnection()->prepare($sql);
+        return $stmt->execute($params);
+    } catch (PDOException $e) {
+        logError("Database execute error: " . $e->getMessage() . " | SQL: " . $sql);
+        throw $e;
+    }
+}
+
+function lastInsertId() {
+    global $database;
+    return $database->getConnection()->lastInsertId();
 }
 
 // Initialize database connection
-$database = new Database();
+try {
+    $database = new Database();
+    
+    if (DEBUG_MODE && !$database->testConnection()) {
+        logError("Database connection test failed");
+    }
+} catch (Exception $e) {
+    if (DEBUG_MODE) {
+        die("Database Error: " . $e->getMessage());
+    } else {
+        die("System temporarily unavailable. Please try again later.");
+    }
+}
 ?>

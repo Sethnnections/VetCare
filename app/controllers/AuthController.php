@@ -1,10 +1,19 @@
 <?php
-
 class AuthController extends Controller {
-    private $userModel;
+private $userModel;
+    private $auth;
     
     public function __construct() {
         $this->userModel = new User();
+        global $database;
+        
+        // Check if Auth class exists, if not create a simple auth handler
+        if (class_exists('Auth')) {
+            $this->auth = new Auth($database->getConnection());
+        } else {
+            // Fallback to basic authentication using User model
+            $this->auth = $this->userModel;
+        }
     }
     
     // Show login form
@@ -15,24 +24,41 @@ class AuthController extends Controller {
             return;
         }
         
-        $this->setTitle('Login');
-        $this->setData('page', 'login');
-        $this->view('auth/login');
+        $error = '';
+        
+        if ($this->isPost()) {
+            $email = $this->input('email');
+            $password = $this->input('password');
+            
+            // Check if user is active first
+            if (!$this->auth->isUserActive($email)) {
+                $error = "Your account is deactivated. Please contact administrator.";
+            } elseif ($this->auth->login($email, $password)) {
+                $this->redirectToDashboard();
+                return;
+            } else {
+                $error = "Invalid email or password!";
+            }
+        }
+        
+        $this->setData('error', $error);
+        $this->setTitle('Login - Veterinary IMS');
+        $this->view('auth/login', 'auth'); // Use auth layout
     }
     
     // Handle login form submission
     public function authenticate() {
         if (!$this->isPost()) {
-            $this->redirect('/auth/login');
+            $this->redirect('/login');
             return;
         }
         
         try {
             $this->validateCsrf();
             
-            $email = $this->get('email');
-            $password = $this->get('password');
-            $remember = $this->get('remember');
+            $email = $this->input('email');
+            $password = $this->input('password');
+            $remember = $this->input('remember');
             
             // Validate input
             $errors = [];
@@ -51,25 +77,25 @@ class AuthController extends Controller {
                 return;
             }
             
-            // Attempt authentication
-            $user = $this->userModel->authenticate($email, $password);
+            // Check if user is active first
+            if (!$this->auth->isUserActive($email)) {
+                $this->setFlash('error', 'Your account is deactivated. Please contact administrator.');
+                $this->setData('old', ['email' => $email]);
+                $this->login();
+                return;
+            }
             
-            if ($user) {
-                // Start session and store user data
-                startSession();
-                $_SESSION['user_id'] = $user['user_id'];
-                $_SESSION['user'] = $user;
-                $_SESSION['last_activity'] = time();
-                
+            // Attempt authentication
+            if ($this->auth->login($email, $password)) {
                 // Handle remember me
                 if ($remember) {
-                    $this->setRememberMeCookie($user['user_id']);
+                    $this->setRememberMeCookie($_SESSION['user_id']);
                 }
                 
                 // Log successful login
-                logError("User logged in: {$user['email']} (ID: {$user['user_id']})");
+                logActivity("User logged in: {$_SESSION['email']} (ID: {$_SESSION['user_id']})");
                 
-                $this->setFlash('success', 'Welcome back, ' . $user['name'] . '!');
+                $this->setFlash('success', 'Welcome back, ' . ($_SESSION['first_name'] ?? $_SESSION['username']) . '!');
                 $this->redirectToDashboard();
             } else {
                 // Log failed login attempt
@@ -89,12 +115,9 @@ class AuthController extends Controller {
     
     // Handle logout
     public function logout() {
-        startSession();
-        
         // Log logout
-        $user = getCurrentUser();
-        if ($user) {
-            logError("User logged out: {$user['email']} (ID: {$user['user_id']})");
+        if (isset($_SESSION['email'])) {
+            logActivity("User logged out: {$_SESSION['email']} (ID: {$_SESSION['user_id']})");
         }
         
         // Clear remember me cookie
@@ -102,66 +125,60 @@ class AuthController extends Controller {
             setcookie('remember_token', '', time() - 3600, '/');
         }
         
-        // Destroy session
-        session_destroy();
+        // Destroy session using auth class
+        $this->auth->logout();
         
         $this->setFlash('success', 'You have been logged out successfully');
-        $this->redirect('/auth/login');
+        $this->redirect('/login');
     }
     
-    // Show registration form (for admin use)
+    // Show registration form (for clients)
     public function register() {
-        $this->authorize(ROLE_ADMIN);
-        
-        $this->setTitle('Register New User');
-        $this->setData('page', 'register');
-        $this->view('auth/register');
-    }
-    
-    // Handle user registration
-    public function store() {
-        $this->authorize(ROLE_ADMIN);
-        
-        if (!$this->isPost()) {
-            $this->redirect('/auth/register');
+        // If already logged in, redirect to dashboard
+        if (isLoggedIn()) {
+            $this->redirectToDashboard();
             return;
         }
         
-        try {
-            $this->validateCsrf();
+        $error = '';
+        $success = '';
+        $userData = [];
+        
+        if ($this->isPost()) {
+            $userData = [
+                'username' => $this->input('username'),
+                'email' => $this->input('email'),
+                'password' => $this->input('password'),
+                'first_name' => $this->input('first_name'),
+                'last_name' => $this->input('last_name'),
+                'phone' => $this->input('phone'),
+                'role' => 'client'
+            ];
             
-            $userData = $this->input();
+            $confirmPassword = $this->input('confirm_password');
             
-            // Validate data
-            $errors = $this->userModel->validate($userData);
-            
-            if (!empty($errors)) {
-                $this->setFlash('error', 'Please fix the errors below');
-                $this->setData('errors', $errors);
-                $this->setData('old', $userData);
-                $this->register();
-                return;
-            }
-            
-            // Create user
-            $userId = $this->userModel->createUser($userData);
-            
-            if ($userId) {
-                logError("New user registered: {$userData['email']} (ID: {$userId}) by " . getCurrentUser()['name']);
-                $this->setFlash('success', 'User registered successfully');
-                $this->redirect('/admin/users');
+            // Validate passwords match
+            if ($userData['password'] !== $confirmPassword) {
+                $error = "Passwords do not match!";
             } else {
-                $this->setFlash('error', 'Failed to register user');
-                $this->setData('old', $userData);
-                $this->register();
+                // Attempt to register
+                $result = $this->auth->register($userData);
+                
+                if ($result['success']) {
+                    $success = "Registration successful! You can now login.";
+                    // Clear form data
+                    $userData = [];
+                } else {
+                    $error = $result['error'];
+                }
             }
-            
-        } catch (Exception $e) {
-            logError("Registration error: " . $e->getMessage());
-            $this->setFlash('error', 'An error occurred during registration');
-            $this->setData('old', $this->input());
-            $this->register();
         }
+        
+        $this->setData('error', $error);
+        $this->setData('success', $success);
+        $this->setData('userData', $userData);
+        $this->setTitle('Register - Veterinary IMS');
+        $this->view('auth/register', 'auth'); // Use auth layout
     }
     
     // Show change password form
@@ -169,7 +186,6 @@ class AuthController extends Controller {
         requireLogin();
         
         $this->setTitle('Change Password');
-        $this->setData('page', 'change-password');
         $this->view('auth/change-password');
     }
     
@@ -185,9 +201,9 @@ class AuthController extends Controller {
         try {
             $this->validateCsrf();
             
-            $currentPassword = $this->get('current_password');
-            $newPassword = $this->get('new_password');
-            $confirmPassword = $this->get('confirm_password');
+            $currentPassword = $this->input('current_password');
+            $newPassword = $this->input('new_password');
+            $confirmPassword = $this->input('confirm_password');
             
             // Validate input
             $errors = [];
@@ -198,8 +214,8 @@ class AuthController extends Controller {
             
             if (empty($newPassword)) {
                 $errors['new_password'] = 'New password is required';
-            } elseif (strlen($newPassword) < PASSWORD_MIN_LENGTH) {
-                $errors['new_password'] = 'Password must be at least ' . PASSWORD_MIN_LENGTH . ' characters';
+            } elseif (strlen($newPassword) < 6) {
+                $errors['new_password'] = 'Password must be at least 6 characters';
             }
             
             if ($newPassword !== $confirmPassword) {
@@ -218,7 +234,7 @@ class AuthController extends Controller {
             $result = $this->userModel->changePassword($user['user_id'], $currentPassword, $newPassword);
             
             if ($result['success']) {
-                logError("Password changed for user: {$user['email']} (ID: {$user['user_id']})");
+                logActivity("Password changed for user: {$user['email']} (ID: {$user['user_id']})");
                 $this->setFlash('success', $result['message']);
                 $this->redirectToDashboard();
             } else {
@@ -241,8 +257,7 @@ class AuthController extends Controller {
         }
         
         $this->setTitle('Forgot Password');
-        $this->setData('page', 'forgot-password');
-        $this->view('auth/forgot-password');
+        $this->view('auth/forgot-password', 'auth');
     }
     
     // Handle forgot password request
@@ -255,7 +270,7 @@ class AuthController extends Controller {
         try {
             $this->validateCsrf();
             
-            $email = $this->get('email');
+            $email = $this->input('email');
             
             if (empty($email)) {
                 $this->setFlash('error', 'Email is required');
@@ -268,19 +283,19 @@ class AuthController extends Controller {
             if ($user) {
                 // Generate reset token (simplified - in production, store in database)
                 $resetToken = bin2hex(random_bytes(32));
-                $resetLink = url("auth/reset-password?token={$resetToken}&email=" . urlencode($email));
+                $resetLink = Router::url("/auth/reset-password?token={$resetToken}&email=" . urlencode($email));
                 
                 // In a real application, you would:
                 // 1. Store the reset token in database with expiration
                 // 2. Send email with reset link
                 // For now, we'll just show a success message
                 
-                logError("Password reset requested for: {$email}");
+                logActivity("Password reset requested for: {$email}");
             }
             
             // Always show success message for security (don't reveal if email exists)
             $this->setFlash('success', 'If an account with that email exists, a password reset link has been sent.');
-            $this->redirect('/auth/login');
+            $this->redirect('/login');
             
         } catch (Exception $e) {
             logError("Forgot password error: " . $e->getMessage());
@@ -291,12 +306,10 @@ class AuthController extends Controller {
     
     // Check session timeout
     public function checkSession() {
-        startSession();
-        
         if (isLoggedIn()) {
             $lastActivity = $_SESSION['last_activity'] ?? 0;
             
-            if (time() - $lastActivity > SESSION_TIMEOUT) {
+            if (time() - $lastActivity > 3600) { // 1 hour timeout
                 session_destroy();
                 $this->json(['status' => 'expired', 'message' => 'Session expired']);
                 return;
@@ -327,13 +340,17 @@ class AuthController extends Controller {
             $userId = $_COOKIE['remember_user'];
             $user = $this->userModel->find($userId);
             
-            if ($user && $user['status'] == STATUS_ACTIVE) {
-                startSession();
+            if ($user && $user['is_active'] == 1) {
+                $_SESSION['logged_in'] = true;
                 $_SESSION['user_id'] = $user['user_id'];
-                $_SESSION['user'] = $user;
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['email'] = $user['email'];
+                $_SESSION['role'] = $user['role'];
+                $_SESSION['first_name'] = $user['first_name'];
+                $_SESSION['last_name'] = $user['last_name'];
                 $_SESSION['last_activity'] = time();
                 
-                logError("User auto-logged in via remember me: {$user['email']} (ID: {$user['user_id']})");
+                logActivity("User auto-logged in via remember me: {$user['email']} (ID: {$user['user_id']})");
                 return true;
             } else {
                 // Clear invalid cookies
@@ -347,9 +364,9 @@ class AuthController extends Controller {
     
     // Redirect to appropriate dashboard based on role
     private function redirectToDashboard() {
-        $user = getCurrentUser();
+        $userRole = $_SESSION['role'] ?? '';
         
-        switch ($user['role']) {
+        switch ($userRole) {
             case ROLE_ADMIN:
                 $this->redirect('/admin/dashboard');
                 break;
@@ -357,7 +374,7 @@ class AuthController extends Controller {
                 $this->redirect('/veterinary/dashboard');
                 break;
             case ROLE_CLIENT:
-                $this->redirect('/client/dashboard');
+                $this->redirect('/client/animals');
                 break;
             default:
                 $this->redirect('/');
@@ -391,7 +408,6 @@ class AuthController extends Controller {
         $userDetails = $this->userModel->find($user['user_id']);
         
         $this->setTitle('My Profile');
-        $this->setData('page', 'profile');
         $this->setData('user', $userDetails);
         $this->view('auth/profile');
     }
@@ -409,7 +425,12 @@ class AuthController extends Controller {
             $this->validateCsrf();
             
             $user = getCurrentUser();
-            $profileData = arrayOnly($this->input(), ['name', 'phone', 'email']);
+            $profileData = [
+                'first_name' => $this->input('first_name'),
+                'last_name' => $this->input('last_name'),
+                'phone' => $this->input('phone'),
+                'email' => $this->input('email')
+            ];
             
             // Validate data
             $errors = $this->userModel->validate($profileData, $user['user_id']);
@@ -421,27 +442,17 @@ class AuthController extends Controller {
                 return;
             }
             
-            // Handle profile image upload
-            $profileImage = $this->files('profile_image');
-            if ($profileImage && $profileImage['error'] === UPLOAD_ERR_OK) {
-                $uploadResult = $this->handleUpload('profile_image', UPLOAD_PATH . '/profiles', ALLOWED_IMAGE_TYPES);
-                
-                if ($uploadResult['success']) {
-                    $profileData['profile_image'] = $uploadResult['filename'];
-                } else {
-                    $this->setFlash('warning', 'Profile updated but image upload failed: ' . $uploadResult['error']);
-                }
-            }
-            
             // Update profile
             $updated = $this->userModel->updateUser($user['user_id'], $profileData);
             
             if ($updated) {
                 // Update session data
-                $updatedUser = $this->userModel->find($user['user_id']);
-                $_SESSION['user'] = $updatedUser;
+                $_SESSION['first_name'] = $profileData['first_name'];
+                $_SESSION['last_name'] = $profileData['last_name'];
+                $_SESSION['phone'] = $profileData['phone'];
+                $_SESSION['email'] = $profileData['email'];
                 
-                logError("Profile updated for user: {$user['email']} (ID: {$user['user_id']})");
+                logActivity("Profile updated for user: {$user['email']} (ID: {$user['user_id']})");
                 $this->setFlash('success', 'Profile updated successfully');
             } else {
                 $this->setFlash('error', 'Failed to update profile');

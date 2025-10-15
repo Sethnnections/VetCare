@@ -1,185 +1,243 @@
 <?php
 $routes = [
     // Home and Auth Routes
-    '#^/$#' => [
-        'controller' => 'Dashboard',
-        'action' => 'index'
-    ],
-    '#^/dashboard$#' => [
-        'controller' => 'Dashboard',
-        'action' => 'index'
-    ],
-    '#^/login$#' => [
+    '/' => [
         'controller' => 'Auth',
         'action' => 'login'
     ],
-    '#^/logout$#' => [
+    '/login' => [
+        'controller' => 'Auth',
+        'action' => 'login'
+    ],
+    '/auth/login' => [
+        'controller' => 'Auth',
+        'action' => 'login'
+    ],
+    '/authenticate' => [
+        'controller' => 'Auth',
+        'action' => 'authenticate'
+    ],
+    '/auth/authenticate' => [
+        'controller' => 'Auth',
+        'action' => 'authenticate'
+    ],
+    '/logout' => [
         'controller' => 'Auth',
         'action' => 'logout'
     ],
-    '#^/register$#' => [
+    '/auth/logout' => [
+        'controller' => 'Auth',
+        'action' => 'logout'
+    ],
+    '/register' => [
         'controller' => 'Auth',
         'action' => 'register'
     ],
+    '/auth/register' => [
+        'controller' => 'Auth',
+        'action' => 'register'
+    ],
+    '/auth/change-password' => [
+        'controller' => 'Auth',
+        'action' => 'changePassword'
+    ],
+    '/auth/update-password' => [
+        'controller' => 'Auth',
+        'action' => 'updatePassword'
+    ],
+    '/auth/forgot-password' => [
+        'controller' => 'Auth',
+        'action' => 'forgotPassword'
+    ],
+    '/auth/send-reset-link' => [
+        'controller' => 'Auth',
+        'action' => 'sendResetLink'
+    ],
+    '/auth/profile' => [
+        'controller' => 'Auth',
+        'action' => 'profile'
+    ],
+    '/auth/update-profile' => [
+        'controller' => 'Auth',
+        'action' => 'updateProfile'
+    ],
+    
+    // Test Route
+    '/test' => [
+        'controller' => 'Test',
+        'action' => 'index'
+    ],
+    
+    // Dashboard Routes
+    '/dashboard' => [
+        'controller' => 'Dashboard',
+        'action' => 'index'
+    ],
+    '/admin/dashboard' => [
+        'controller' => 'Dashboard',
+        'action' => 'admin'
+    ],
+    '/veterinary/dashboard' => [
+        'controller' => 'Dashboard',
+        'action' => 'veterinary'
+    ],
+    '/client/dashboard' => [
+        'controller' => 'Dashboard',
+        'action' => 'client'
+    ],
     
     // Client Routes
-    '#^/client/profile$#' => [
+    '/client/profile' => [
         'controller' => 'ClientProfile',
         'action' => 'profile'
     ],
-    '#^/client/profile/update$#' => [
+    '/client/profile/update' => [
         'controller' => 'ClientProfile',
         'action' => 'updateProfile'
     ],
-    '#^/client/animals$#' => [
+    '/client/animals' => [
         'controller' => 'ClientProfile',
         'action' => 'animals'
     ],
-    '#^/client/animals/add$#' => [
+    '/client/animals/add' => [
         'controller' => 'ClientProfile',
         'action' => 'addAnimal'
     ],
-    '#^/client/animals/([0-9]+)/edit$#' => [
+    '/client/animals/{id}/edit' => [
         'controller' => 'ClientProfile',
         'action' => 'editAnimal'
     ],
-    '#^/client/animals/([0-9]+)/delete$#' => [
+    '/client/animals/{id}/delete' => [
         'controller' => 'ClientProfile',
         'action' => 'deleteAnimal'
     ],
-    '#^/client/animals/([0-9]+)$#' => [
+    '/client/animals/{id}' => [
         'controller' => 'ClientProfile',
         'action' => 'viewAnimal'
     ],
     
-    // Veterinary Routes
-    '#^/veterinary/dashboard$#' => [
-        'controller' => 'Veterinary',
-        'action' => 'dashboard'
-    ],
-    '#^/veterinary/treatments$#' => [
-        'controller' => 'Veterinary',
-        'action' => 'treatments'
-    ],
-    '#^/veterinary/vaccinations$#' => [
-        'controller' => 'Veterinary',
-        'action' => 'vaccinations'
-    ],
-    
-    // Admin Routes
-    '#^/admin/dashboard$#' => [
-        'controller' => 'Admin',
-        'action' => 'dashboard'
-    ],
-    '#^/admin/users$#' => [
-        'controller' => 'Admin',
-        'action' => 'users'
-    ],
-    '#^/admin/register-veterinary$#' => [
-        'controller' => 'Admin',
-        'action' => 'registerVeterinary'
-    ],
-    
-    // Animal Routes (General)
-    '#^/animals$#' => [
-        'controller' => 'Animal',
+    // User Management Routes (Admin)
+    '/users' => [
+        'controller' => 'User',
         'action' => 'index'
     ],
-    '#^/animals/create$#' => [
-        'controller' => 'Animal',
+    '/users/create' => [
+        'controller' => 'User',
         'action' => 'create'
     ],
-    '#^/animals/([0-9]+)$#' => [
-        'controller' => 'Animal',
+    '/users/store' => [
+        'controller' => 'User',
+        'action' => 'store'
+    ],
+    '/users/{id}' => [
+        'controller' => 'User',
         'action' => 'show'
     ],
-    '#^/animals/([0-9]+)/edit$#' => [
-        'controller' => 'Animal',
+    '/users/{id}/edit' => [
+        'controller' => 'User',
         'action' => 'edit'
     ],
-    '#^/animals/([0-9]+)/delete$#' => [
-        'controller' => 'Animal',
-        'action' => 'delete'
+    '/users/{id}/update' => [
+        'controller' => 'User',
+        'action' => 'update'
+    ],
+    '/users/{id}/deactivate' => [
+        'controller' => 'User',
+        'action' => 'deactivate'
+    ],
+    '/users/{id}/activate' => [
+        'controller' => 'User',
+        'action' => 'activate'
     ],
     
-    // Treatment Routes
-    '#^/treatments$#' => [
-        'controller' => 'Treatment',
-        'action' => 'index'
-    ],
-    '#^/treatments/create$#' => [
-        'controller' => 'Treatment',
-        'action' => 'create'
-    ],
-    '#^/treatments/([0-9]+)$#' => [
-        'controller' => 'Treatment',
-        'action' => 'show'
-    ],
-    '#^/treatments/([0-9]+)/edit$#' => [
-        'controller' => 'Treatment',
-        'action' => 'edit'
-    ],
-    '#^/treatments/([0-9]+)/complete$#' => [
-        'controller' => 'Treatment',
-        'action' => 'complete'
-    ],
-    
-    // Vaccine Routes
-    '#^/vaccines$#' => [
-        'controller' => 'Vaccine',
-        'action' => 'index'
-    ],
-    '#^/vaccines/create$#' => [
-        'controller' => 'Vaccine',
-        'action' => 'create'
-    ],
-    '#^/vaccines/([0-9]+)$#' => [
-        'controller' => 'Vaccine',
-        'action' => 'show'
-    ],
-    '#^/vaccines/([0-9]+)/edit$#' => [
-        'controller' => 'Vaccine',
-        'action' => 'edit'
-    ],
-    '#^/vaccines/([0-9]+)/complete$#' => [
-        'controller' => 'Vaccine',
-        'action' => 'complete'
-    ],
-    
-    // Client Management Routes (for admin/veterinary)
-    '#^/clients$#' => [
+    // Client Management Routes
+    '/clients' => [
         'controller' => 'Client',
         'action' => 'index'
     ],
-    '#^/clients/create$#' => [
+    '/clients/create' => [
         'controller' => 'Client',
         'action' => 'create'
     ],
-    '#^/clients/([0-9]+)$#' => [
+    '/clients/store' => [
+        'controller' => 'Client',
+        'action' => 'store'
+    ],
+    '/clients/{id}' => [
         'controller' => 'Client',
         'action' => 'show'
     ],
-    '#^/clients/([0-9]+)/edit$#' => [
+    '/clients/{id}/edit' => [
         'controller' => 'Client',
         'action' => 'edit'
     ],
-    '#^/clients/([0-9]+)/delete$#' => [
+    '/clients/{id}/update' => [
+        'controller' => 'Client',
+        'action' => 'update'
+    ],
+    '/clients/{id}/delete' => [
         'controller' => 'Client',
         'action' => 'delete'
     ],
-    
-    // API Routes for AJAX
-    '#^/api/animals/search$#' => [
-        'controller' => 'Animal',
-        'action' => 'search'
-    ],
-    '#^/api/clients/search$#' => [
+    '/clients/{id}/activate' => [
         'controller' => 'Client',
+        'action' => 'activate'
+    ],
+    
+    // Animal Routes
+    '/animals' => [
+        'controller' => 'Animal',
+        'action' => 'index'
+    ],
+    '/animals/create' => [
+        'controller' => 'Animal',
+        'action' => 'create'
+    ],
+    '/animals/store' => [
+        'controller' => 'Animal',
+        'action' => 'store'
+    ],
+    '/animals/{id}' => [
+        'controller' => 'Animal',
+        'action' => 'show'
+    ],
+    '/animals/{id}/edit' => [
+        'controller' => 'Animal',
+        'action' => 'edit'
+    ],
+    '/animals/{id}/update' => [
+        'controller' => 'Animal',
+        'action' => 'update'
+    ],
+    
+    // AJAX Routes
+    '/api/users/search' => [
+        'controller' => 'User',
         'action' => 'search'
     ],
-    '#^/api/treatments/stats$#' => [
-        'controller' => 'Treatment',
+    '/api/users/stats' => [
+        'controller' => 'User',
         'action' => 'stats'
+    ],
+    '/api/users/by-role/{role}' => [
+        'controller' => 'User',
+        'action' => 'byRole'
+    ],
+    '/api/clients/search' => [
+        'controller' => 'Client',
+        'action' => 'search'
+    ],
+    '/api/clients/stats' => [
+        'controller' => 'Client',
+        'action' => 'stats'
+    ],
+    '/api/auth/check-email' => [
+        'controller' => 'Auth',
+        'action' => 'checkEmail'
+    ],
+    '/api/auth/check-session' => [
+        'controller' => 'Auth',
+        'action' => 'checkSession'
     ]
 ];
 ?>
