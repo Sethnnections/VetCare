@@ -152,14 +152,18 @@ private $userModel;
                 'first_name' => $this->input('first_name'),
                 'last_name' => $this->input('last_name'),
                 'phone' => $this->input('phone'),
+                'address' => $this->input('address'),
                 'role' => 'client'
             ];
             
             $confirmPassword = $this->input('confirm_password');
+            $terms = $this->input('terms');
             
             // Validate passwords match
             if ($userData['password'] !== $confirmPassword) {
                 $error = "Passwords do not match!";
+            } elseif (!$terms) {
+                $error = "You must agree to the terms and conditions!";
             } else {
                 // Attempt to register
                 $result = $this->auth->register($userData);
@@ -180,7 +184,6 @@ private $userModel;
         $this->setTitle('Register - Veterinary IMS');
         $this->view('auth/register', 'auth'); // Use auth layout
     }
-    
     // Show change password form
     public function changePassword() {
         requireLogin();
@@ -362,26 +365,25 @@ private $userModel;
         return false;
     }
     
-    // Redirect to appropriate dashboard based on role
-    private function redirectToDashboard() {
-        $userRole = $_SESSION['role'] ?? '';
-        
-        switch ($userRole) {
-            case ROLE_ADMIN:
-                $this->redirect('/admin/dashboard');
-                break;
-            case ROLE_VETERINARY:
-                $this->redirect('/veterinary/dashboard');
-                break;
-            case ROLE_CLIENT:
-                $this->redirect('/client/animals');
-                break;
-            default:
-                $this->redirect('/');
-                break;
+        // Redirect to appropriate dashboard based on role
+        private function redirectToDashboard() {
+            $userRole = $_SESSION['role'] ?? '';
+            
+            switch ($userRole) {
+                case ROLE_ADMIN:
+                    $this->redirect('/admin/dashboard');
+                    break;
+                case ROLE_VETERINARY:
+                    $this->redirect('/veterinary/dashboard');
+                    break;
+                case ROLE_CLIENT:
+                    $this->redirect('/client/dashboard');
+                    break;
+                default:
+                    $this->redirect('/');
+                    break;
+            }
         }
-    }
-    
     // AJAX endpoint to check if email exists (for registration)
     public function checkEmail() {
         if (!$this->isAjax()) {

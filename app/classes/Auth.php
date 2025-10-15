@@ -62,8 +62,8 @@ class Auth {
             $hashedPassword = password_hash($userData['password'], PASSWORD_DEFAULT);
             
             // Insert user
-            $sql = "INSERT INTO users (username, email, password, role, first_name, last_name, phone, is_active) 
-                    VALUES (:username, :email, :password, :role, :first_name, :last_name, :phone, 1)";
+            $sql = "INSERT INTO users (username, email, password, role, first_name, last_name, phone, address, is_active) 
+                    VALUES (:username, :email, :password, :role, :first_name, :last_name, :phone, :address, 1)";
             
             $stmt = $this->db->prepare($sql);
             $stmt->execute([
@@ -73,7 +73,8 @@ class Auth {
                 'role' => $userData['role'],
                 'first_name' => $userData['first_name'] ?? null,
                 'last_name' => $userData['last_name'] ?? null,
-                'phone' => $userData['phone'] ?? null
+                'phone' => $userData['phone'] ?? null,
+                'address' => $userData['address'] ?? null
             ]);
             
             $userId = $this->db->lastInsertId();
