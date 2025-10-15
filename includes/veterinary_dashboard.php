@@ -1,728 +1,348 @@
-<?php
-require_once 'includes/init.php';
-requireLogin();
-requireRole(['admin']);
+<div class="page-header">
+    <div class="row">
+        <div class="col-sm-12">
+            <h3 class="page-title">Veterinary Dashboard</h3>
+            <ul class="breadcrumb">
+                <li class="breadcrumb-item active">Dashboard</li>
+            </ul>
+        </div>
+    </div>
+</div>
 
-$current_role = $auth->getUserRole();
-$user_id = $_SESSION['user_id'];
-
-$message = '';
-$error = '';
-
-if($_POST) {
-    $username = $_POST['username'] ?? '';
-    $email = $_POST['email'] ?? '';
-    $password = $_POST['password'] ?? '';
-    $confirm_password = $_POST['confirm_password'] ?? '';
-    $role = 'veterinary';
-
-    // Validation
-    if(empty($username) || empty($email) || empty($password)) {
-        $error = "All fields are required!";
-    } elseif($password !== $confirm_password) {
-        $error = "Passwords do not match!";
-    } elseif(strlen($password) < 6) {
-        $error = "Password must be at least 6 characters long!";
-    } else {
-        // Check if email already exists
-        $user = new User($db);
-        $user->email = $email;
-        if($user->emailExists()) {
-            $error = "Email already exists!";
-        } else {
-            // Register veterinary staff
-            if($auth->registerUser($username, $email, $password, $role)) {
-                $message = "Veterinary staff registered successfully!";
-                // Clear form fields
-                $_POST = array();
-            } else {
-                $error = "Registration failed! Please try again.";
-            }
-        }
-    }
-}
-?>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Register Veterinary - Veterinary IMS</title>
-    <!-- Bootstrap CSS -->
-      <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
-    <!-- Normalize CSS -->
-    <link rel="stylesheet" href="css/normalize.css">
-    <!-- Main CSS -->
-    <link rel="stylesheet" href="css/main.css">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css">
-    <!-- Fontawesome CSS -->
-    <link rel="stylesheet" href="css/all.min.css">
-    <!-- Flaticon CSS -->
-    <link rel="stylesheet" href="fonts/flaticon.css">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css">
-    <!-- Modernize js -->
-    <script src="js/modernizr-3.6.0.min.js"></script>
-    <style>
-        :root {
-            --primary: #112954;
-            --primary-light: #112954;
-            --secondary: #212529;
-            --success: #28a745;
-            --danger: #f72585;
-            --warning: #e86029;
-            --info: #17a2b8;
-            --light: #f8f9fa;
-            --dark: #071329ff;
-            --gray: #6c757d;
-            --light-gray: #e9ecef;
-            --orange-deep: #e86029;
-            --orange-light: #ff8c5a;
-            --border-radius: 12px;
-            --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            --transition: all 0.3s ease;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            min-height: 100vh;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
-        .registration-card {
-            background: white;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            overflow: hidden;
-            transition: var(--transition);
-            margin: 2rem 0;
-        }
-        
-        .registration-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        }
-        
-        .registration-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: white;
-            padding: 2rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .registration-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 200px;
-            height: 200px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-        }
-        
-        .registration-icon {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            display: block;
-            color: var(--orange-deep);
-        }
-        
-        .registration-body {
-            padding: 2rem;
-        }
-        
-        .form-control {
-            border-radius: 8px;
-            border: 1px solid var(--light-gray);
-            padding: 0.75rem 1rem;
-            transition: var(--transition);
-        }
-        
-        .form-control:focus {
-            border-color: var(--orange-deep);
-            box-shadow: 0 0 0 0.2rem rgba(232, 96, 41, 0.25);
-        }
-        
-        .form-label {
-            font-weight: 600;
-            color: var(--dark);
-            margin-bottom: 0.5rem;
-        }
-        
-        .btn {
-            border-radius: 8px;
-            padding: 0.75rem 1.5rem;
-            font-weight: 500;
-            transition: var(--transition);
-        }
-        
-        .btn-primary {
-            background: linear-gradient(to right, var(--orange-deep), var(--orange-light));
-            border: none;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(232, 96, 41, 0.4);
-            background: linear-gradient(to right, var(--orange-light), var(--orange-deep));
-        }
-        
-        .btn-outline-secondary {
-            border: 1px solid var(--gray);
-            color: var(--gray);
-        }
-        
-        .btn-outline-secondary:hover {
-            background-color: var(--gray);
-            color: white;
-        }
-        
-        .alert {
-            border-radius: 8px;
-            border: none;
-            padding: 1rem 1.25rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .alert-success {
-            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-            color: #155724;
-            border-left: 4px solid var(--success);
-        }
-        
-        .alert-danger {
-            background: linear-gradient(135deg, #f8d7da 0%, #f1b0b7 100%);
-            color: #721c24;
-            border-left: 4px solid var(--danger);
-        }
-        
-        .alert-warning {
-            background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-            color: #856404;
-            border-left: 4px solid var(--warning);
-        }
-        
-        .password-strength {
-            height: 5px;
-            border-radius: 5px;
-            margin-top: 5px;
-            transition: var(--transition);
-        }
-        
-        .password-weak {
-            background-color: var(--danger);
-            width: 25%;
-        }
-        
-        .password-medium {
-            background-color: var(--warning);
-            width: 50%;
-        }
-        
-        .password-strong {
-            background-color: #4CAF50;
-            width: 100%;
-        }
-        
-        .feature-list {
-            list-style: none;
-            padding: 0;
-        }
-        
-        .feature-list li {
-            padding: 0.5rem 0;
-            display: flex;
-            align-items: center;
-        }
-        
-        .feature-list li i {
-            color: var(--orange-deep);
-            margin-right: 0.75rem;
-        }
-        
-        .steps-indicator {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-            position: relative;
-        }
-        
-        .steps-indicator::before {
-            content: '';
-            position: absolute;
-            top: 15px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background-color: var(--light-gray);
-            z-index: 1;
-        }
-        
-        .step {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
-            z-index: 2;
-        }
-        
-        .step-number {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: white;
-            border: 2px solid var(--light-gray);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            transition: var(--transition);
-        }
-        
-        .step.active .step-number {
-            background-color: var(--orange-deep);
-            border-color: var(--orange-deep);
-            color: white;
-        }
-        
-        .step-label {
-            font-size: 0.85rem;
-            color: var(--gray);
-            text-align: center;
-        }
-        
-        .step.active .step-label {
-            color: var(--orange-deep);
-            font-weight: 600;
-        }
-        
-        .input-group-text {
-            background-color: white;
-            border-right: none;
-        }
-        
-        .input-group .form-control {
-            border-left: none;
-        }
-        
-        .input-group .form-control:focus {
-            border-color: var(--light-gray);
-        }
-        
-        .input-group:focus-within .input-group-text {
-            border-color: var(--orange-deep);
-            background-color: rgba(232, 96, 41, 0.05);
-        }
-        
-        .input-group:focus-within .form-control {
-            border-color: var(--orange-deep);
-        }
-        
-        .icon-orange {
-            color: var(--orange-deep);
-        }
-        
-        .form-text {
-            font-size: 0.8rem;
-            margin-top: 0.25rem;
-        }
-        
-        .password-match {
-            color: var(--success);
-        }
-        
-        .password-mismatch {
-            color: var(--danger);
-        }
-        
-        li {
-            color: #fff;
-        }
-        
-        @media (max-width: 768px) {
-            .registration-wrapper {
-                padding: 1rem;
-            }
-            
-            .registration-body {
-                padding: 1.5rem;
-            }
-        }
-    </style>
-</head>
-<body>
-    <!-- Preloader Start Here -->
-    <div id="preloader"></div>
-    <!-- Preloader End Here -->
-    
-    <div id="wrapper" class="wrapper">
-        <!-- Header Area Start Here -->
-        <?php include 'includes/header.php'; ?>
-        <!-- Header Area End Here -->
-        
-        <!-- Page Area Start Here -->
-        <div class="dashboard-page-one">
-            <!-- Sidebar Area Start Here -->
-            <?php include 'includes/sidebar.php'; ?>
-            <!-- Sidebar Area End Here -->
-            
-            <div class="dashboard-content-one">
-                <!-- Breadcubs Area Start Here -->
-                <div class="breadcrumbs-area">
-                    <h3>Register Veterinary Staff</h3>
-                    <ul>
-                        <li>
-                            <a href="dashboard.php">Home</a>
-                        </li>
-                        <li>
-                            <a href="users.php">User Management</a>
-                        </li>
-                        <li>Register Veterinary</li>
-                    </ul>
+<!-- Dashboard Summary Start Here -->
+<div class="row gutters-20">
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one mg-b-20">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <div class="item-icon bg-light-blue">
+                        <i class="flaticon-multiple-users-silhouette text-blue"></i>
+                    </div>
                 </div>
-                <!-- Breadcubs Area End Here -->
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">My Patients</div>
+                        <div class="item-number"><span class="counter" data-num="<?php echo $stats['my_patients']; ?>"><?php echo $stats['my_patients']; ?></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one mg-b-20">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <div class="item-icon bg-light-green">
+                        <i class="flaticon-books text-green"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Today's Treatments</div>
+                        <div class="item-number"><span class="counter" data-num="<?php echo $stats['today_treatments']; ?>"><?php echo $stats['today_treatments']; ?></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one mg-b-20">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <div class="item-icon bg-light-yellow">
+                        <i class="flaticon-calendar text-orange"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Follow-ups</div>
+                        <div class="item-number"><span class="counter" data-num="<?php echo $stats['follow_ups']; ?>"><?php echo $stats['follow_ups']; ?></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-sm-6 col-12">
+        <div class="dashboard-summery-one mg-b-20">
+            <div class="row align-items-center">
+                <div class="col-6">
+                    <div class="item-icon bg-light-red">
+                        <i class="flaticon-open-book text-red"></i>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="item-content">
+                        <div class="item-title">Vaccinations Due</div>
+                        <div class="item-number"><span class="counter" data-num="<?php echo $stats['vaccinations_due']; ?>"><?php echo $stats['vaccinations_due']; ?></span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Dashboard Summary End Here -->
 
-                <!-- Registration Content Area Start Here -->
-                <div class="registration-wrapper">
-                    <div class="container-fluid">
-                        <div class="row justify-content-center">
-                            <div class="col-md-12">
-                                <div class="registration-card">
-                                    <div class="row g-0" style="color: #fff;">
-                                        <div class="col-lg-5 d-none d-lg-block">
-                                            <div class="registration-header h-100 d-flex flex-column justify-content-center">
-                                                <i class="bi bi-person-plus-fill registration-icon"></i>
-                                                <h2 style="color: #fff;">Add Veterinary Staff</h2>
-                                                <p class="mt-2" style="color: #fff;">Register a new veterinary professional to your team</p>
-                                                
-                                                <div class="mt-4 text-start " style="color: #fff;">
-                                                    <h5 class="mb-3" style="color: #fff;">Veterinary Staff Can:</h5>
-                                                    <ul class="feature-list">
-                                                        <li>
-                                                            <i class="bi bi-check-circle-fill"></i>
-                                                            Manage animal records
-                                                        </li>
-                                                        <li>
-                                                            <i class="bi bi-check-circle-fill"></i>
-                                                            Create treatment plans
-                                                        </li>
-                                                        <li>
-                                                            <i class="bi bi-check-circle-fill"></i>
-                                                            Schedule appointments
-                                                        </li>
-                                                        <li>
-                                                            <i class="bi bi-check-circle-fill"></i>
-                                                            Access medicine inventory
-                                                        </li>
-                                                        <li>
-                                                            <i class="bi bi-check-circle-fill"></i>
-                                                            View medical history
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-7">
-                                            <div class="registration-body">
-                                                <!-- Steps Indicator -->
-                                                <div class="steps-indicator">
-                                                    <div class="step active">
-                                                        <div class="step-number">1</div>
-                                                        <div class="step-label">Account Details</div>
-                                                    </div>
-                                                    <div class="step">
-                                                        <div class="step-number">2</div>
-                                                        <div class="step-label">Profile Setup</div>
-                                                    </div>
-                                                    <div class="step">
-                                                        <div class="step-number">3</div>
-                                                        <div class="step-label">Confirmation</div>
-                                                    </div>
-                                                </div>
-                                                
-                                                <h4 class="mb-4">Create Veterinary Staff Account</h4>
-                                                
-                                                <?php if($message): ?>
-                                                    <div class="alert alert-success d-flex align-items-center" role="alert">
-                                                        <i class="bi bi-check-circle-fill me-2 icon-orange"></i>
-                                                        <div>
-                                                            <h5 class="alert-heading mb-1">Success!</h5>
-                                                            <?php echo $message; ?>
-                                                        </div>
-                                                    </div>
-                                                <?php endif; ?>
-                                                
-                                                <?php if($error): ?>
-                                                    <div class="alert alert-danger d-flex align-items-center" role="alert">
-                                                        <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                                                        <div>
-                                                            <h5 class="alert-heading mb-1">Registration Error</h5>
-                                                            <?php echo $error; ?>
-                                                        </div>
-                                                    </div>
-                                                <?php endif; ?>
-                                                
-                                                <form method="POST" id="registrationForm">
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div class="mb-3">
-                                                                <label for="username" class="form-label">Username</label>
-                                                                <div class="input-group">
-                                                                    <span class="input-group-text">
-                                                                        <i class="bi bi-person icon-orange"></i>
-                                                                    </span>
-                                                                    <input type="text" class="form-control" id="username" name="username" 
-                                                                           value="<?php echo $_POST['username'] ?? ''; ?>" 
-                                                                           placeholder="Enter username" required>
-                                                                </div>
-                                                                <div class="form-text">Choose a unique username for the veterinary staff</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <div class="row">
-                                                        <div class="col-md-12">
-                                                            <div class="mb-3">
-                                                                <label for="email" class="form-label">Email Address</label>
-                                                                <div class="input-group">
-                                                                    <span class="input-group-text">
-                                                                        <i class="bi bi-envelope icon-orange"></i>
-                                                                    </span>
-                                                                    <input type="email" class="form-control" id="email" name="email" 
-                                                                           value="<?php echo $_POST['email'] ?? ''; ?>" 
-                                                                           placeholder="Enter email address" required>
-                                                                </div>
-                                                                <div class="form-text">A valid email address for communication</div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <div class="row">
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="password" class="form-label">Password</label>
-                                                                <div class="input-group">
-                                                                    <span class="input-group-text">
-                                                                        <i class="bi bi-lock icon-orange"></i>
-                                                                    </span>
-                                                                    <input type="password" class="form-control" id="password" name="password" 
-                                                                           placeholder="Enter password" required>
-                                                                </div>
-                                                                <div class="password-strength" id="passwordStrength"></div>
-                                                                <div class="form-text">Password must be at least 6 characters long.</div>
-                                                            </div>
-                                                        </div>
-                                                        <div class="col-md-6">
-                                                            <div class="mb-3">
-                                                                <label for="confirm_password" class="form-label">Confirm Password</label>
-                                                                <div class="input-group">
-                                                                    <span class="input-group-text">
-                                                                        <i class="bi bi-lock-fill icon-orange"></i>
-                                                                    </span>
-                                                                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" 
-                                                                           placeholder="Confirm password" required>
-                                                                </div>
-                                                                <div class="form-text" id="passwordMatchText"></div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    
-                                                    <div class="d-grid gap-2 mt-4">
-                                                        <button type="submit" class="btn btn-primary btn-lg">
-                                                            <i class="bi bi-person-plus me-2"></i> Register Veterinary Staff
-                                                        </button>
-                                                    </div>
-                                                    
-                                                    <div class="mt-3 text-center">
-                                                        <a href="users.php" class="btn btn-outline-secondary">
-                                                            <i class="bi bi-arrow-left me-2"></i> Back to User Management
-                                                        </a>
-                                                    </div>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+<!-- Quick Actions Section -->
+<div class="row gutters-20">
+    <div class="col-12">
+        <div class="card dashboard-card-one pd-b-20">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Quick Actions</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 col-sm-6">
+                        <a href="/treatments/create" class="btn btn-primary w-100 mb-3">
+                            <i class="fas fa-stethoscope me-2"></i>New Treatment
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <a href="/vaccines/create" class="btn btn-success w-100 mb-3">
+                            <i class="fas fa-syringe me-2"></i>Record Vaccination
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <a href="/animals" class="btn btn-info w-100 mb-3">
+                            <i class="fas fa-paw me-2"></i>View Animals
+                        </a>
+                    </div>
+                    <div class="col-md-3 col-sm-6">
+                        <a href="/appointments" class="btn btn-warning w-100 mb-3">
+                            <i class="fas fa-calendar-alt me-2"></i>Appointments
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Treatments Section -->
+<div class="row gutters-20">
+    <div class="col-lg-8">
+        <div class="card dashboard-card-one pd-b-20">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Recent Treatments</h3>
+                    </div>
+                    <div class="dropdown">
+                        <a class="dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-expanded="false">...</a>
+                        <div class="dropdown-menu dropdown-menu-right">
+                            <a class="dropdown-item" href="/treatments"><i class="fas fa-list"></i>View All</a>
+                            <a class="dropdown-item" href="/treatments/create"><i class="fas fa-plus"></i>Add New</a>
                         </div>
                     </div>
                 </div>
-                <!-- Registration Content Area End Here -->
-
-                <!-- Footer Area Start Here -->
-                <footer class="footer-wrap-layout1">
-                    <div class="copyright">© Copyrights <a href="#">Veterinary IMS</a> 2025. All rights reserved. Veterinary Public Health Laboratory, Blantyre</div>
-                </footer>
-                <!-- Footer Area End Here -->
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Animal</th>
+                                <th>Client</th>
+                                <th>Diagnosis</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Cost</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($recentTreatments as $treatment): ?>
+                            <tr>
+                                <td>
+                                    <strong><?php echo htmlspecialchars($treatment['animal_name']); ?></strong>
+                                    <br><small class="text-muted"><?php echo htmlspecialchars($treatment['species']); ?> - <?php echo htmlspecialchars($treatment['breed']); ?></small>
+                                </td>
+                                <td><?php echo htmlspecialchars($treatment['client_name'] ?? 'N/A'); ?></td>
+                                <td><?php echo htmlspecialchars(substr($treatment['diagnosis'], 0, 50)) . '...'; ?></td>
+                                <td><?php echo date('M j, Y', strtotime($treatment['treatment_date'])); ?></td>
+                                <td>
+                                    <span class="badge bg-<?php 
+                                        echo $treatment['status'] == 'completed' ? 'success' : 
+                                             ($treatment['status'] == 'follow_up' ? 'warning' : 'info'); 
+                                    ?>">
+                                        <?php echo ucfirst(str_replace('_', ' ', $treatment['status'])); ?>
+                                    </span>
+                                </td>
+                                <td>MK <?php echo number_format($treatment['cost'] ?? 0, 2); ?></td>
+                                <td>
+                                    <a href="/treatments/<?php echo $treatment['treatment_id']; ?>" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            <?php endforeach; ?>
+                            <?php if(empty($recentTreatments)): ?>
+                            <tr>
+                                <td colspan="7" class="text-center text-muted">No recent treatments found.</td>
+                            </tr>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
-        <!-- Page Area End Here -->
     </div>
 
-    <!-- Bootstrap Bundle with Popper -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- jquery-->
-    <script src="js/jquery-3.3.1.min.js"></script>
-    <!-- Plugins js -->
-    <script src="js/plugins.js"></script>
-    <!-- Popper js -->
-    <script src="js/popper.min.js"></script>
-    <!-- Bootstrap js -->
-    <script src="js/bootstrap.min.js"></script>
-    <!-- Custom Js -->
+    <!-- Upcoming Follow-ups & Vaccinations Section -->
+    <div class="col-lg-4">
+        <!-- Upcoming Follow-ups Section -->
+        <div class="card dashboard-card-one pd-b-20">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Upcoming Follow-ups</h3>
+                    </div>
+                </div>
+                <div class="follow-ups-list">
+                    <?php foreach ($upcomingFollowUps as $followUp): ?>
+                    <div class="media align-items-center mb-3">
+                        <div class="media-body">
+                            <h5 class="mt-0 mb-1"><?php echo htmlspecialchars($followUp['animal_name']); ?></h5>
+                            <p class="mb-1 text-muted"><?php echo htmlspecialchars(substr($followUp['diagnosis'], 0, 30)) . '...'; ?></p>
+                            <small class="text-warning">
+                                <i class="fas fa-calendar-day"></i> 
+                                Due: <?php echo date('M j, Y', strtotime($followUp['follow_up_date'])); ?>
+                            </small>
+                            <br>
+                            <small class="text-muted">Client: <?php echo htmlspecialchars($followUp['client_name'] ?? 'N/A'); ?></small>
+                        </div>
+                        <a href="/treatments/<?php echo $followUp['treatment_id']; ?>" class="btn btn-sm btn-outline-primary">
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                    <?php endforeach; ?>
+                    <?php if(empty($upcomingFollowUps)): ?>
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-check-circle fa-2x mb-2"></i>
+                        <p>No upcoming follow-ups</p>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
 
-    
-    <!-- Custom Scripts -->
-    <script>
-        // Immediate preloader fix
-        (function() {
-            const preloader = document.getElementById('preloader');
-            if (preloader) {
-                // Hide preloader after very short delay
-                setTimeout(() => {
-                    preloader.style.opacity = '0';
-                    setTimeout(() => {
-                        preloader.style.display = 'none';
-                    }, 300);
-                }, 100);
-            }
-        })();
-        
-        // Password strength indicator
-        document.addEventListener('DOMContentLoaded', function() {
-            const passwordInput = document.getElementById('password');
-            const confirmPasswordInput = document.getElementById('confirm_password');
-            const passwordStrength = document.getElementById('passwordStrength');
-            const passwordMatchText = document.getElementById('passwordMatchText');
-            
-            if (passwordInput) {
-                passwordInput.addEventListener('input', function() {
-                    const password = this.value;
-                    let strength = 0;
-                    
-                    if (password.length >= 6) strength += 1;
-                    if (password.length >= 8) strength += 1;
-                    if (/[A-Z]/.test(password)) strength += 1;
-                    if (/[0-9]/.test(password)) strength += 1;
-                    if (/[^A-Za-z0-9]/.test(password)) strength += 1;
-                    
-                    // Reset classes
-                    passwordStrength.className = 'password-strength';
-                    
-                    if (password.length === 0) {
-                        passwordStrength.style.width = '0%';
-                    } else if (strength <= 2) {
-                        passwordStrength.classList.add('password-weak');
-                    } else if (strength <= 4) {
-                        passwordStrength.classList.add('password-medium');
-                    } else {
-                        passwordStrength.classList.add('password-strong');
-                    }
-                });
-            }
-            
-            // Password confirmation validation
-            if (confirmPasswordInput && passwordInput) {
-                function validatePassword() {
-                    if (passwordInput.value !== confirmPasswordInput.value) {
-                        confirmPasswordInput.setCustomValidity("Passwords don't match");
-                        passwordMatchText.innerHTML = '<span class="password-mismatch"><i class="bi bi-x-circle-fill me-1"></i>Passwords do not match</span>';
-                        confirmPasswordInput.classList.add('is-invalid');
-                        confirmPasswordInput.classList.remove('is-valid');
-                    } else {
-                        confirmPasswordInput.setCustomValidity('');
-                        if (confirmPasswordInput.value.length > 0) {
-                            passwordMatchText.innerHTML = '<span class="password-match"><i class="bi bi-check-circle-fill me-1"></i>Passwords match</span>';
-                            confirmPasswordInput.classList.remove('is-invalid');
-                            confirmPasswordInput.classList.add('is-valid');
-                        } else {
-                            passwordMatchText.innerHTML = '';
-                            confirmPasswordInput.classList.remove('is-invalid');
-                            confirmPasswordInput.classList.remove('is-valid');
-                        }
-                    }
-                }
-                
-                passwordInput.addEventListener('change', validatePassword);
-                confirmPasswordInput.addEventListener('keyup', validatePassword);
-            }
-            
-            // Form validation
-            const form = document.getElementById('registrationForm');
-            if (form) {
-                form.addEventListener('submit', function(e) {
-                    const password = document.getElementById('password').value;
-                    const confirmPassword = document.getElementById('confirm_password').value;
-                    
-                    if (password !== confirmPassword) {
-                        e.preventDefault();
-                        // Create a more stylish alert
-                        const alertDiv = document.createElement('div');
-                        alertDiv.className = 'alert alert-danger d-flex align-items-center mt-3';
-                        alertDiv.innerHTML = `
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                            <div>
-                                <h5 class="alert-heading mb-1">Password Mismatch</h5>
-                                Passwords do not match. Please check and try again.
-                            </div>
-                        `;
-                        
-                        // Insert after the form
-                        form.parentNode.insertBefore(alertDiv, form.nextSibling);
-                        
-                        // Remove alert after 5 seconds
-                        setTimeout(() => {
-                            alertDiv.remove();
-                        }, 5000);
-                        
-                        return false;
-                    }
-                    
-                    if (password.length < 6) {
-                        e.preventDefault();
-                        const alertDiv = document.createElement('div');
-                        alertDiv.className = 'alert alert-warning d-flex align-items-center mt-3';
-                        alertDiv.innerHTML = `
-                            <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                            <div>
-                                <h5 class="alert-heading mb-1">Password Too Short</h5>
-                                Password must be at least 6 characters long.
-                            </div>
-                        `;
-                        
-                        form.parentNode.insertBefore(alertDiv, form.nextSibling);
-                        
-                        setTimeout(() => {
-                            alertDiv.remove();
-                        }, 5000);
-                        
-                        return false;
-                    }
-                    
-                    return true;
-                });
-            }
-            
-            // Add real-time validation indicators
-            const inputs = document.querySelectorAll('input[required]');
-            inputs.forEach(input => {
-                input.addEventListener('blur', function() {
-                    if (this.value.trim() === '') {
-                        this.classList.add('is-invalid');
-                    } else {
-                        this.classList.remove('is-invalid');
-                        this.classList.add('is-valid');
-                    }
-                });
-            });
-        });
-    </script>
-</body>
-</html>
+        <!-- Vaccinations Due Section -->
+        <div class="card dashboard-card-one pd-b-20 mt-3">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Vaccinations Due Soon</h3>
+                    </div>
+                </div>
+                <div class="vaccinations-list">
+                    <?php foreach ($vaccinationsDue as $vaccine): ?>
+                    <div class="media align-items-center mb-3">
+                        <div class="media-body">
+                            <h5 class="mt-0 mb-1"><?php echo htmlspecialchars($vaccine['animal_name']); ?></h5>
+                            <p class="mb-1 text-muted"><?php echo htmlspecialchars($vaccine['vaccine_name']); ?></p>
+                            <small class="text-danger">
+                                <i class="fas fa-clock"></i> 
+                                Due: <?php echo date('M j, Y', strtotime($vaccine['next_due_date'])); ?>
+                            </small>
+                            <br>
+                            <small class="text-muted">Client: <?php echo htmlspecialchars($vaccine['client_name'] ?? 'N/A'); ?></small>
+                        </div>
+                        <a href="/vaccines/<?php echo $vaccine['vaccine_id']; ?>" class="btn btn-sm btn-outline-danger">
+                            <i class="fas fa-syringe"></i>
+                        </a>
+                    </div>
+                    <?php endforeach; ?>
+                    <?php if(empty($vaccinationsDue)): ?>
+                    <div class="text-center text-muted py-3">
+                        <i class="fas fa-check-circle fa-2x mb-2"></i>
+                        <p>No vaccinations due soon</p>
+                    </div>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Treatment Statistics Section -->
+<div class="row gutters-20">
+    <div class="col-12">
+        <div class="card dashboard-card-one pd-b-20">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Treatment Statistics</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 text-center">
+                        <div class="stat-item">
+                            <h2 class="text-primary"><?php echo $stats['ongoing_treatments']; ?></h2>
+                            <p class="text-muted">Ongoing Treatments</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="stat-item">
+                            <h2 class="text-success"><?php echo $stats['completed_treatments']; ?></h2>
+                            <p class="text-muted">Completed</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="stat-item">
+                            <h2 class="text-warning"><?php echo $stats['follow_up_required']; ?></h2>
+                            <p class="text-muted">Follow-up Required</p>
+                        </div>
+                    </div>
+                    <div class="col-md-3 text-center">
+                        <div class="stat-item">
+                            <h2 class="text-info">MK <?php echo number_format($stats['total_revenue'], 2); ?></h2>
+                            <p class="text-muted">Total Revenue</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Emergency Contacts Section -->
+<div class="row gutters-20">
+    <div class="col-12">
+        <div class="card dashboard-card-one pd-b-20">
+            <div class="card-body">
+                <div class="heading-layout1">
+                    <div class="item-title">
+                        <h3>Emergency Contacts</h3>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="emergency-contact text-center p-3 border rounded">
+                            <i class="fas fa-ambulance fa-2x text-danger mb-2"></i>
+                            <h5>Emergency Vet</h5>
+                            <p class="mb-1">Dr. John Smith</p>
+                            <p class="mb-1"><strong>+265 888 123 456</strong></p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="emergency-contact text-center p-3 border rounded">
+                            <i class="fas fa-hospital fa-2x text-primary mb-2"></i>
+                            <h5>24/7 Clinic</h5>
+                            <p class="mb-1">Blantyre Animal Hospital</p>
+                            <p class="mb-1"><strong>+265 888 234 567</strong></p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="emergency-contact text-center p-3 border rounded">
+                            <i class="fas fa-phone-alt fa-2x text-success mb-2"></i>
+                            <h5>Poison Control</h5>
+                            <p class="mb-1">Emergency Hotline</p>
+                            <p class="mb-1"><strong>+265 888 345 678</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<?php include 'app/views/layouts/footer.php'; ?>

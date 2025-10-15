@@ -1,66 +1,67 @@
 <?php
-abstract class Controller {
+class Controller {
+    protected $params = [];
     protected $data = [];
-    protected $layout = 'layouts/main';
     
-    // Load a view
-    protected function view($view, $data = []) {
-        $this->data = array_merge($this->data, $data);
-        
-        // Extract data variables
-        extract($this->data);
-        
-        // Include the view file
+    public function __construct($params = []) {
+        $this->params = $params;
+    }
+    
+    // Set data for views
+    protected function setData($key, $value) {
+        $this->data[$key] = $value;
+    }
+    
+    // Set page title
+    protected function setTitle($title) {
+        $this->setData('title', $title);
+    }
+    
+    // Render view
+    protected function view($view) {
         $viewFile = VIEW_PATH . '/' . $view . '.php';
         
         if (file_exists($viewFile)) {
-            if ($this->layout) {
-                $content = $viewFile;
-                include VIEW_PATH . '/' . $this->layout . '.php';
-            } else {
-                include $viewFile;
-            }
+            // Extract data for the view
+            extract($this->data);
+            
+            // Start output buffering
+            ob_start();
+            require_once $viewFile;
+            $content = ob_get_clean();
+            
+            // Include layout
+            require_once VIEW_PATH . '/layouts/main.php';
         } else {
-            throw new Exception("View file not found: {$viewFile}");
+            throw new Exception("View file $viewFile not found");
         }
     }
     
-    // Load a partial view
-    protected function partial($partial, $data = []) {
-        extract($data);
-        
-        $partialFile = VIEW_PATH . '/partials/' . $partial . '.php';
-        
-        if (file_exists($partialFile)) {
-            include $partialFile;
-        } else {
-            throw new Exception("Partial file not found: {$partialFile}");
+    // Redirect to another URL
+    protected function redirect($url) {
+        header('Location: ' . Router::url($url));
+        exit();
+    }
+    
+    // Get POST data
+    protected function input($key = null) {
+        if ($key) {
+            return isset($_POST[$key]) ? $this->sanitize($_POST[$key]) : null;
         }
+        return $this->sanitize($_POST);
     }
     
-    // Render JSON response
-    protected function json($data, $statusCode = 200) {
-        jsonResponse($data, $statusCode);
-    }
-    
-    // Redirect to a URL
-    protected function redirect($path) {
-        redirect($path);
-    }
-    
-    // Get request method
-    protected function getMethod() {
-        return $_SERVER['REQUEST_METHOD'];
+    // Get GET data
+    protected function get($key = null, $default = null) {
+        if ($key) {
+            return isset($_GET[$key]) ? $this->sanitize($_GET[$key]) : $default;
+        }
+        return $this->sanitize($_GET);
     }
     
     // Check if request is POST
     protected function isPost() {
-        return $this->getMethod() === 'POST';
-    }
-    
-    // Check if request is GET
-    protected function isGet() {
-        return $this->getMethod() === 'GET';
+        return $_SERVER['REQUEST_METHOD'] === 'POST';
     }
     
     // Check if request is AJAX
@@ -69,102 +70,61 @@ abstract class Controller {
                strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
     }
     
-    // Get all input data
-    protected function input() {
-        $input = [];
-        
-        if ($this->isPost()) {
-            $input = array_merge($input, $_POST);
-        }
-        
-        $input = array_merge($input, $_GET);
-        
-        return sanitize($input);
-    }
-    
-    // Get specific input value
-    protected function get($key, $default = null) {
-        $input = $this->input();
-        return arrayGet($input, $key, $default);
+    // Set flash message
+    protected function setFlash($type, $message) {
+        $_SESSION['flash'] = [
+            'type' => $type,
+            'message' => $message
+        ];
     }
     
     // Validate CSRF token
     protected function validateCsrf() {
-        if ($this->isPost()) {
-            $token = $this->get('csrf_token');
-            if (!validateCsrfToken($token)) {
-                throw new Exception('Invalid CSRF token');
-            }
+        $token = $this->input('csrf_token');
+        if (!$token || !validateCsrfToken($token)) {
+            throw new Exception('Invalid CSRF token');
         }
-    }
-    
-    // Set flash message
-    protected function setFlash($type, $message) {
-        setFlash($type, $message);
-    }
-    
-    // Get uploaded files
-    protected function files($key = null) {
-        if ($key) {
-            return $_FILES[$key] ?? null;
-        }
-        return $_FILES;
-    }
-    
-    // Validate required fields
-    protected function validateRequired($fields) {
-        $input = $this->input();
-        return validateRequired($fields, $input);
-    }
-    
-    // Set page data
-    protected function setData($key, $value) {
-        $this->data[$key] = $value;
-    }
-    
-    // Get page data
-    protected function getData($key = null) {
-        if ($key) {
-            return arrayGet($this->data, $key);
-        }
-        return $this->data;
-    }
-    
-    // Set page title
-    protected function setTitle($title) {
-        $this->data['page_title'] = $title;
-    }
-    
-    // Set no layout (for AJAX requests)
-    protected function noLayout() {
-        $this->layout = null;
     }
     
     // Authorize user role
-    protected function authorize($role) {
-        requireRole($role);
-    }
-    
-    // Check if user has permission
-    protected function can($permission) {
-        $user = getCurrentUser();
-        // This can be extended to check specific permissions
-        return $user !== null;
-    }
-    
-    // Handle file upload
-    protected function handleUpload($fileKey, $destination, $allowedTypes = null) {
-        $file = $this->files($fileKey);
-        
-        if (!$file || $file['error'] !== UPLOAD_ERR_OK) {
-            return ['success' => false, 'error' => 'No file uploaded or upload error'];
+    protected function authorize($allowedRoles) {
+        if (!isset($_SESSION['role']) || !in_array($_SESSION['role'], (array)$allowedRoles)) {
+            $this->setFlash('error', 'Access denied');
+            $this->redirect('/dashboard');
         }
-        
-        return uploadFile($file, $destination, $allowedTypes);
     }
     
-    // Paginate data
-    protected function paginate($model, $page = 1, $perPage = RECORDS_PER_PAGE) {
-        return $model->paginate($page, $perPage);
+    // Send JSON response
+    protected function json($data, $statusCode = 200) {
+        http_response_code($statusCode);
+        header('Content-Type: application/json');
+        echo json_encode($data);
+        exit();
+    }
+    
+    // Sanitize input data
+    private function sanitize($data) {
+        if (is_array($data)) {
+            return array_map([$this, 'sanitize'], $data);
+        }
+        return htmlspecialchars(trim($data), ENT_QUOTES, 'UTF-8');
+    }
+    
+    // Pagination helper
+    protected function paginate($model, $page = 1, $perPage = 10) {
+        $page = max(1, (int)$page);
+        $offset = ($page - 1) * $perPage;
+        
+        $total = $model->count();
+        $data = $model->findAll($offset, $perPage);
+        
+        return [
+            'data' => $data,
+            'current_page' => $page,
+            'per_page' => $perPage,
+            'total' => $total,
+            'total_pages' => ceil($total / $perPage)
+        ];
     }
 }
+?>

@@ -1,233 +1,158 @@
 <?php
-
-abstract class Model {
-    protected $db;
+class Model {
     protected $table;
     protected $primaryKey = 'id';
     protected $fillable = [];
-    protected $hidden = ['password'];
-    protected $timestamps = true;
+    protected $hidden = [];
     
-   public function __construct() {
-    }
+    protected $db;
 
-    protected function getDatabase() {
-        if ($this->db === null) {
-            $this->db = getDB();
-        }
-        return $this->db;
-    }
-        
-    // Create a new record
-    public function create($data) {
-        $data = $this->filterFillable($data);
-        
-        if ($this->timestamps) {
-            $data['created_at'] = getCurrentDateTime();
-            $data['updated_at'] = getCurrentDateTime();
-        }
-        
-        return insertRecord($this->table, $data);
+
+    
+    public function __construct() {
+        global $database;
+        $this->db = $database->getConnection();
     }
     
-    // Find a record by ID
+    // Find record by ID
     public function find($id) {
-        $sql = "SELECT * FROM {$this->table} WHERE {$this->primaryKey} = :id";
-        $result = fetchOne($sql, ['id' => $id]);
-        return $result ? $this->hideFields($result) : null;
+        $sql = "SELECT * FROM {$this->table} WHERE {$this->primaryKey} = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetch();
     }
     
-    // Find a record by condition
-    public function findBy($column, $value) {
-        $sql = "SELECT * FROM {$this->table} WHERE {$column} = :value";
-        $result = fetchOne($sql, ['value' => $value]);
-        return $result ? $this->hideFields($result) : null;
-    }
-    
-    // Get all records
-    public function all($orderBy = null) {
+    // Find all records
+    public function findAll($offset = null, $limit = null) {
         $sql = "SELECT * FROM {$this->table}";
-        if ($orderBy) {
-            $sql .= " ORDER BY {$orderBy}";
+        
+        if ($limit !== null) {
+            $sql .= " LIMIT " . (int)$limit;
         }
-        $results = fetchAll($sql);
-        return array_map([$this, 'hideFields'], $results);
+        
+        if ($offset !== null) {
+            $sql .= " OFFSET " . (int)$offset;
+        }
+        
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
     
-    // Get records with pagination
-    public function paginate($page = 1, $perPage = RECORDS_PER_PAGE, $conditions = [], $orderBy = null) {
-        $offset = ($page - 1) * $perPage;
+    // Find by column
+    public function findBy($column, $value) {
+        $sql = "SELECT * FROM {$this->table} WHERE {$column} = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$value]);
+        return $stmt->fetch();
+    }
+    
+    // Create new record
+    public function create($data) {
+        $filteredData = array_intersect_key($data, array_flip($this->fillable));
         
-        $whereClause = '';
-        $params = [];
+        // Sanitize all data before inserting
+        $sanitizedData = [];
+        foreach ($filteredData as $key => $value) {
+            $sanitizedData[$key] = sanitize($value);
+        }
+        
+        $columns = implode(', ', array_keys($sanitizedData));
+        $placeholders = ':' . implode(', :', array_keys($sanitizedData));
+        
+        $sql = "INSERT INTO {$this->table} ({$columns}) VALUES ({$placeholders})";
+        $stmt = $this->db->prepare($sql);
+        
+        try {
+            $stmt->execute($sanitizedData);
+            return $this->db->lastInsertId();
+        } catch (PDOException $e) {
+            logError("Database insert error: " . $e->getMessage());
+            throw new Exception("Database error: " . $e->getMessage());
+        }
+    }
+    
+    // Update record
+    public function update($id, $data) {
+        $filteredData = array_intersect_key($data, array_flip($this->fillable));
+        
+        $setClause = implode(', ', array_map(function($column) {
+            return "{$column} = :{$column}";
+        }, array_keys($filteredData)));
+        
+        $sql = "UPDATE {$this->table} SET {$setClause} WHERE {$this->primaryKey} = :id";
+        $stmt = $this->db->prepare($sql);
+        
+        $filteredData['id'] = $id;
+        
+        try {
+            return $stmt->execute($filteredData);
+        } catch (PDOException $e) {
+            throw new Exception("Database error: " . $e->getMessage());
+        }
+    }
+    
+    // Delete record
+    public function delete($id) {
+        $sql = "DELETE FROM {$this->table} WHERE {$this->primaryKey} = ?";
+        $stmt = $this->db->prepare($sql);
+        return $stmt->execute([$id]);
+    }
+    
+    // Count records
+    public function count($conditions = []) {
+        $sql = "SELECT COUNT(*) as count FROM {$this->table}";
         
         if (!empty($conditions)) {
-            $whereParts = [];
-            foreach ($conditions as $column => $value) {
-                $whereParts[] = "{$column} = :{$column}";
-                $params[$column] = $value;
-            }
-            $whereClause = 'WHERE ' . implode(' AND ', $whereParts);
+            $whereClause = implode(' AND ', array_map(function($column) {
+                return "{$column} = :{$column}";
+            }, array_keys($conditions)));
+            $sql .= " WHERE {$whereClause}";
         }
         
-        $orderClause = $orderBy ? "ORDER BY {$orderBy}" : '';
-        
-        // Get total count
-        $countSql = "SELECT COUNT(*) as count FROM {$this->table} {$whereClause}";
-        $totalRecords = fetchOne($countSql, $params)['count'];
-        
-        // Get records
-        $sql = "SELECT * FROM {$this->table} {$whereClause} {$orderClause} LIMIT {$perPage} OFFSET {$offset}";
-        $results = fetchAll($sql, $params);
-        
-        return [
-            'data' => array_map([$this, 'hideFields'], $results),
-            'pagination' => paginate($totalRecords, $page, $perPage)
-        ];
-    }
-    
-    // Update a record
-    public function update($id, $data) {
-        $data = $this->filterFillable($data);
-        
-        if ($this->timestamps) {
-            $data['updated_at'] = getCurrentDateTime();
-        }
-        
-        return updateRecord(
-            $this->table, 
-            $data, 
-            "{$this->primaryKey} = :id", 
-            ['id' => $id]
-        );
-    }
-    
-    // Delete a record
-    public function delete($id) {
-        return deleteRecord($this->table, "{$this->primaryKey} = :id", ['id' => $id]);
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($conditions);
+        $result = $stmt->fetch();
+        return $result['count'] ?? 0;
     }
     
     // Search records
     public function search($term, $columns = []) {
         if (empty($columns)) {
-            return [];
+            $columns = $this->fillable;
         }
         
-        $whereParts = [];
-        $params = [];
+        $searchConditions = implode(' OR ', array_map(function($column) {
+            return "{$column} LIKE :term";
+        }, $columns));
         
-        foreach ($columns as $column) {
-            $whereParts[] = "{$column} LIKE :term";
-        }
-        
-        $whereClause = implode(' OR ', $whereParts);
-        $params['term'] = "%{$term}%";
-        
-        $sql = "SELECT * FROM {$this->table} WHERE {$whereClause}";
-        $results = fetchAll($sql, $params);
-        
-        return array_map([$this, 'hideFields'], $results);
-    }
-    
-    // Count records
-    public function count($conditions = []) {
-        $whereClause = '';
-        $params = [];
-        
-        if (!empty($conditions)) {
-            $whereParts = [];
-            foreach ($conditions as $column => $value) {
-                $whereParts[] = "{$column} = :{$column}";
-                $params[$column] = $value;
-            }
-            $whereClause = 'WHERE ' . implode(' AND ', $whereParts);
-        }
-        
-        return countRecords($this->table, $whereClause ?: '1=1', $params);
+        $sql = "SELECT * FROM {$this->table} WHERE {$searchConditions}";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute(['term' => "%{$term}%"]);
+        return $stmt->fetchAll();
     }
     
     // Check if record exists
     public function exists($id) {
-        return $this->find($id) !== null;
+        $sql = "SELECT 1 FROM {$this->table} WHERE {$this->primaryKey} = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$id]);
+        return $stmt->fetch() !== false;
     }
     
-    // Filter fillable fields
-    protected function filterFillable($data) {
-        if (empty($this->fillable)) {
-            return $data;
-        }
-        
-        return array_intersect_key($data, array_flip($this->fillable));
+    // Execute raw query
+    public function query($sql, $params = []) {
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute($params);
+        return $stmt;
     }
     
     // Hide sensitive fields
     protected function hideFields($data) {
-        if (!is_array($data)) {
-            return $data;
-        }
-        
         foreach ($this->hidden as $field) {
             unset($data[$field]);
         }
-        
         return $data;
-    }
-    
-    // Get table name
-    public function getTable() {
-        return $this->table;
-    }
-    
-    // Get primary key
-    public function getPrimaryKey() {
-        return $this->primaryKey;
-    }
-    
-    // Execute raw SQL
-    protected function query($sql, $params = []) {
-        return executeQuery($sql, $params);
-    }
-    
-    // Begin transaction
-    public function beginTransaction() {
-        $this->getDatabase()->beginTransaction();
-    }
-    
-    // Commit transaction
-    public function commit() {
-        $this->getDatabase()->commit();
-    }
-    
-    // Rollback transaction
-    public function rollback() {
-        $this->getDatabase()->rollback();
-    }
-    
-    // Validation method to be overridden in child classes
-    public function validate($data, $id = null) {
-        return [];
-    }
-    
-    // Save method (create or update)
-    public function save($data, $id = null) {
-        $errors = $this->validate($data, $id);
-        
-        if (!empty($errors)) {
-            return ['success' => false, 'errors' => $errors];
-        }
-        
-        try {
-            if ($id) {
-                $result = $this->update($id, $data);
-                return ['success' => true, 'id' => $id, 'updated' => $result];
-            } else {
-                $newId = $this->create($data);
-                return ['success' => true, 'id' => $newId, 'created' => true];
-            }
-        } catch (Exception $e) {
-            logError("Model save error: " . $e->getMessage());
-            return ['success' => false, 'error' => 'Database error occurred'];
-        }
     }
 }
 ?>

@@ -1,4 +1,7 @@
 <?php
+// START OUTPUT BUFFERING - NO WHITESPACE BEFORE THIS!
+ob_start();
+
 require_once 'includes/init.php';
 requireLogin();
 
@@ -41,13 +44,13 @@ $username = $_SESSION['username'];
         position: fixed;
         left: 0;
         top: 0;
-        margin-top: 80px; /* Adjust based on header height */
+        margin-top: 80px;
         overflow-y: auto;
         z-index: 1000;
     }
     
     .sidebar-menu-content {
-        height: calc(100vh - 160px); /* Adjust based on header and footer */
+        height: calc(100vh - 160px);
         overflow-y: auto;
     }
     
@@ -64,7 +67,7 @@ $username = $_SESSION['username'];
     
     /* Adjust main content area */
     .dashboard-page-one {
-        margin-left: 260px; /* Adjust based on sidebar width */
+        margin-left: 260px;
     }
     
     /* Mobile responsiveness */
@@ -83,13 +86,72 @@ $username = $_SESSION['username'];
             margin-left: 0;
         }
     }
-</style>
+
+    /* ===== PRELOADER FIX ===== */
+    #preloader {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: #fff;
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        transition: opacity 0.5s ease, visibility 0.5s ease;
+    }
+
+    #preloader:after {
+        content: '';
+        width: 50px;
+        height: 50px;
+        border: 5px solid #f3f3f3;
+        border-top: 5px solid #e86029;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    /* Hide preloader when loaded */
+    body.loaded #preloader {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    /* Ensure content is visible */
+    #wrapper {
+        opacity: 1;
+        visibility: visible;
+    }
+    </style>
 </head>
 
 <body>
     <!-- Preloader Start Here -->
     <div id="preloader"></div>
     <!-- Preloader End Here -->
+    
+    <!-- Immediate Preloader Fix Script -->
+    <script>
+    // Immediate preloader safety fix
+    (function() {
+        const preloader = document.getElementById('preloader');
+        // Safety: hide preloader if it's still visible after a short delay
+        setTimeout(() => {
+            if (preloader && preloader.style.display !== 'none') {
+                preloader.style.opacity = '0';
+                preloader.style.visibility = 'hidden';
+                document.body.classList.add('loaded');
+            }
+        }, 3000);
+    })();
+    </script>
+    
     <div id="wrapper" class="wrapper bg-ash">
        <!-- Header Menu Area Start Here -->
         <div class="navbar navbar-expand-md header-menu-one bg-light">
@@ -225,9 +287,44 @@ $username = $_SESSION['username'];
     <script src="js/Chart.min.js"></script>
     <!-- Custom Js -->
     <script src="js/main.js"></script>
-<!-- Scroll to Top Button -->
-<a href="#" class="scroll-to-top" style="display: none; position: fixed; bottom: 20px; right: 20px; width: 40px; height: 40px; background-color: #667eea; color: white; border-radius: 50%; text-align: center; line-height: 40px; z-index: 1000; text-decoration: none;">
-    <i class="fas fa-chevron-up"></i>
-</a>
+
+    <!-- Preloader Handling Script -->
+    <script>
+    // Enhanced preloader handling
+    document.addEventListener('DOMContentLoaded', function() {
+        const preloader = document.getElementById('preloader');
+        
+        // Hide preloader when window fully loads
+        window.addEventListener('load', function() {
+            setTimeout(function() {
+                if (preloader) {
+                    preloader.style.opacity = '0';
+                    preloader.style.visibility = 'hidden';
+                    document.body.classList.add('loaded');
+                }
+            }, 500);
+        });
+
+        // Safety: force hide after 5 seconds
+        setTimeout(function() {
+            const preloader = document.getElementById('preloader');
+            if (preloader) {
+                preloader.style.display = 'none';
+                preloader.style.opacity = '0';
+                preloader.style.visibility = 'hidden';
+                document.body.classList.add('loaded');
+            }
+        }, 5000);
+    });
+    </script>
+
+    <!-- Scroll to Top Button -->
+    <a href="#" class="scroll-to-top" style="display: none; position: fixed; bottom: 20px; right: 20px; width: 40px; height: 40px; background-color: #667eea; color: white; border-radius: 50%; text-align: center; line-height: 40px; z-index: 1000; text-decoration: none;">
+        <i class="fas fa-chevron-up"></i>
+    </a>
 </body>
 </html>
+<?php
+// END OUTPUT BUFFERING - flush all output at the end
+ob_end_flush();
+?>
