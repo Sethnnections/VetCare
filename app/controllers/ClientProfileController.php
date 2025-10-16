@@ -10,24 +10,19 @@ class ClientProfileController extends Controller {
         $this->userModel = new User();
     }
     
-    // Show client profile
-    public function profile() {
-        requireLogin();
-        $this->authorize([ROLE_CLIENT]);
-        
-        $userId = $_SESSION['user_id'];
-        $client = $this->clientModel->getClientByUserId($userId);
-        
-        if (!$client) {
-            $this->setFlash('error', 'Client profile not found');
-            $this->redirect('/dashboard');
-            return;
-        }
-        
-        $this->setTitle('My Profile');
-        $this->setData('client', $client);
-        $this->view('client/profile');
-    }
+        // Show client profile
+  public function profile() {
+    requireLogin();
+    $this->authorize([ROLE_CLIENT]);
+    
+    $client = $this->checkProfile();
+    if (!$client) return;
+    
+    $this->setTitle('My Profile');
+    $this->setData('client', $client);
+    $this->view('client/profile', 'dashboard'); // Add 'dashboard' as layout
+}
+
     
     // Update client profile
     public function updateProfile() {
@@ -89,28 +84,23 @@ class ClientProfileController extends Controller {
         }
     }
     
-    // Show client's animals
-    public function animals() {
+    // Show client's animalspublic 
+    // 
+    function animals() {
         requireLogin();
         $this->authorize([ROLE_CLIENT]);
         
-        $userId = $_SESSION['user_id'];
-        $client = $this->clientModel->getClientByUserId($userId);
-        
-        if (!$client) {
-            $this->setFlash('error', 'Client profile not found');
-            $this->redirect('/dashboard');
-            return;
-        }
+        $client = $this->checkProfile();
+        if (!$client) return;
         
         $animals = $this->clientModel->getClientAnimals($client['client_id']);
         
         $this->setTitle('My Animals');
         $this->setData('animals', $animals);
         $this->setData('client', $client);
-        $this->view('client/animals');
+        $this->view('client/animals', 'dashboard'); // Add 'dashboard' as layout
     }
-    
+            
     // Add new animal (AJAX modal)
     public function addAnimal() {
         requireLogin();
@@ -331,5 +321,162 @@ class ClientProfileController extends Controller {
         $this->setData('vaccines', $vaccines);
         $this->view('client/animal-view');
     }
+    // Add these methods to your existing ClientProfileController class
+
+/**
+ * Check if client profile exists, if not redirect to create profile
+ */
+public function checkProfile() {
+    requireLogin();
+    $this->authorize([ROLE_CLIENT]);
+    
+    $userId = $_SESSION['user_id'];
+    $client = $this->clientModel->getClientByUserId($userId);
+    
+    if (!$client) {
+        $this->redirect('/client/profile/create');
+        return;
+    }
+    
+    return $client;
+}
+
+/**
+ * Show create profile form for new clients
+ */
+public function create() {
+    requireLogin();
+    $this->authorize([ROLE_CLIENT]);
+    
+    $userId = $_SESSION['user_id'];
+    $existingClient = $this->clientModel->getClientByUserId($userId);
+    
+    if ($existingClient) {
+        $this->redirect('/client/profile');
+        return;
+    }
+    
+    $user = $this->userModel->find($userId);
+    
+    $this->setTitle('Complete Your Profile');
+    $this->setData('user', $user);
+    $this->view('client/profile-create', 'dashboard'); // Add 'dashboard' as layout
+}
+/**
+ * Store new client profile
+ */
+public function store() {
+    requireLogin();
+    $this->authorize([ROLE_CLIENT]);
+    
+    if (!$this->isPost()) {
+        $this->redirect('/client/profile/create');
+        return;
+    }
+    
+    try {
+        $this->validateCsrf();
+        
+        $userId = $_SESSION['user_id'];
+        
+        // Check if profile already exists
+        $existingClient = $this->clientModel->getClientByUserId($userId);
+        if ($existingClient) {
+            $this->setFlash('error', 'Profile already exists');
+            $this->redirect('/client/profile');
+            return;
+        }
+        
+        $profileData = [
+            'user_id' => $userId,
+            'emergency_contact' => $this->input('emergency_contact'),
+            'preferred_contact_method' => $this->input('preferred_contact_method'),
+            'notes' => $this->input('notes')
+        ];
+        
+        // Also update user profile data
+        $userData = [
+            'first_name' => $this->input('first_name'),
+            'last_name' => $this->input('last_name'),
+            'phone' => $this->input('phone'),
+            'address' => $this->input('address')
+        ];
+        
+        // Validate data
+        $errors = $this->validateProfileData($profileData, $userData);
+        
+        if (!empty($errors)) {
+            $this->setFlash('error', 'Please fix the errors below');
+            $this->setData('errors', $errors);
+            $this->setData('old', array_merge($profileData, $userData));
+            $this->create();
+            return;
+        }
+        
+        // Update user data first
+        $this->userModel->updateUser($userId, $userData);
+        
+        // Create client profile
+        $clientId = $this->clientModel->createClient($profileData);
+        
+        if ($clientId) {
+            // Update session with new user data
+            $_SESSION['first_name'] = $userData['first_name'];
+            $_SESSION['last_name'] = $userData['last_name'];
+            $_SESSION['phone'] = $userData['phone'];
+            
+            logActivity("Client profile created for user ID: {$userId}");
+            $this->setFlash('success', 'Profile created successfully!');
+            $this->redirect('/client/profile');
+        } else {
+            $this->setFlash('error', 'Failed to create profile');
+            $this->setData('old', array_merge($profileData, $userData));
+            $this->create();
+        }
+        
+    } catch (Exception $e) {
+        logError("Client profile creation error: " . $e->getMessage());
+        $this->setFlash('error', 'An error occurred while creating profile');
+        $this->create();
+    }
+}
+
+/**
+ * Validate profile creation data
+ */
+private function validateProfileData($profileData, $userData) {
+    $errors = [];
+    
+    // Required fields
+    $required = ['first_name', 'last_name', 'phone', 'emergency_contact'];
+    foreach ($required as $field) {
+        if (empty($userData[$field]) && empty($profileData[$field])) {
+            $errors[$field] = 'This field is required';
+        }
+    }
+    
+    // Phone validation
+    if (!empty($userData['phone']) && !validatePhone($userData['phone'])) {
+        $errors['phone'] = 'Invalid phone number format';
+    }
+    
+    // Emergency contact validation
+    if (!empty($profileData['emergency_contact']) && !validatePhone($profileData['emergency_contact'])) {
+        $errors['emergency_contact'] = 'Invalid emergency contact number';
+    }
+    
+    // Preferred contact method validation
+    $allowedMethods = ['phone', 'email', 'sms'];
+    if (!empty($profileData['preferred_contact_method']) && !in_array($profileData['preferred_contact_method'], $allowedMethods)) {
+        $errors['preferred_contact_method'] = 'Invalid contact method selected';
+    }
+    
+    return $errors;
+}
+
+// Also update the existing profile method to use check
+
+// Update animals method to check profile
+
 }
 ?>

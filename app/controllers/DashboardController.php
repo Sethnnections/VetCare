@@ -67,26 +67,32 @@ class DashboardController extends Controller {
     
     public function client() {
         requireLogin();
-        $this->authorize(ROLE_CLIENT);
+        $this->authorize([ROLE_CLIENT]);
         
+        $userId = $_SESSION['user_id'];
         $clientModel = new Client();
-        $animalModel = new Animal();
+        $client = $clientModel->getClientByUserId($userId);
         
-        // Get client ID from user ID
-        $client = $clientModel->getClientByUserId($_SESSION['user_id']);
+        // DEBUG: Check what's happening
+        error_log("DEBUG: Client dashboard - User ID: $userId, Client exists: " . ($client ? 'YES' : 'NO'));
         
-        if ($client) {
-            $stats = [
-                'my_animals' => $animalModel->count(['client_id' => $client['client_id']]),
-                'active_animals' => $animalModel->count(['client_id' => $client['client_id'], 'status' => STATUS_ACTIVE])
-            ];
-            
-            $this->setData('stats', $stats);
+        // Redirect to create profile if doesn't exist
+        if (!$client) {
+            $this->setFlash('info', 'Please complete your profile to continue');
+            $this->redirect('/client/profile/create');
+            return;
         }
         
         $this->setTitle('Client Dashboard');
-        $this->setData('current_page', 'dashboard');
-        $this->view('client/dashboard', 'dashboard');
+        $this->view('client/dashboard');
     }
 }
 ?>
+
+
+
+
+
+
+
+

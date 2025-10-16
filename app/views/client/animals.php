@@ -1,5 +1,3 @@
-<?php include 'app/views/layouts/header.php'; ?>
-<?php include 'app/views/layouts/sidebar.php'; ?>
 
 <div class="page-header">
     <div class="row">

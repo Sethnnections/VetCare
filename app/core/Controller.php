@@ -18,34 +18,39 @@ class Controller {
     }
     
     // Render view with layout
-    protected function view($view, $layout = 'main') {
-        // Extract data for the view
-        extract($this->data);
-        
-        // Start output buffering for view content
-        ob_start();
-        
-        // Include the view file
-        $viewFile = VIEW_PATH . '/' . $view . '.php';
-        if (file_exists($viewFile)) {
-            require_once $viewFile;
-        } else {
-            throw new Exception("View file not found: $viewFile");
-        }
-        
-        // Get the view content
-        $content = ob_get_clean();
-        
-        // Include the layout
-        $layoutFile = VIEW_PATH . '/layouts/' . $layout . '.php';
-        if (file_exists($layoutFile)) {
-            require_once $layoutFile;
-        } else {
-            // If layout doesn't exist, just output content
-            echo $content;
-        }
+ 
+    
+    // In Controller.php - Add this method if it doesn't exist
+protected function view($view, $layout = 'dashboard') {
+    $viewFile = VIEW_PATH . '/' . $view . '.php';
+    
+    if (!file_exists($viewFile)) {
+        throw new Exception("View file not found: " . $viewFile);
     }
     
+    // Extract data for the view
+    if (!empty($this->data)) {
+        extract($this->data);
+    }
+    
+    // Set current_page for sidebar highlighting
+    $current_page = $this->current_page ?? str_replace('/', '_', $view);
+    
+    // Start output buffering for the view content
+    ob_start();
+    require $viewFile;
+    $content = ob_get_clean();
+    
+    // Now load the layout and pass the content
+    $layoutFile = VIEW_PATH . '/layouts/' . $layout . '.php';
+    
+    if (file_exists($layoutFile)) {
+        require $layoutFile;
+    } else {
+        // Fallback to main layout
+        require VIEW_PATH . '/layouts/main.php';
+    }
+}
     // Redirect to another URL
     protected function redirect($url) {
         $baseUrl = Router::url($url);

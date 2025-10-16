@@ -1,6 +1,3 @@
-<?php include 'app/views/layouts/header.php'; ?>
-<?php include 'app/views/layouts/sidebar.php'; ?>
-
 <div class="page-header">
     <div class="row">
         <div class="col-sm-12">
@@ -133,6 +130,7 @@
                 </div>
             </div>
         </div>
+
     </div>
 </div>
 

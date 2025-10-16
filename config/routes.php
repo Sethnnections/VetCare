@@ -67,7 +67,8 @@ $routes = [
         'controller' => 'Test',
         'action' => 'index'
     ],
-    
+    // Dashboard routes
+
     // Dashboard Routes
     '/dashboard' => [
         'controller' => 'Dashboard',
@@ -114,6 +115,14 @@ $routes = [
     '/client/animals/{id}' => [
         'controller' => 'ClientProfile',
         'action' => 'viewAnimal'
+    ],
+    '/client/profile/create' => [
+        'controller' => 'ClientProfile',
+        'action' => 'create'
+    ],
+    '/client/profile/store' => [
+        'controller' => 'ClientProfile',
+        'action' => 'store'
     ],
     
     // User Management Routes (Admin)
@@ -238,6 +247,7 @@ $routes = [
     '/api/auth/check-session' => [
         'controller' => 'Auth',
         'action' => 'checkSession'
-    ]
+    ],
+    
 ];
 ?>
