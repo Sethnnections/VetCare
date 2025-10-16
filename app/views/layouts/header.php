@@ -1,77 +1,52 @@
-<div class="navbar navbar-expand-md header-menu-one bg-light">
-    <div class="nav-bar-header-one">
-        <div class="header-logo">
-            <a href="dashboard.php">
-                <img src="img/logo.png" width="50px" height="30px" alt="logo" style="padding: 0%; margin: 0%;">
-            </a>
-        </div>
-         <div class="toggle-button sidebar-toggle">
-            <button type="button" class="item-link">
-                <span class="btn-icon-wrap">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </span>
-            </button>
-        </div>
-    </div>
-    <div class="d-md-none mobile-nav-bar">
-       <button class="navbar-toggler pulse-animation" type="button" data-toggle="collapse" data-target="#mobile-navbar" aria-expanded="false">
-            <i class="far fa-arrow-alt-circle-down"></i>
-        </button>
-        <button type="button" class="navbar-toggler sidebar-toggle-mobile">
-            <i class="fas fa-bars"></i>
-        </button>
-    </div>
-    <div class="header-main-menu collapse navbar-collapse" id="mobile-navbar">
-        <ul class="navbar-nav">
-            <li class="navbar-item header-search-bar">
-                <div class="input-group stylish-input-group">
-                    <span class="input-group-addon">
-                        <button type="submit">
-                            <span class="flaticon-search" aria-hidden="true"></span>
-                        </button>
+ <div class="header-main">
+            <div class="header-left">
+                <button class="toggle-button" id="sidebarToggle">
+                    <span class="btn-icon-wrap">
+                        <span></span>
+                        <span></span>
+                        <span></span>
                     </span>
-                    <input type="text" class="form-control" placeholder="Find Something . . .">
+                </button>
+                <button class="mobile-nav-toggle d-md-none" id="mobileSidebarToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+            
+            <div class="header-search">
+                <div class="search-input-group">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="form-control" placeholder="Find Something...">
                 </div>
-            </li>
-        </ul>
-        <ul class="navbar-nav">
-            <li class="navbar-item dropdown header-admin">
-                <a class="navbar-nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown"
-                    aria-expanded="false">
-                    <!-- In header.php, update this section -->
-                    <div class="admin-title">
-                        <h5 class="item-title">
+            </div>
+            
+            <div class="header-right">
+                <div class="user-profile dropdown">
+                    <div class="user-info">
+                        <h6 class="user-name">
                             <?php 
-                            if(!empty($user->first_name)) {
-                                echo htmlspecialchars($user->first_name . ' ' . $user->last_name);
+                            if(!empty($_SESSION['first_name'])) {
+                                echo htmlspecialchars($_SESSION['first_name'] . ' ' . $_SESSION['last_name']);
                             } else {
                                 echo htmlspecialchars($_SESSION['username']);
                             }
                             ?>
-                        </h5>
-                        <span><?php echo ucfirst($_SESSION['role']); ?></span>
+                        </h6>
+                        <div class="user-role"><?php echo ucfirst($_SESSION['role']); ?></div>
                     </div>
-                    <div class="admin-img">
-                        <img src="img/figure/admin.jpg" alt="Admin">
-                    </div>
-                </a>
-                <div class="dropdown-menu dropdown-menu-right">
-                    <div class="item-header">
-                        <h6 class="item-title"><?php echo htmlspecialchars($_SESSION['username']); ?></h6>
-                    </div>
-                    <div class="item-content">
-                        <ul class="settings-list">
-                            <li><a href="profile.php"><i class="flaticon-user"></i>My Profile</a></li>
-                            <li><a href="#"><i class="flaticon-list"></i>Task</a></li>
-                            <li><a href="#"><i class="flaticon-chat-comment-oval-speech-bubble-with-text-lines"></i>Message</a></li>
-                            <li><a href="#"><i class="flaticon-gear-loading"></i>Account Settings</a></li>
-                            <li><a href="logout.php"><i class="flaticon-turn-off"></i>Log Out</a></li>
-                        </ul>
+                    <div class="user-avatar">
+                        <?php 
+                        $initials = '';
+                        if(!empty($_SESSION['first_name'])) {
+                            $initials = strtoupper(substr($_SESSION['first_name'], 0, 1));
+                            if(!empty($_SESSION['last_name'])) {
+                                $initials .= strtoupper(substr($_SESSION['last_name'], 0, 1));
+                            }
+                        } else {
+                            $initials = strtoupper(substr($_SESSION['username'], 0, 2));
+                        }
+                        echo $initials;
+                        ?>
                     </div>
                 </div>
-            </li>
-        </ul>
-    </div>
-</div>
+            </div>
+        </div>
