@@ -12,13 +12,31 @@ class Client extends Model {
     
     // Business logic methods
     public function getClientByUserId($userId) {
+        error_log("=== CLIENT MODEL DEBUG ===");
+        error_log("User ID: " . $userId);
+        
         $sql = "SELECT c.*, u.first_name, u.last_name, u.email, u.phone, u.address, u.profile_picture
                 FROM {$this->table} c 
                 JOIN users u ON c.user_id = u.user_id 
                 WHERE c.user_id = ?";
-        return fetchOne($sql, [$userId]);
+        
+        error_log("SQL: " . $sql);
+        
+        $result = fetchOne($sql, [$userId]);
+        
+        error_log("Query result: " . print_r($result, true));
+        error_log("Result type: " . gettype($result));
+        error_log("Is result array? " . (is_array($result) ? 'Yes' : 'No'));
+        
+        if (is_array($result)) {
+            error_log("Result keys: " . implode(', ', array_keys($result)));
+        } else {
+            error_log("No client profile found for user ID: " . $userId);
+        }
+        
+        return $result;
     }
-    
+
     public function getClientAnimals($clientId) {
         $sql = "SELECT * FROM animals WHERE client_id = ? AND status = 'active' ORDER BY name";
         return fetchAll($sql, [$clientId]);

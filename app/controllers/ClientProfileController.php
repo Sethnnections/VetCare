@@ -10,81 +10,61 @@ class ClientProfileController extends Controller {
         $this->userModel = new User();
     }
     
-        // Show client profile
-  public function profile() {
-    requireLogin();
-    $this->authorize([ROLE_CLIENT]);
-    
-    $client = $this->checkProfile();
-    if (!$client) return;
-    
-    $this->setTitle('My Profile');
-    $this->setData('client', $client);
-    $this->view('client/profile', 'dashboard'); // Add 'dashboard' as layout
-}
-
-    
-    // Update client profile
-    public function updateProfile() {
+    // Show client profile
+    public function profile() {
         requireLogin();
         $this->authorize([ROLE_CLIENT]);
         
-        if (!$this->isPost()) {
-            $this->redirect('/client/profile');
+        $userId = $_SESSION['user_id'];
+        error_log("=== PROFILE CONTROLLER DEBUG ===");
+        error_log("User ID from session: " . $userId);
+        
+        $client = $this->clientModel->getClientByUserId($userId);
+        
+        error_log("Client data from model: " . print_r($client, true));
+        
+        if (!$client) {
+            error_log("No client profile found - redirecting to create");
+            $this->setFlash('info', 'Please complete your profile first.');
+            $this->redirect('/client/profile/create');
             return;
         }
         
-        try {
-            $this->validateCsrf();
-            
-            $profileData = $this->input();
-            $userId = $_SESSION['user_id'];
-            $client = $this->clientModel->getClientByUserId($userId);
-            
-            if (!$client) {
-                $this->setFlash('error', 'Client profile not found');
-                $this->redirect('/client/profile');
-                return;
-            }
-            
-            // Validate required fields
-            $errors = [];
-            if (empty($profileData['first_name'])) {
-                $errors['first_name'] = 'First name is required';
-            }
-            if (empty($profileData['last_name'])) {
-                $errors['last_name'] = 'Last name is required';
-            }
-            if (empty($profileData['phone'])) {
-                $errors['phone'] = 'Phone number is required';
-            }
-            
-            if (!empty($errors)) {
-                $this->setFlash('error', 'Please fix the errors below');
-                $this->setData('errors', $errors);
-                $this->setData('client', array_merge($client, $profileData));
-                $this->profile();
-                return;
-            }
-            
-            $updated = $this->clientModel->updateClientProfile($client['client_id'], $profileData);
-            
-            if ($updated) {
-                $this->setFlash('success', 'Profile updated successfully');
-            } else {
-                $this->setFlash('error', 'Failed to update profile');
-            }
-            
-            $this->redirect('/client/profile');
-            
-        } catch (Exception $e) {
-            logError("Profile update error: " . $e->getMessage());
-            $this->setFlash('error', 'An error occurred while updating profile');
-            $this->redirect('/client/profile');
-        }
+        // Set data for the view - make sure this is called
+        $this->setData('client', $client);
+        $this->setTitle('My Profile');
+        
+        // Debug: Check what data is set
+        error_log("Data set in controller: " . print_r($this->data, true));
+        
+        // Render the view
+        $this->view('client/profile', 'dashboard');
     }
-    
-    // Show client's animalspublic 
+
+    /**
+     * Check if client profile exists
+     */
+    public function checkProfile() {
+        requireLogin();
+        $this->authorize([ROLE_CLIENT]);
+        
+        $userId = $_SESSION['user_id'];
+        error_log("Checking profile for user ID: " . $userId);
+        
+        $client = $this->clientModel->getClientByUserId($userId);
+        
+        error_log("Raw client data from model: " . print_r($client, true));
+        
+        if (!$client) {
+            error_log("No client profile found - redirecting to create");
+            $this->redirect('/client/profile/create');
+            return false;
+        }
+        
+        error_log("Client profile found, returning data");
+        return $client;
+    }
+
     // 
     function animals() {
         requireLogin();
@@ -323,23 +303,6 @@ class ClientProfileController extends Controller {
     }
     // Add these methods to your existing ClientProfileController class
 
-/**
- * Check if client profile exists, if not redirect to create profile
- */
-public function checkProfile() {
-    requireLogin();
-    $this->authorize([ROLE_CLIENT]);
-    
-    $userId = $_SESSION['user_id'];
-    $client = $this->clientModel->getClientByUserId($userId);
-    
-    if (!$client) {
-        $this->redirect('/client/profile/create');
-        return;
-    }
-    
-    return $client;
-}
 
 /**
  * Show create profile form for new clients
@@ -474,9 +437,136 @@ private function validateProfileData($profileData, $userData) {
     return $errors;
 }
 
-// Also update the existing profile method to use check
+/**
+ * Show edit profile form
+ */
+public function editProfile() {
+    requireLogin();
+    $this->authorize([ROLE_CLIENT]);
+    
+    $client = $this->checkProfile();
+    if (!$client) return;
+    
+    $this->setTitle('Edit Profile');
+    $this->setData('client', $client);
+    $this->view('client/profile-update', 'dashboard');
+}
 
-// Update animals method to check profile
+/**
+ * Enhanced update profile method
+ */
+public function updateProfile() {
+    requireLogin();
+    $this->authorize([ROLE_CLIENT]);
+    
+    if (!$this->isPost()) {
+        $this->redirect('/client/profile');
+        return;
+    }
+    
+    try {
+        $this->validateCsrf();
+        
+        $profileData = $this->input();
+        $userId = $_SESSION['user_id'];
+        $client = $this->clientModel->getClientByUserId($userId);
+        
+        if (!$client) {
+            $this->setFlash('error', 'Client profile not found');
+            $this->redirect('/client/profile');
+            return;
+        }
+        
+        // Enhanced validation
+        $errors = $this->validateProfileUpdateData($profileData);
+        
+        if (!empty($errors)) {
+            $this->setFlash('error', 'Please fix the errors below');
+            $this->setData('errors', $errors);
+            $this->setData('old', $profileData);
+            $this->setData('client', $client);
+            $this->editProfile();
+            return;
+        }
+        
+        $updated = $this->clientModel->updateClientProfile($client['client_id'], $profileData);
+        
+        if ($updated) {
+            // Update session data
+            $_SESSION['first_name'] = $profileData['first_name'];
+            $_SESSION['last_name'] = $profileData['last_name'];
+            $_SESSION['phone'] = $profileData['phone'];
+            
+            logActivity("Profile updated for client ID: {$client['client_id']}");
+            $this->setFlash('success', 'Profile updated successfully');
+            
+            // Redirect to profile page
+            $this->redirect('/client/profile');
+        } else {
+            $this->setFlash('error', 'Failed to update profile. No changes were made.');
+            $this->setData('old', $profileData);
+            $this->setData('client', $client);
+            $this->editProfile();
+        }
+        
+    } catch (Exception $e) {
+        logError("Profile update error: " . $e->getMessage());
+        $this->setFlash('error', 'An error occurred while updating profile: ' . $e->getMessage());
+        $this->redirect('/client/profile');
+    }
+}
+
+/**
+ * Enhanced validation for profile updates
+ */
+private function validateProfileUpdateData($data) {
+    $errors = [];
+    
+    // Required fields validation
+    $required = ['first_name', 'last_name', 'phone', 'emergency_contact', 'preferred_contact_method'];
+    foreach ($required as $field) {
+        if (empty(trim($data[$field] ?? ''))) {
+            $errors[$field] = 'This field is required';
+        }
+    }
+    
+    // Name validation
+    if (!empty($data['first_name']) && strlen(trim($data['first_name'])) < 2) {
+        $errors['first_name'] = 'First name must be at least 2 characters long';
+    }
+    
+    if (!empty($data['last_name']) && strlen(trim($data['last_name'])) < 2) {
+        $errors['last_name'] = 'Last name must be at least 2 characters long';
+    }
+    
+    // Phone validation
+    if (!empty($data['phone']) && !validatePhone($data['phone'])) {
+        $errors['phone'] = 'Invalid phone number format. Use Malawi format: +265 XXX XXX XXX';
+    }
+    
+    // Emergency contact validation
+    if (!empty($data['emergency_contact']) && !validatePhone($data['emergency_contact'])) {
+        $errors['emergency_contact'] = 'Invalid emergency contact number. Use Malawi format: +265 XXX XXX XXX';
+    }
+    
+    // Preferred contact method validation
+    $allowedMethods = ['phone', 'email', 'sms'];
+    if (!empty($data['preferred_contact_method']) && !in_array($data['preferred_contact_method'], $allowedMethods)) {
+        $errors['preferred_contact_method'] = 'Invalid contact method selected';
+    }
+    
+    // Address length validation
+    if (!empty($data['address']) && strlen(trim($data['address'])) > 500) {
+        $errors['address'] = 'Address is too long (maximum 500 characters)';
+    }
+    
+    // Notes length validation
+    if (!empty($data['notes']) && strlen(trim($data['notes'])) > 1000) {
+        $errors['notes'] = 'Notes are too long (maximum 1000 characters)';
+    }
+    
+    return $errors;
+}
 
 }
 ?>

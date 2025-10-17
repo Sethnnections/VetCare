@@ -97,24 +97,24 @@ $routes = [
         'action' => 'updateProfile'
     ],
     '/client/animals' => [
-        'controller' => 'ClientProfile',
-        'action' => 'animals'
+    'controller' => 'Animal',
+    'action' => 'clientIndex'
     ],
     '/client/animals/add' => [
-        'controller' => 'ClientProfile',
-        'action' => 'addAnimal'
+    'controller' => 'Animal', 
+    'action' => 'clientCreate'
     ],
     '/client/animals/{id}/edit' => [
         'controller' => 'ClientProfile',
         'action' => 'editAnimal'
     ],
-    '/client/animals/{id}/delete' => [
-        'controller' => 'ClientProfile',
-        'action' => 'deleteAnimal'
+   '/client/animals/{id}/delete' => [
+    'controller' => 'Animal',
+    'action' => 'clientDelete'
     ],
     '/client/animals/{id}' => [
-        'controller' => 'ClientProfile',
-        'action' => 'viewAnimal'
+    'controller' => 'Animal',
+    'action' => 'clientShow'
     ],
     '/client/profile/create' => [
         'controller' => 'ClientProfile',
@@ -248,6 +248,21 @@ $routes = [
         'controller' => 'Auth',
         'action' => 'checkSession'
     ],
-    
+    // Client Animal Management Routes
+    '/client/animals/{id}/update' => [
+            'controller' => 'Animal',
+            'action' => 'clientUpdate'
+    ],
+    // Client Profile Update Routes
+    '/client/profile/edit' => [
+        'controller' => 'ClientProfile',
+        'action' => 'editProfile'
+    ],
+    '/client/profile/update' => [
+        'controller' => 'ClientProfile',
+        'action' => 'updateProfile'
+    ],
+
+ 
 ];
 ?>

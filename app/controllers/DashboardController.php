@@ -73,6 +73,7 @@ class DashboardController extends Controller {
         $clientModel = new Client();
         $client = $clientModel->getClientByUserId($userId);
         
+        
         // DEBUG: Check what's happening
         error_log("DEBUG: Client dashboard - User ID: $userId, Client exists: " . ($client ? 'YES' : 'NO'));
         

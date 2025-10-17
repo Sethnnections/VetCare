@@ -313,6 +313,283 @@ class AnimalController extends Controller {
         $this->setData('vaccines', $vaccines);
         $this->view('animals/medical-history');
     }
+
+    // Client-specific animal methods
+    public function clientIndex() {
+        requireLogin();
+        requireRole(ROLE_CLIENT);
+        
+        $clientId = $this->clientModel->getClientIdByUserId(getCurrentUserId());
+        $animals = $this->animalModel->getAnimalsByClient($clientId);
+        
+        $this->setTitle('My Animals');
+        $this->setData('animals', $animals);
+        $this->setData('stats', [
+            'total' => count($animals),
+            'active' => count(array_filter($animals, function($animal) {
+                return $animal['status'] == STATUS_ACTIVE;
+            }))
+        ]);
+        $this->view('client/animals/index');
+    }
+
+    public function clientCreate() {
+        requireLogin();
+        requireRole(ROLE_CLIENT);
+        
+        if ($this->isPost()) {
+            $this->clientStore();
+            return;
+        }
+        
+        $this->setTitle('Add New Animal');
+        $this->view('client/animals/create');
+    }
+
+    public function clientStore() {
+        requireLogin();
+        requireRole(ROLE_CLIENT);
+        
+        if (!$this->isPost()) {
+            $this->redirect('/client/animals/add');
+            return;
+        }
+        
+        try {
+            $this->validateCsrf();
+            
+            $animalData = $this->input();
+            $clientId = $this->clientModel->getClientIdByUserId(getCurrentUserId());
+            
+            if (!$clientId) {
+                $this->setFlash('error', 'Client profile not found. Please complete your profile first.');
+                $this->redirect('/client/profile/create');
+                return;
+            }
+            
+            $animalData['client_id'] = $clientId;
+            $animalData['status'] = STATUS_ACTIVE;
+            
+            $errors = $this->animalModel->validate($animalData);
+            
+            if (!empty($errors)) {
+                $this->setFlash('error', 'Please fix the errors below');
+                $this->setData('errors', $errors);
+                $this->setData('old', $animalData);
+                $this->clientCreate();
+                return;
+            }
+            
+            $animalId = $this->animalModel->create($animalData);
+            
+            if ($animalId) {
+                logActivity("Animal created: {$animalData['name']} by client ID: {$clientId}");
+                $this->setFlash('success', 'Animal added successfully');
+                $this->redirect('/client/animals/' . $animalId);
+            } else {
+                $this->setFlash('error', 'Failed to add animal');
+                $this->setData('old', $animalData);
+                $this->clientCreate();
+            }
+            
+        } catch (Exception $e) {
+            logError("Animal creation error: " . $e->getMessage());
+            $this->setFlash('error', 'An error occurred while adding animal');
+            $this->clientCreate();
+        }
+    }
+
+    public function clientShow($id) {
+        requireLogin();
+        requireRole(ROLE_CLIENT);
+        
+        $clientId = $this->clientModel->getClientIdByUserId(getCurrentUserId());
+        $animal = $this->animalModel->find($id);
+        
+        // Check if animal belongs to client
+        if (!$animal || $animal['client_id'] != $clientId) {
+            $this->setFlash('error', 'Animal not found or access denied');
+            $this->redirect('/client/animals');
+            return;
+        }
+        
+        $treatments = $this->animalModel->getAnimalTreatments($id);
+        $vaccines = $this->animalModel->getAnimalVaccinations($id);
+        $lastTreatment = $this->animalModel->getLastTreatment($id);
+        $nextVaccination = $this->animalModel->getNextVaccination($id);
+        
+        $this->setTitle('Animal: ' . $animal['name']);
+        $this->setData('animal', $animal);
+        $this->setData('treatments', $treatments);
+        $this->setData('vaccines', $vaccines);
+        $this->setData('lastTreatment', $lastTreatment);
+        $this->setData('nextVaccination', $nextVaccination);
+        $this->view('client/animals/show');
+    }
+
+    public function clientEdit($id) {
+        requireLogin();
+        requireRole(ROLE_CLIENT);
+        
+        $clientId = $this->clientModel->getClientIdByUserId(getCurrentUserId());
+        $animal = $this->animalModel->find($id);
+        
+        // Check if animal belongs to client
+        if (!$animal || $animal['client_id'] != $clientId) {
+            $this->setFlash('error', 'Animal not found or access denied');
+            $this->redirect('/client/animals');
+            return;
+        }
+        
+        $this->setTitle('Edit Animal: ' . $animal['name']);
+        $this->setData('animal', $animal);
+        $this->view('client/animals/edit');
+    }
+
+    public function clientUpdate($id) {
+        requireLogin();
+        requireRole(ROLE_CLIENT);
+        
+        if (!$this->isPost()) {
+            $this->redirect('/client/animals/' . $id . '/edit');
+            return;
+        }
+        
+        try {
+            $this->validateCsrf();
+            
+            $clientId = $this->clientModel->getClientIdByUserId(getCurrentUserId());
+            $animal = $this->animalModel->find($id);
+            
+            // Check if animal belongs to client
+            if (!$animal || $animal['client_id'] != $clientId) {
+                $this->setFlash('error', 'Animal not found or access denied');
+                $this->redirect('/client/animals');
+                return;
+            }
+            
+            $animalData = $this->input();
+            $errors = $this->animalModel->validate($animalData, $id);
+            
+            if (!empty($errors)) {
+                $this->setFlash('error', 'Please fix the errors below');
+                $this->setData('errors', $errors);
+                $this->setData('animal', array_merge(['animal_id' => $id], $animalData));
+                $this->clientEdit($id);
+                return;
+            }
+            
+            $updated = $this->animalModel->update($id, $animalData);
+            
+            if ($updated) {
+                logActivity("Animal updated: {$animalData['name']} by client ID: {$clientId}");
+                $this->setFlash('success', 'Animal updated successfully');
+                $this->redirect('/client/animals/' . $id);
+            } else {
+                $this->setFlash('error', 'Failed to update animal');
+                $this->setData('animal', array_merge(['animal_id' => $id], $animalData));
+                $this->clientEdit($id);
+            }
+            
+        } catch (Exception $e) {
+            logError("Animal update error: " . $e->getMessage());
+            $this->setFlash('error', 'An error occurred while updating animal');
+            $this->clientEdit($id);
+        }
+    }
+
+    public function clientDelete($id) {
+        requireLogin();
+        requireRole(ROLE_CLIENT);
+        
+        if (!$this->isPost()) {
+            $this->redirect('/client/animals');
+            return;
+        }
+        
+        try {
+            $this->validateCsrf();
+            
+            $clientId = $this->clientModel->getClientIdByUserId(getCurrentUserId());
+            $animal = $this->animalModel->find($id);
+            
+            // Check if animal belongs to client
+            if (!$animal || $animal['client_id'] != $clientId) {
+                $this->setFlash('error', 'Animal not found or access denied');
+                $this->redirect('/client/animals');
+                return;
+            }
+            
+            // Check if animal has active treatments
+            $treatments = $this->animalModel->getAnimalTreatments($id);
+            $activeTreatments = array_filter($treatments, function($treatment) {
+                return $treatment['status'] != STATUS_COMPLETED;
+            });
+            
+            if (!empty($activeTreatments)) {
+                $this->setFlash('error', 'Cannot delete animal with active treatments. Please contact the veterinary staff.');
+                $this->redirect('/client/animals/' . $id);
+                return;
+            }
+            
+            // Soft delete by setting status to inactive
+            $deleted = $this->animalModel->update($id, ['status' => STATUS_INACTIVE]);
+            
+            if ($deleted) {
+                logActivity("Animal deleted: {$animal['name']} by client ID: {$clientId}");
+                $this->setFlash('success', 'Animal deleted successfully');
+            } else {
+                $this->setFlash('error', 'Failed to delete animal');
+            }
+            
+            $this->redirect('/client/animals');
+            
+        } catch (Exception $e) {
+            logError("Animal deletion error: " . $e->getMessage());
+            $this->setFlash('error', 'An error occurred while deleting animal');
+            $this->redirect('/client/animals');
+        }
+    }
+
+    public function clientMedicalHistory($id) {
+        requireLogin();
+        requireRole(ROLE_CLIENT);
+        
+        $clientId = $this->clientModel->getClientIdByUserId(getCurrentUserId());
+        $animal = $this->animalModel->find($id);
+        
+        // Check if animal belongs to client
+        if (!$animal || $animal['client_id'] != $clientId) {
+            $this->setFlash('error', 'Animal not found or access denied');
+            $this->redirect('/client/animals');
+            return;
+        }
+        
+        $treatments = $this->animalModel->getAnimalTreatments($id);
+        $vaccines = $this->animalModel->getAnimalVaccinations($id);
+        
+        $this->setTitle('Medical History: ' . $animal['name']);
+        $this->setData('animal', $animal);
+        $this->setData('treatments', $treatments);
+        $this->setData('vaccines', $vaccines);
+        $this->view('client/animals/medical-history');
+    }
+
+    // AJAX method to get client's animals
+    public function clientAnimalsAjax() {
+        if (!$this->isAjax()) {
+            $this->json(['error' => 'Invalid request'], 400);
+            return;
+        }
+        
+        requireLogin();
+        requireRole(ROLE_CLIENT);
+        
+        $clientId = $this->clientModel->getClientIdByUserId(getCurrentUserId());
+        $animals = $this->animalModel->getAnimalsByClient($clientId);
+        
+        $this->json(['success' => true, 'animals' => $animals]);
+    }
     
     // Get animal statistics (AJAX)
     public function stats() {

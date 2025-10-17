@@ -85,7 +85,7 @@
     </div>
 
     <!-- Quick Actions -->
-    <div class="row">
+    <div class="row mt-3">
         <div class="col-12">
             <div class="card">
                 <div class="card-header">

@@ -128,7 +128,14 @@ function validateEmail($email) {
 }
 
 function validatePhone($phone) {
-    return preg_match('/^\+?[0-9\s\-\(\)]{10,}$/', $phone);
+    // Remove all non-digit characters except +
+    $cleanPhone = preg_replace('/[^\d+]/', '', $phone);
+    
+    // Malawi phone number patterns:
+    // +265XXXXXXXXX, 265XXXXXXXXX, 0XXXXXXXXX
+    $pattern = '/^(\+265|265|0)[1-9]\d{7,8}$/';
+    
+    return preg_match($pattern, $cleanPhone);
 }
 
 function validateRequired($fields, $data) {
@@ -396,4 +403,5 @@ function getClientIp() {
         return $_SERVER['REMOTE_ADDR'];
     }
 }
+
 ?>
