@@ -67,9 +67,7 @@ $routes = [
         'controller' => 'Test',
         'action' => 'index'
     ],
-    // Dashboard routes
-
-    // Dashboard Routes
+   
     '/dashboard' => [
         'controller' => 'Dashboard',
         'action' => 'index'
@@ -92,30 +90,6 @@ $routes = [
         'controller' => 'ClientProfile',
         'action' => 'profile'
     ],
-    '/client/profile/update' => [
-        'controller' => 'ClientProfile',
-        'action' => 'updateProfile'
-    ],
-    '/client/animals' => [
-    'controller' => 'Animal',
-    'action' => 'clientIndex'
-    ],
-    '/client/animals/add' => [
-    'controller' => 'Animal', 
-    'action' => 'clientCreate'
-    ],
-    '/client/animals/{id}/edit' => [
-        'controller' => 'ClientProfile',
-        'action' => 'editAnimal'
-    ],
-   '/client/animals/{id}/delete' => [
-    'controller' => 'Animal',
-    'action' => 'clientDelete'
-    ],
-    '/client/animals/{id}' => [
-    'controller' => 'Animal',
-    'action' => 'clientShow'
-    ],
     '/client/profile/create' => [
         'controller' => 'ClientProfile',
         'action' => 'create'
@@ -123,6 +97,30 @@ $routes = [
     '/client/profile/store' => [
         'controller' => 'ClientProfile',
         'action' => 'store'
+    ],
+    '/client/animals' => [
+        'controller' => 'Animal',
+        'action' => 'clientIndex'
+    ],
+    '/client/animals/add' => [
+        'controller' => 'Animal',
+        'action' => 'clientCreate'
+    ],
+    '/client/animals/{id}' => [
+        'controller' => 'Animal',
+        'action' => 'clientShow'
+    ],
+    '/client/animals/{id}/edit' => [
+        'controller' => 'Animal',
+        'action' => 'clientEdit'
+    ],
+    '/client/animals/{id}/update' => [
+        'controller' => 'Animal',
+        'action' => 'clientUpdate'
+    ],
+    '/client/animals/{id}/delete' => [
+        'controller' => 'Animal',
+        'action' => 'clientDelete'
     ],
     
     // User Management Routes (Admin)

@@ -314,7 +314,7 @@ class AnimalController extends Controller {
         $this->view('animals/medical-history');
     }
 
-    // In AnimalController.php - Fix the clientIndex method
+    // Client-specific animal methods
     public function clientIndex() {
         requireLogin();
         $this->authorize([ROLE_CLIENT]);
@@ -341,7 +341,6 @@ class AnimalController extends Controller {
         $this->view('client/animals/index', 'dashboard');
     }
 
-    // Fix the clientCreate method
     public function clientCreate() {
         requireLogin();
         $this->authorize([ROLE_CLIENT]);
@@ -355,60 +354,9 @@ class AnimalController extends Controller {
         $this->view('client/animals/create', 'dashboard');
     }
 
-    // Fix the clientEdit method
-    public function clientEdit($id) {
-        requireLogin();
-        $this->authorize([ROLE_CLIENT]);
-        
-        $userId = $_SESSION['user_id'];
-        $clientId = $this->clientModel->getClientIdByUserId($userId);
-        $animal = $this->animalModel->find($id);
-        
-        // Check if animal belongs to client
-        if (!$animal || $animal['client_id'] != $clientId) {
-            $this->setFlash('error', 'Animal not found or access denied');
-            $this->redirect('/client/animals');
-            return;
-        }
-        
-        $this->setTitle('Edit Animal: ' . $animal['name']);
-        $this->setData('animal', $animal);
-        $this->view('client/animals/edit', 'dashboard');
-    }
-
-    // Fix the clientShow method
-    public function clientShow($id) {
-        requireLogin();
-        $this->authorize([ROLE_CLIENT]);
-        
-        $userId = $_SESSION['user_id'];
-        $clientId = $this->clientModel->getClientIdByUserId($userId);
-        $animal = $this->animalModel->find($id);
-        
-        // Check if animal belongs to client
-        if (!$animal || $animal['client_id'] != $clientId) {
-            $this->setFlash('error', 'Animal not found or access denied');
-            $this->redirect('/client/animals');
-            return;
-        }
-        
-        $treatments = $this->animalModel->getAnimalTreatments($id);
-        $vaccines = $this->animalModel->getAnimalVaccinations($id);
-        $lastTreatment = $this->animalModel->getLastTreatment($id);
-        $nextVaccination = $this->animalModel->getNextVaccination($id);
-        
-        $this->setTitle('Animal: ' . $animal['name']);
-        $this->setData('animal', $animal);
-        $this->setData('treatments', $treatments);
-        $this->setData('vaccines', $vaccines);
-        $this->setData('lastTreatment', $lastTreatment);
-        $this->setData('nextVaccination', $nextVaccination);
-        $this->view('client/animals/show', 'dashboard');
-    }
-
     public function clientStore() {
         requireLogin();
-        requireRole(ROLE_CLIENT);
+        $this->authorize([ROLE_CLIENT]);
         
         if (!$this->isPost()) {
             $this->redirect('/client/animals/add');
@@ -459,11 +407,58 @@ class AnimalController extends Controller {
         }
     }
 
+    public function clientShow($id) {
+        requireLogin();
+        $this->authorize([ROLE_CLIENT]);
+        
+        $userId = $_SESSION['user_id'];
+        $clientId = $this->clientModel->getClientIdByUserId($userId);
+        $animal = $this->animalModel->find($id);
+        
+        // Check if animal belongs to client
+        if (!$animal || $animal['client_id'] != $clientId) {
+            $this->setFlash('error', 'Animal not found or access denied');
+            $this->redirect('/client/animals');
+            return;
+        }
+        
+        $treatments = $this->animalModel->getAnimalTreatments($id);
+        $vaccines = $this->animalModel->getAnimalVaccinations($id);
+        $lastTreatment = $this->animalModel->getLastTreatment($id);
+        $nextVaccination = $this->animalModel->getNextVaccination($id);
+        
+        $this->setTitle('Animal: ' . $animal['name']);
+        $this->setData('animal', $animal);
+        $this->setData('treatments', $treatments);
+        $this->setData('vaccines', $vaccines);
+        $this->setData('lastTreatment', $lastTreatment);
+        $this->setData('nextVaccination', $nextVaccination);
+        $this->view('client/animals/show', 'dashboard');
+    }
 
+    public function clientEdit($id) {
+        requireLogin();
+        $this->authorize([ROLE_CLIENT]);
+        
+        $userId = $_SESSION['user_id'];
+        $clientId = $this->clientModel->getClientIdByUserId($userId);
+        $animal = $this->animalModel->find($id);
+        
+        // Check if animal belongs to client
+        if (!$animal || $animal['client_id'] != $clientId) {
+            $this->setFlash('error', 'Animal not found or access denied');
+            $this->redirect('/client/animals');
+            return;
+        }
+        
+        $this->setTitle('Edit Animal: ' . $animal['name']);
+        $this->setData('animal', $animal);
+        $this->view('client/animals/edit', 'dashboard');
+    }
 
     public function clientUpdate($id) {
         requireLogin();
-        requireRole(ROLE_CLIENT);
+        $this->authorize([ROLE_CLIENT]);
         
         if (!$this->isPost()) {
             $this->redirect('/client/animals/' . $id . '/edit');
@@ -515,7 +510,7 @@ class AnimalController extends Controller {
 
     public function clientDelete($id) {
         requireLogin();
-        requireRole(ROLE_CLIENT);
+        $this->authorize([ROLE_CLIENT]);
         
         if (!$this->isPost()) {
             $this->redirect('/client/animals');
@@ -568,7 +563,7 @@ class AnimalController extends Controller {
 
     public function clientMedicalHistory($id) {
         requireLogin();
-        requireRole(ROLE_CLIENT);
+        $this->authorize([ROLE_CLIENT]);
         
         $clientId = $this->clientModel->getClientIdByUserId(getCurrentUserId());
         $animal = $this->animalModel->find($id);
@@ -587,7 +582,7 @@ class AnimalController extends Controller {
         $this->setData('animal', $animal);
         $this->setData('treatments', $treatments);
         $this->setData('vaccines', $vaccines);
-        $this->view('client/animals/medical-history');
+        $this->view('client/animals/medical-history', 'dashboard');
     }
 
     // AJAX method to get client's animals
@@ -598,7 +593,7 @@ class AnimalController extends Controller {
         }
         
         requireLogin();
-        requireRole(ROLE_CLIENT);
+        $this->authorize([ROLE_CLIENT]);
         
         $clientId = $this->clientModel->getClientIdByUserId(getCurrentUserId());
         $animals = $this->animalModel->getAnimalsByClient($clientId);

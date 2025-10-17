@@ -1,191 +1,260 @@
 <?php
+// app/views/client/animals/index.php
+$animals = $animals ?? [];
+$stats = $stats ?? [];
 $current_page = 'client_animals';
-$title = $title ?? 'My Animals';
 ?>
 
-<div class="page-header">
+<div class="container-fluid">
     <div class="row">
-        <div class="col-sm-12">
-            <h3 class="page-title"><?= $title ?></h3>
-            <ul class="breadcrumb">
-                <li class="breadcrumb-item"><a href="<?= url('/dashboard') ?>">Dashboard</a></li>
-                <li class="breadcrumb-item active">My Animals</li>
-            </ul>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-sm-12">
-        <!-- Flash Messages -->
-        <?php if ($flash = getFlashMessage()): ?>
-            <div class="alert alert-<?= $flash['type'] ?> alert-dismissible fade show" role="alert">
-                <?= $flash['message'] ?>
-                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true">×</span>
-                </button>
-            </div>
-        <?php endif; ?>
-
-        <!-- Animals Summary Cards -->
-        <div class="row">
-            <div class="col-xl-3 col-sm-6 col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="dash-widget-header">
-                            <span class="dash-widget-icon bg-primary">
-                                <i class="fas fa-paw"></i>
-                            </span>
-                            <div class="dash-count">
-                                <h3><?= $stats['total'] ?? 0 ?></h3>
-                            </div>
-                        </div>
-                        <div class="dash-widget-info">
-                            <h6 class="text-muted">Total Animals</h6>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-sm-6 col-12">
-                <div class="card">
-                    <div class="card-body">
-                        <div class="dash-widget-header">
-                            <span class="dash-widget-icon bg-success">
-                                <i class="fas fa-heartbeat"></i>
-                            </span>
-                            <div class="dash-count">
-                                <h3><?= $stats['active'] ?? 0 ?></h3>
-                            </div>
-                        </div>
-                        <div class="dash-widget-info">
-                            <h6 class="text-muted">Active Animals</h6>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Add Animal Button -->
-        <div class="page-header">
-            <div class="row align-items-center">
-                <div class="col">
-                    <h3 class="page-title">My Pets</h3>
-                </div>
-                <div class="col-auto">
-                    <a href="<?= url('/client/animals/add') ?>" class="btn btn-primary">
-                        <i class="fas fa-plus"></i> Add New Animal
+        <div class="col-12">
+            <div class="dashboard-card fade-in">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-paw me-2"></i>My Animals
+                    </h4>
+                    <a href="<?php echo url('/client/animals/add'); ?>" class="btn btn-primary btn-sm">
+                        <i class="fas fa-plus me-1"></i>Add New Animal
                     </a>
                 </div>
-            </div>
-        </div>
-
-        <!-- Animals List -->
-        <div class="card">
-            <div class="card-body">
-                <?php if (empty($animals)): ?>
-                    <div class="empty-state">
-                        <div class="empty-state-icon">
-                            <i class="fas fa-paw"></i>
+                <div class="card-body">
+                    <?php 
+                    $flash = getFlashMessage();
+                    if ($flash): ?>
+                        <div class="alert alert-<?php echo $flash['type']; ?> alert-dismissible fade show">
+                            <?php echo $flash['message']; ?>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                         </div>
-                        <h2>No Animals Found</h2>
-                        <p class="empty-state-desc">
-                            You haven't added any animals yet. Start by adding your first pet.
-                        </p>
-                        <a href="<?= url('/client/animals/add') ?>" class="btn btn-primary mt-4">
-                            <i class="fas fa-plus"></i> Add Your First Animal
-                        </a>
+                    <?php endif; ?>
+
+                    <!-- Stats Cards -->
+                    <div class="row mb-4">
+                        <div class="col-md-3">
+                            <div class="stat-card bg-primary text-white">
+                                <div class="stat-card-body">
+                                    <h3><?php echo $stats['total'] ?? 0; ?></h3>
+                                    <p>Total Animals</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="stat-card bg-success text-white">
+                                <div class="stat-card-body">
+                                    <h3><?php echo $stats['active'] ?? 0; ?></h3>
+                                    <p>Active Animals</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                <?php else: ?>
-                    <div class="table-responsive">
-                        <table class="table table-hover table-center mb-0">
-                            <thead>
-                                <tr>
-                                    <th>Photo</th>
-                                    <th>Name</th>
-                                    <th>Species/Breed</th>
-                                    <th>Age</th>
-                                    <th>Gender</th>
-                                    <th>Weight</th>
-                                    <th>Last Treatment</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($animals as $animal): ?>
+
+                    <?php if (empty($animals)): ?>
+                        <!-- No Animals State -->
+                        <div class="text-center py-5">
+                            <div class="empty-state">
+                                <i class="fas fa-paw fa-4x text-muted mb-3"></i>
+                                <h4>No Animals Yet</h4>
+                                <p class="text-muted">You haven't added any animals to your profile yet.</p>
+                                <a href="<?php echo url('/client/animals/add'); ?>" class="btn btn-primary">
+                                    <i class="fas fa-plus me-2"></i>Add Your First Animal
+                                </a>
+                            </div>
+                        </div>
+                    <?php else: ?>
+                        <!-- Animals Table -->
+                        <div class="table-responsive">
+                            <table class="table table-striped table-hover" id="animalsTable">
+                                <thead class="table-dark">
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Species</th>
+                                        <th>Breed</th>
+                                        <th>Gender</th>
+                                        <th>Age</th>
+                                        <th>Weight</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($animals as $animal): ?>
                                     <tr>
                                         <td>
-                                            <div class="avatar-sm">
-                                                <?php if (!empty($animal['photo'])): ?>
-                                                    <img class="avatar-img rounded-circle" 
-                                                         src="<?= url('/uploads/animals/' . $animal['photo']) ?>" 
-                                                         alt="<?= htmlspecialchars($animal['name']) ?>">
-                                                <?php else: ?>
-                                                    <div class="avatar-img rounded-circle bg-light text-center">
-                                                        <i class="fas fa-paw fa-2x text-muted"></i>
-                                                    </div>
-                                                <?php endif; ?>
-                                            </div>
-                                        </td>
-                                        <td>
-                                            <h2 class="table-avatar">
-                                                <a href="<?= url('/client/animals/' . $animal['animal_id']) ?>">
-                                                    <?= htmlspecialchars($animal['name']) ?>
-                                                </a>
-                                            </h2>
-                                        </td>
-                                        <td>
-                                            <?= htmlspecialchars($animal['species']) ?>
-                                            <?php if (!empty($animal['breed'])): ?>
-                                                <br><small class="text-muted"><?= htmlspecialchars($animal['breed']) ?></small>
+                                            <strong><?php echo htmlspecialchars($animal['name']); ?></strong>
+                                            <?php if (!empty($animal['microchip'])): ?>
+                                                <br>
+                                                <small class="text-muted">
+                                                    <i class="fas fa-microchip me-1"></i>
+                                                    <?php echo htmlspecialchars($animal['microchip']); ?>
+                                                </small>
                                             <?php endif; ?>
                                         </td>
-                                        <td><?= calculateAge($animal['birth_date']) ?></td>
+                                        <td><?php echo htmlspecialchars(ucfirst($animal['species'])); ?></td>
+                                        <td><?php echo !empty($animal['breed']) ? htmlspecialchars($animal['breed']) : 'N/A'; ?></td>
                                         <td>
-                                            <span class="badge badge-<?= $animal['gender'] == 'male' ? 'info' : 'warning' ?>">
-                                                <?= ucfirst($animal['gender']) ?>
+                                            <span class="badge bg-<?php 
+                                                echo $animal['gender'] == 'male' ? 'primary' : 
+                                                     ($animal['gender'] == 'female' ? 'danger' : 'secondary'); 
+                                            ?>">
+                                                <?php echo htmlspecialchars(ucfirst($animal['gender'])); ?>
                                             </span>
                                         </td>
                                         <td>
-                                            <?php if (!empty($animal['weight'])): ?>
-                                                <?= $animal['weight'] ?> kg
-                                            <?php else: ?>
-                                                <span class="text-muted">-</span>
-                                            <?php endif; ?>
+                                            <?php
+                                            if (!empty($animal['birth_date'])) {
+                                                $birthDate = new DateTime($animal['birth_date']);
+                                                $today = new DateTime();
+                                                $age = $today->diff($birthDate);
+                                                
+                                                if ($age->y > 0) {
+                                                    echo $age->y . ' year' . ($age->y > 1 ? 's' : '');
+                                                    if ($age->m > 0) {
+                                                        echo ', ' . $age->m . ' month' . ($age->m > 1 ? 's' : '');
+                                                    }
+                                                } else {
+                                                    echo $age->m . ' month' . ($age->m > 1 ? 's' : '');
+                                                }
+                                            } else {
+                                                echo 'Unknown';
+                                            }
+                                            ?>
                                         </td>
                                         <td>
-                                            <?php if (!empty($animal['last_treatment'])): ?>
-                                                <?= formatDate($animal['last_treatment']) ?>
-                                            <?php else: ?>
-                                                <span class="text-muted">No treatments</span>
-                                            <?php endif; ?>
+                                            <?php echo !empty($animal['weight']) ? $animal['weight'] . ' kg' : 'N/A'; ?>
                                         </td>
                                         <td>
-                                            <div class="actions">
-                                                <a href="<?= url('/client/animals/' . $animal['animal_id']) ?>" 
-                                                   class="btn btn-sm btn-info" title="View">
+                                            <span class="badge bg-<?php echo $animal['status'] == 1 ? 'success' : 'secondary'; ?>">
+                                                <?php echo $animal['status'] == 1 ? 'Active' : 'Inactive'; ?>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group btn-group-sm">
+                                                <a href="<?php echo url('/client/animals/' . $animal['animal_id']); ?>" 
+                                                   class="btn btn-info" 
+                                                   title="View Details">
                                                     <i class="fas fa-eye"></i>
                                                 </a>
-                                                <a href="<?= url('/client/animals/' . $animal['animal_id'] . '/edit') ?>" 
-                                                   class="btn btn-sm btn-primary" title="Edit">
+                                                <a href="<?php echo url('/client/animals/' . $animal['animal_id'] . '/edit'); ?>" 
+                                                   class="btn btn-warning" 
+                                                   title="Edit">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
-                                                <form action="<?= url('/client/animals/' . $animal['animal_id'] . '/delete') ?>" 
-                                                      method="POST" class="d-inline" 
-                                                      onsubmit="return confirm('Are you sure you want to delete this animal?')">
-                                                    <input type="hidden" name="csrf_token" value="<?= generateCsrfToken() ?>">
-                                                    <button type="submit" class="btn btn-sm btn-danger" title="Delete">
-                                                        <i class="fas fa-trash"></i>
-                                                    </button>
-                                                </form>
+                                                <button type="button" 
+                                                        class="btn btn-danger delete-animal" 
+                                                        data-animal-id="<?php echo $animal['animal_id']; ?>"
+                                                        data-animal-name="<?php echo htmlspecialchars($animal['name']); ?>"
+                                                        title="Delete">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
                                             </div>
                                         </td>
                                     </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                <?php endif; ?>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteAnimalModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Delete</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete <strong id="deleteAnimalName"></strong>?</p>
+                <p class="text-danger">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteAnimalForm" method="POST" style="display: inline;">
+                    <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                    <button type="submit" class="btn btn-danger">Delete Animal</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.stat-card {
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.stat-card h3 {
+    font-size: 2.5rem;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.stat-card p {
+    margin-bottom: 0;
+    opacity: 0.9;
+}
+
+.empty-state {
+    padding: 40px 20px;
+}
+
+.empty-state i {
+    opacity: 0.5;
+}
+
+.table th {
+    border-top: none;
+    font-weight: 600;
+}
+
+.btn-group-sm > .btn {
+    padding: 0.25rem 0.5rem;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Delete animal confirmation
+    const deleteButtons = document.querySelectorAll('.delete-animal');
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteAnimalModal'));
+    const deleteAnimalName = document.getElementById('deleteAnimalName');
+    const deleteAnimalForm = document.getElementById('deleteAnimalForm');
+
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const animalId = this.getAttribute('data-animal-id');
+            const animalName = this.getAttribute('data-animal-name');
+            
+            deleteAnimalName.textContent = animalName;
+            deleteAnimalForm.action = '<?php echo url('/client/animals'); ?>/' + animalId + '/delete';
+            
+            deleteModal.show();
+        });
+    });
+
+    // Initialize DataTable if animals exist
+    <?php if (!empty($animals)): ?>
+        if (typeof $.fn.DataTable !== 'undefined') {
+            $('#animalsTable').DataTable({
+                pageLength: 10,
+                responsive: true,
+                order: [[0, 'asc']],
+                language: {
+                    search: "Search animals:",
+                    lengthMenu: "Show _MENU_ animals per page",
+                    info: "Showing _START_ to _END_ of _TOTAL_ animals",
+                    infoEmpty: "No animals to show",
+                    infoFiltered: "(filtered from _MAX_ total animals)"
+                }
+            });
+        }
+    <?php endif; ?>
+});
+</script>

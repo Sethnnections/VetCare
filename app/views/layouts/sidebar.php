@@ -409,7 +409,7 @@
 
             <?php else: ?>
             <!-- ==================== CLIENT MENU ==================== -->
-            <li class="nav-item sidebar-nav-item">
+            <li class="nav-item sidebar-nav-item <?php echo (in_array($current_page, ['client_animals', 'client_animals_add'])) ? 'active' : ''; ?>">
                 <a href="#" class="nav-link">
                     <i class="fas fa-paw"></i>
                     <span>My Animals</span>
@@ -417,13 +417,13 @@
                 </a>
                 <ul class="nav sub-group-menu">
                     <li class="nav-item">
-                        <a href="<?php echo url('/client/animals'); ?>" class="nav-link">
+                        <a href="<?php echo url('/client/animals'); ?>" class="nav-link <?php echo ($current_page == 'client_animals') ? 'active' : ''; ?>">
                             <i class="fas fa-list"></i>
                             <span>My Pets</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?php echo url('/client/animals/add'); ?>" class="nav-link">
+                        <a href="<?php echo url('/client/animals/add'); ?>" class="nav-link <?php echo ($current_page == 'client_animals_add') ? 'active' : ''; ?>">
                             <i class="fas fa-plus-circle"></i>
                             <span>Add Animal</span>
                         </a>
@@ -443,7 +443,7 @@
                 </ul>
             </li>
 
-            <li class="nav-item sidebar-nav-item">
+            <li class="nav-item sidebar-nav-item <?php echo ($current_page == 'profile') ? 'active' : ''; ?>">
                 <a href="#" class="nav-link">
                     <i class="fas fa-user"></i>
                     <span>My Profile</span>
@@ -451,7 +451,7 @@
                 </a>
                 <ul class="nav sub-group-menu">
                     <li class="nav-item">
-                        <a href="<?php echo url('/client/profile'); ?>" class="nav-link">
+                        <a href="<?php echo url('/client/profile'); ?>" class="nav-link <?php echo ($current_page == 'profile') ? 'active' : ''; ?>">
                             <i class="fas fa-user-circle"></i>
                             <span>View Profile</span>
                         </a>
@@ -632,6 +632,7 @@
                     <span>Feedback</span>
                 </a>
             </li>
+            
             <?php if($current_role == 'admin'): ?>
             <li class="nav-item">
                 <a href="<?php echo url('/auth/profile'); ?>" class="nav-link">
@@ -640,6 +641,7 @@
                 </a>
             </li>
             <?php endif; ?>
+            
             <!-- Logout Button at Bottom -->
             <li class="nav-item sidebar-footer">
                 <a href="<?php echo url('/logout'); ?>" class="nav-link logout-btn">
@@ -650,3 +652,94 @@
         </ul>
     </div>
 </div>
+
+<style>
+/* Ensure proper sidebar highlighting */
+.sidebar-nav-item.active > .nav-link {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-left: 3px solid #fff;
+}
+
+.sidebar-nav-item.active .sub-group-menu {
+    display: block;
+}
+
+.sub-group-menu .nav-link.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-left: 3px solid #fff;
+}
+
+/* Smooth transitions */
+.sidebar-nav-item .nav-link {
+    transition: all 0.3s ease;
+}
+
+.sub-group-menu {
+    transition: all 0.3s ease;
+}
+
+/* Logout button styling */
+.sidebar-footer {
+    margin-top: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logout-btn {
+    color: #ff6b6b !important;
+}
+
+.logout-btn:hover {
+    background-color: rgba(255, 107, 107, 0.1) !important;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Auto-expand active menu items
+    const activeMenuItems = document.querySelectorAll('.sidebar-nav-item.active');
+    activeMenuItems.forEach(item => {
+        const link = item.querySelector('.nav-link');
+        if (link) {
+            link.classList.remove('collapsed');
+            const subMenu = item.querySelector('.sub-group-menu');
+            if (subMenu) {
+                subMenu.style.display = 'block';
+            }
+        }
+    });
+
+    // Handle menu toggle
+    const menuToggles = document.querySelectorAll('.sidebar-nav-item > .nav-link');
+    menuToggles.forEach(toggle => {
+        toggle.addEventListener('click', function(e) {
+            e.preventDefault();
+            const parent = this.parentElement;
+            const subMenu = parent.querySelector('.sub-group-menu');
+            
+            if (subMenu) {
+                const isActive = parent.classList.contains('active');
+                
+                // Close all other menus
+                document.querySelectorAll('.sidebar-nav-item').forEach(item => {
+                    if (item !== parent) {
+                        item.classList.remove('active');
+                        const otherSubMenu = item.querySelector('.sub-group-menu');
+                        if (otherSubMenu) {
+                            otherSubMenu.style.display = 'none';
+                        }
+                    }
+                });
+                
+                // Toggle current menu
+                if (!isActive) {
+                    parent.classList.add('active');
+                    subMenu.style.display = 'block';
+                } else {
+                    parent.classList.remove('active');
+                    subMenu.style.display = 'none';
+                }
+            }
+        });
+    });
+});
+</script>
