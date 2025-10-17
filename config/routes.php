@@ -246,11 +246,6 @@ $routes = [
         'controller' => 'Auth',
         'action' => 'checkSession'
     ],
-    // Client Animal Management Routes
-    '/client/animals/{id}/update' => [
-            'controller' => 'Animal',
-            'action' => 'clientUpdate'
-    ],
     // Client Profile Update Routes
     '/client/profile/edit' => [
         'controller' => 'ClientProfile',
@@ -261,6 +256,44 @@ $routes = [
         'action' => 'updateProfile'
     ],
 
- 
+    // Veterinary Animal Routes - ASSIGNED ANIMALS ONLY
+    '/veterinary/animals' => [
+    'controller' => 'Animal',
+    'action' => 'veterinaryIndex'
+    ],
+   '/veterinary/animals/{id}' => [
+    'controller' => 'Animal',
+    'action' => 'veterinaryShow'
+    ],
+    '/veterinary/animals/{id}/edit' => [
+        'controller' => 'Animal',
+        'action' => 'veterinaryEdit'
+    ],
+    '/veterinary/animals/{id}/update' => [
+        'controller' => 'Animal',
+        'action' => 'veterinaryUpdate'
+    ],
+
+    // Admin assignment routes
+    '/animals/{id}/assign' => [
+        'controller' => 'Animal',
+        'action' => 'assignToVeterinary'
+    ],
+
+    // Admin Assignment Routes
+    '/admin/animal-assignments' => [
+        'controller' => 'Admin',
+        'action' => 'animalAssignments'
+    ],
+    '/admin/animal-assignments/assign' => [
+        'controller' => 'Admin',
+        'action' => 'assignAnimal'
+    ],
+    '/admin/animal-assignments/unassign/{id}' => [
+        'controller' => 'Admin',
+        'action' => 'unassignAnimal'
+    ],
+
+    // In config/routes.php - Add these routes 
 ];
 ?>

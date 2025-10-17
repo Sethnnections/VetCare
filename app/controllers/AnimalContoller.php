@@ -589,7 +589,130 @@ class AnimalController extends Controller {
         $this->setData('vaccines', $vaccines);
         $this->view('client/animals/medical-history');
     }
+    /**
+     * Show assigned animals for veterinary
+     */
+    public function veterinaryIndex() {
+        requireLogin();
+        $this->authorize([ROLE_VETERINARY]);
+        
+        $veterinaryId = $_SESSION['user_id'];
+        $animals = $this->animalModel->getAnimalsByVeterinary($veterinaryId);
+        
+        $this->setTitle('My Assigned Animals');
+        $this->setData('animals', $animals);
+        $this->setData('stats', [
+            'total' => count($animals),
+            'active' => count(array_filter($animals, function($animal) {
+                return $animal['status'] == STATUS_ACTIVE;
+            }))
+        ]);
+        $this->view('veterinary/animals/index', 'dashboard');
+    }
 
+    /**
+     * Show animal details for veterinary
+     */
+    public function veterinaryShow($id) {
+        requireLogin();
+        $this->authorize([ROLE_VETERINARY]);
+        
+        $veterinaryId = $_SESSION['user_id'];
+        $animal = $this->animalModel->find($id);
+        
+        // Check if animal is assigned to this veterinary
+        if (!$animal || $animal['assigned_veterinary'] != $veterinaryId) {
+            $this->setFlash('error', 'Animal not found or not assigned to you');
+            $this->redirect('/veterinary/animals');
+            return;
+        }
+        
+        $treatments = $this->animalModel->getAnimalTreatments($id);
+        $vaccines = $this->animalModel->getAnimalVaccinations($id);
+        $lastTreatment = $this->animalModel->getLastTreatment($id);
+        $nextVaccination = $this->animalModel->getNextVaccination($id);
+        
+        $this->setTitle('Animal: ' . $animal['name']);
+        $this->setData('animal', $animal);
+        $this->setData('treatments', $treatments);
+        $this->setData('vaccines', $vaccines);
+        $this->setData('lastTreatment', $lastTreatment);
+        $this->setData('nextVaccination', $nextVaccination);
+        $this->view('veterinary/animals/show', 'dashboard');
+    }
+
+    /**
+     * Show edit form for veterinary (limited access)
+     */
+    public function veterinaryEdit($id) {
+        requireLogin();
+        $this->authorize([ROLE_VETERINARY]);
+        
+        $veterinaryId = $_SESSION['user_id'];
+        $animal = $this->animalModel->find($id);
+        
+        // Check if animal is assigned to this veterinary
+        if (!$animal || $animal['assigned_veterinary'] != $veterinaryId) {
+            $this->setFlash('error', 'Animal not found or not assigned to you');
+            $this->redirect('/veterinary/animals');
+            return;
+        }
+        
+        $this->setTitle('Edit Animal: ' . $animal['name']);
+        $this->setData('animal', $animal);
+        $this->view('veterinary/animals/edit', 'dashboard');
+    }
+
+    /**
+     * Update animal for veterinary (limited fields)
+     */
+    public function veterinaryUpdate($id) {
+        requireLogin();
+        $this->authorize([ROLE_VETERINARY]);
+        
+        if (!$this->isPost()) {
+            $this->redirect('/veterinary/animals/' . $id . '/edit');
+            return;
+        }
+        
+        try {
+            $this->validateCsrf();
+            
+            $veterinaryId = $_SESSION['user_id'];
+            $animal = $this->animalModel->find($id);
+            
+            // Check if animal is assigned to this veterinary
+            if (!$animal || $animal['assigned_veterinary'] != $veterinaryId) {
+                $this->setFlash('error', 'Animal not found or not assigned to you');
+                $this->redirect('/veterinary/animals');
+                return;
+            }
+            
+            $animalData = $this->input();
+            
+            // Veterinary can only update specific fields
+            $allowedFields = ['weight', 'notes'];
+            $updateData = array_intersect_key($animalData, array_flip($allowedFields));
+            
+            if (!empty($updateData)) {
+                $updated = $this->animalModel->update($id, $updateData);
+                
+                if ($updated) {
+                    logActivity("Animal updated by veterinary: {$animal['name']} (ID: {$id})");
+                    $this->setFlash('success', 'Animal updated successfully');
+                } else {
+                    $this->setFlash('error', 'Failed to update animal');
+                }
+            }
+            
+            $this->redirect('/veterinary/animals/' . $id);
+            
+        } catch (Exception $e) {
+            logError("Animal update error by veterinary: " . $e->getMessage());
+            $this->setFlash('error', 'An error occurred while updating animal');
+            $this->redirect('/veterinary/animals/' . $id . '/edit');
+        }
+    }
     // AJAX method to get client's animals
     public function clientAnimalsAjax() {
         if (!$this->isAjax()) {

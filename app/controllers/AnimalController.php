@@ -611,5 +611,217 @@ class AnimalController extends Controller {
         $stats = $this->animalModel->getStats();
         $this->json($stats);
     }
+
+
+    // Veterinary-specific animal method
+    // Veterinary-specific animal methods - SEE ONLY ASSIGNED ANIMALS
+    public function veterinaryIndex() {
+        requireLogin();
+        $this->authorize([ROLE_VETERINARY]);
+        
+        $veterinaryId = $_SESSION['user_id'];
+        $search = $this->get('search');
+        
+        // Get only animals assigned to this veterinary
+        $assignedAnimals = $this->animalModel->getAnimalsByVeterinary($veterinaryId);
+        
+        // Apply search filter if provided
+        if ($search && !empty($assignedAnimals)) {
+            $assignedAnimals = array_filter($assignedAnimals, function($animal) use ($search) {
+                return stripos($animal['name'], $search) !== false ||
+                    stripos($animal['species'], $search) !== false ||
+                    stripos($animal['breed'] ?? '', $search) !== false ||
+                    stripos($animal['client_first_name'] . ' ' . $animal['client_last_name'], $search) !== false;
+            });
+        }
+        
+        $this->setTitle('My Assigned Animals');
+        $this->setData('animals', $assignedAnimals);
+        $this->setData('search', $search);
+        $this->setData('stats', [
+            'total' => count($assignedAnimals),
+            'active' => count($assignedAnimals) // All assigned are active
+        ]);
+        $this->view('veterinary/animals/index', 'dashboard');
+    }
+
+    public function veterinaryShow($id) {
+        requireLogin();
+        $this->authorize([ROLE_VETERINARY]);
+        
+        $veterinaryId = $_SESSION['user_id'];
+        $animal = $this->animalModel->find($id);
+        
+        // Check if animal is assigned to this veterinary
+        if (!$animal || !$this->animalModel->isAssignedToVeterinary($id, $veterinaryId)) {
+            $this->setFlash('error', 'Animal not found or not assigned to you');
+            $this->redirect('/veterinary/animals');
+            return;
+        }
+        
+        $treatments = $this->animalModel->getAnimalTreatments($id);
+        $vaccines = $this->animalModel->getAnimalVaccinations($id);
+        $lastTreatment = $this->animalModel->getLastTreatment($id);
+        $nextVaccination = $this->animalModel->getNextVaccination($id);
+        $billings = $this->animalModel->getAnimalBillings($id);
+        $reminders = $this->animalModel->getAnimalReminders($id);
+        
+        // Get client details
+        $client = $this->clientModel->find($animal['client_id']);
+        
+        $this->setTitle('Animal: ' . $animal['name']);
+        $this->setData('animal', $animal);
+        $this->setData('client', $client);
+        $this->setData('treatments', $treatments);
+        $this->setData('vaccines', $vaccines);
+        $this->setData('lastTreatment', $lastTreatment);
+        $this->setData('nextVaccination', $nextVaccination);
+        $this->setData('billings', $billings);
+        $this->setData('reminders', $reminders);
+        $this->view('veterinary/animals/show', 'dashboard');
+    }
+
+    public function veterinaryEdit($id) {
+        requireLogin();
+        $this->authorize([ROLE_VETERINARY]);
+        
+        $veterinaryId = $_SESSION['user_id'];
+        $animal = $this->animalModel->find($id);
+        
+        // Check if animal is assigned to this veterinary
+        if (!$animal || !$this->animalModel->isAssignedToVeterinary($id, $veterinaryId)) {
+            $this->setFlash('error', 'Animal not found or not assigned to you');
+            $this->redirect('/veterinary/animals');
+            return;
+        }
+        
+        $this->setTitle('Edit Animal: ' . $animal['name']);
+        $this->setData('animal', $animal);
+        $this->view('veterinary/animals/edit', 'dashboard');
+    }
+
+    public function veterinaryUpdate($id) {
+        requireLogin();
+        $this->authorize([ROLE_VETERINARY]);
+        
+        if (!$this->isPost()) {
+            $this->redirect('/veterinary/animals/' . $id . '/edit');
+            return;
+        }
+        
+        try {
+            $this->validateCsrf();
+            
+            $veterinaryId = $_SESSION['user_id'];
+            $animal = $this->animalModel->find($id);
+            
+            // Check if animal is assigned to this veterinary
+            if (!$animal || !$this->animalModel->isAssignedToVeterinary($id, $veterinaryId)) {
+                $this->setFlash('error', 'Animal not found or not assigned to you');
+                $this->redirect('/veterinary/animals');
+                return;
+            }
+            
+            $animalData = $this->input();
+            $errors = $this->animalModel->validate($animalData, $id);
+            
+            if (!empty($errors)) {
+                $this->setFlash('error', 'Please fix the errors below');
+                $this->setData('errors', $errors);
+                $this->setData('animal', array_merge(['animal_id' => $id], $animalData));
+                $this->veterinaryEdit($id);
+                return;
+            }
+            
+            $updated = $this->animalModel->update($id, $animalData);
+            
+            if ($updated) {
+                logActivity("Animal updated by veterinary {$veterinaryId}: {$animalData['name']} (ID: {$id})");
+                $this->setFlash('success', 'Animal updated successfully');
+                $this->redirect('/veterinary/animals/' . $id);
+            } else {
+                $this->setFlash('error', 'Failed to update animal');
+                $this->setData('animal', array_merge(['animal_id' => $id], $animalData));
+                $this->veterinaryEdit($id);
+            }
+            
+        } catch (Exception $e) {
+            logError("Animal update error: " . $e->getMessage());
+            $this->setFlash('error', 'An error occurred while updating animal');
+            $this->veterinaryEdit($id);
+        }
+    }
+
+    // Admin method to assign animals to veterinary
+    public function assignToVeterinary() {
+        requireLogin();
+        $this->authorize([ROLE_ADMIN]);
+        
+        if ($this->isPost()) {
+            try {
+                $this->validateCsrf();
+                
+                $animalId = $this->input('animal_id');
+                $veterinaryId = $this->input('veterinary_id');
+                $assignedBy = $_SESSION['user_id'];
+                
+                $assigned = $this->animalModel->assignToVeterinary($animalId, $veterinaryId, $assignedBy);
+                
+                if ($assigned) {
+                    logActivity("Animal {$animalId} assigned to veterinary {$veterinaryId} by admin {$assignedBy}");
+                    $this->setFlash('success', 'Animal assigned to veterinary successfully');
+                } else {
+                    $this->setFlash('error', 'Failed to assign animal to veterinary');
+                }
+                
+                $this->redirect('/animals/' . $animalId);
+                
+            } catch (Exception $e) {
+                logError("Animal assignment error: " . $e->getMessage());
+                $this->setFlash('error', 'An error occurred while assigning animal');
+                $this->redirect('/animals');
+            }
+        }
+    }
+
+
+    public function veterinaryMedicalHistory($id) {
+        requireLogin();
+        $this->authorize([ROLE_VETERINARY, ROLE_ADMIN]);
+        
+        $animal = $this->animalModel->getAnimalWithClient($id);
+        
+        if (!$animal) {
+            $this->setFlash('error', 'Animal not found');
+            $this->redirect('/veterinary/animals');
+            return;
+        }
+        
+        $treatments = $this->animalModel->getAnimalTreatments($id);
+        $vaccines = $this->animalModel->getAnimalVaccinations($id);
+        
+        $this->setTitle('Medical History: ' . $animal['name']);
+        $this->setData('animal', $animal);
+        $this->setData('treatments', $treatments);
+        $this->setData('vaccines', $vaccines);
+        $this->view('veterinary/animals/medical-history', 'dashboard');
+    }
+
+    // Veterinary dashboard with assigned animals
+    public function veterinaryAssignedAnimals() {
+        requireLogin();
+        $this->authorize([ROLE_VETERINARY]);
+        
+        $veterinaryId = $_SESSION['user_id'];
+        
+        // Get animals assigned to this veterinary (you'll need to implement this method)
+        $assignedAnimals = $this->animalModel->getAnimalsByVeterinary($veterinaryId);
+        $recentTreatments = $this->treatmentModel->getRecentTreatmentsByVeterinary($veterinaryId, 10);
+        
+        $this->setTitle('My Assigned Animals');
+        $this->setData('animals', $assignedAnimals);
+        $this->setData('recentTreatments', $recentTreatments);
+        $this->view('veterinary/animals/assigned', 'dashboard');
+    }
 }
 ?>

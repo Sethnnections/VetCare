@@ -1,1 +1,5 @@
 [2025-10-16 18:28:46] ERROR: Failed login attempt for: q@vims.com
+[2025-10-17 14:58:59] ERROR: Database fetchOne error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'c.name' in 'field list' | SQL: SELECT a.*, c.name as client_name, c.phone as client_phone 
+                FROM animals a 
+                JOIN clients c ON a.client_id = c.client_id 
+                WHERE a.animal_id = :animal_id

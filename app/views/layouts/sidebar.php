@@ -273,35 +273,94 @@
                 </a>
             </li>
 
-            <?php elseif($current_role == 'veterinary'): ?>
             <!-- ==================== VETERINARY MENU ==================== -->
-            <li class="nav-item sidebar-nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-paw"></i>
-                    <span>Animal Management</span>
-                    <i class="fas fa-chevron-down float-end"></i>
-                </a>
-                <ul class="nav sub-group-menu">
-                    <li class="nav-item">
-                        <a href="<?php echo url('/animals'); ?>" class="nav-link">
-                            <i class="fas fa-list"></i>
-                            <span>All Animals</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/animals/medical-records'); ?>" class="nav-link">
-                            <i class="fas fa-file-medical"></i>
-                            <span>Medical Records</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/animals/emergency'); ?>" class="nav-link">
-                            <i class="fas fa-ambulance"></i>
-                            <span>Emergency Cases</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
+            <?php elseif($current_role == 'veterinary'): ?>
+                <!-- ==================== VETERINARY MENU ==================== -->
+                <li class="nav-item <?php echo ($current_page == 'veterinary_animals') ? 'active' : ''; ?>">
+                    <a href="<?php echo url('/veterinary/animals'); ?>" class="nav-link <?php echo ($current_page == 'veterinary_animals') ? 'active' : ''; ?>">
+                        <i class="fas fa-paw"></i>
+                        <span>My Assigned Animals</span>
+                    </a>
+                </li>
+
+                <li class="nav-item sidebar-nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-stethoscope"></i>
+                        <span>Treatment Management</span>
+                        <i class="fas fa-chevron-down float-end"></i>
+                    </a>
+                    <ul class="nav sub-group-menu">
+                        <li class="nav-item">
+                            <a href="<?php echo url('/treatments'); ?>" class="nav-link">
+                                <i class="fas fa-list"></i>
+                                <span>All Treatments</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php echo url('/treatments/create'); ?>" class="nav-link">
+                                <i class="fas fa-plus-circle"></i>
+                                <span>New Treatment</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php echo url('/treatments/my-treatments'); ?>" class="nav-link">
+                                <i class="fas fa-user-md"></i>
+                                <span>My Treatments</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item sidebar-nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-pills"></i>
+                        <span>Medicine Management</span>
+                        <i class="fas fa-chevron-down float-end"></i>
+                    </a>
+                    <ul class="nav sub-group-menu">
+                        <li class="nav-item">
+                            <a href="<?php echo url('/medicines'); ?>" class="nav-link">
+                                <i class="fas fa-capsules"></i>
+                                <span>Medicine Inventory</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php echo url('/medicines/prescribe'); ?>" class="nav-link">
+                                <i class="fas fa-prescription"></i>
+                                <span>Prescribe Medicine</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item sidebar-nav-item">
+                    <a href="#" class="nav-link">
+                        <i class="fas fa-syringe"></i>
+                        <span>Vaccinations</span>
+                        <i class="fas fa-chevron-down float-end"></i>
+                    </a>
+                    <ul class="nav sub-group-menu">
+                        <li class="nav-item">
+                            <a href="<?php echo url('/vaccines'); ?>" class="nav-link">
+                                <i class="fas fa-list"></i>
+                                <span>All Vaccinations</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="<?php echo url('/vaccines/administer'); ?>" class="nav-link">
+                                <i class="fas fa-syringe"></i>
+                                <span>Administer Vaccine</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+
+                <li class="nav-item">
+                    <a href="<?php echo url('/veterinary/schedule'); ?>" class="nav-link">
+                        <i class="fas fa-calendar-day"></i>
+                        <span>My Schedule</span>
+                    </a>
+                </li>
 
             <li class="nav-item sidebar-nav-item">
                 <a href="#" class="nav-link">

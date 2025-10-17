@@ -243,6 +243,10 @@ class Animal extends Model {
         }
         return $this;
     }
+
+
+
+   
     
     // Convert object to array
     public function toArray() {
@@ -263,5 +267,129 @@ class Animal extends Model {
             'updated_at' => $this->updatedAt
         ];
     }
+
+        // In Animal.php - Complete veterinary assignment methods
+
+    /**
+     * Get animals assigned to a specific veterinary
+     */
+    public function getAnimalsByVeterinary($veterinaryId) {
+        $sql = "SELECT a.*, 
+                    u.first_name as client_first_name, 
+                    u.last_name as client_last_name,
+                    u.phone as client_phone,
+                    u.email as client_email
+                FROM {$this->table} a 
+                JOIN clients c ON a.client_id = c.client_id 
+                JOIN users u ON c.user_id = u.user_id
+                WHERE a.assigned_veterinary = ? 
+                AND a.status = 'active' 
+                ORDER BY a.name";
+        
+        return fetchAll($sql, [$veterinaryId]);
+    }
+
+    /**
+     * Check if animal is assigned to veterinary
+     */
+    public function isAssignedToVeterinary($animalId, $veterinaryId) {
+        $sql = "SELECT animal_id FROM {$this->table} 
+                WHERE animal_id = ? AND assigned_veterinary = ? AND status = 'active'";
+        $result = fetchOne($sql, [$animalId, $veterinaryId]);
+        return $result !== false;
+    }
+
+    /**
+     * Assign animal to veterinary
+     */
+    public function assignToVeterinary($animalId, $veterinaryId) {
+        $sql = "UPDATE {$this->table} SET assigned_veterinary = ? WHERE animal_id = ?";
+        return execute($sql, [$veterinaryId, $animalId]);
+    }
+
+    /**
+     * Unassign animal from veterinary
+     */
+    public function unassignFromVeterinary($animalId) {
+        $sql = "UPDATE {$this->table} SET assigned_veterinary = NULL WHERE animal_id = ?";
+        return execute($sql, [$animalId]);
+    }
+
+    /**
+     * Get available veterinarians (users with veterinary role)
+     */
+    public function getAvailableVeterinarians() {
+        $sql = "SELECT user_id, username, first_name, last_name, email 
+                FROM users 
+                WHERE role = 'veterinary' AND is_active = 1 
+                ORDER BY first_name, last_name";
+        return fetchAll($sql);
+    }
+
+    /**
+     * Get animals needing assignment (no veterinary assigned)
+     */
+    public function getUnassignedAnimals() {
+        $sql = "SELECT a.*, 
+                    u.first_name as client_first_name, 
+                    u.last_name as client_last_name
+                FROM {$this->table} a 
+                JOIN clients c ON a.client_id = c.client_id 
+                JOIN users u ON c.user_id = u.user_id
+                WHERE a.assigned_veterinary IS NULL 
+                AND a.status = 'active' 
+                ORDER BY a.name";
+        
+        return fetchAll($sql);
+    }
+
+    /**
+     * Get all veterinary assignments with details
+     */
+    public function getVeterinaryAssignments() {
+        $sql = "SELECT a.*, 
+                    vet.first_name as vet_first_name,
+                    vet.last_name as vet_last_name,
+                    vet.email as vet_email,
+                    client.first_name as client_first_name,
+                    client.last_name as client_last_name,
+                    client.phone as client_phone
+                FROM {$this->table} a 
+                LEFT JOIN users vet ON a.assigned_veterinary = vet.user_id
+                LEFT JOIN clients c ON a.client_id = c.client_id
+                LEFT JOIN users client ON c.user_id = client.user_id
+                WHERE a.assigned_veterinary IS NOT NULL 
+                AND a.status = 'active'
+                ORDER BY vet.first_name, vet.last_name, a.name";
+        
+        return fetchAll($sql);
+    }
+
+    /**
+     * Get assignment statistics
+     */
+    public function getAssignmentStats() {
+        $stats = [];
+        
+        // Total animals
+        $stats['total_animals'] = $this->count(['status' => 'active']);
+        
+        // Assigned animals
+        $sql = "SELECT COUNT(*) as count FROM {$this->table} WHERE assigned_veterinary IS NOT NULL AND status = 'active'";
+        $result = fetchOne($sql);
+        $stats['assigned_animals'] = $result['count'] ?? 0;
+        
+        // Unassigned animals
+        $stats['unassigned_animals'] = $stats['total_animals'] - $stats['assigned_animals'];
+        
+        // Veterinarians count
+        $sql = "SELECT COUNT(*) as count FROM users WHERE role = 'veterinary' AND is_active = 1";
+        $result = fetchOne($sql);
+        $stats['total_veterinarians'] = $result['count'] ?? 0;
+        
+        return $stats;
+    }
 }
+
+
 ?>

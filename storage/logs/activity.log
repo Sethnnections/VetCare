@@ -60,3 +60,10 @@
 [2025-10-17 10:08:00] ACTIVITY: System - User logged out: client@outlook.com (ID: 7)
 [2025-10-17 10:08:06] ACTIVITY: System - User logged in: client@outlook.com (ID: 7)
 [2025-10-17 14:52:04] ACTIVITY: System - Animal created: Bruce by client ID: 3
+[2025-10-17 14:58:31] ACTIVITY: System - User logged out: client@outlook.com (ID: 7)
+[2025-10-17 14:58:44] ACTIVITY: System - User logged in: sb@vetelinary.com (ID: 6)
+[2025-10-17 16:06:00] ACTIVITY: System - User logged out: sb@vetelinary.com (ID: 6)
+[2025-10-17 16:06:09] ACTIVITY: System - User logged in: admin@vet.com (ID: 1)
+[2025-10-17 16:47:36] ACTIVITY: System - Animal 'Bruce' assigned to veterinary 'Steve Biko' by admin
+[2025-10-17 16:51:27] ACTIVITY: System - User logged out: admin@vet.com (ID: 1)
+[2025-10-17 16:51:32] ACTIVITY: System - User logged in: sb@vetelinary.com (ID: 6)

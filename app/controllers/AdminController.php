@@ -1,12 +1,10 @@
 <?php
-// app/controllers/AdminController.php
 
 class AdminController extends Controller {
     private $userModel;
     private $clientModel;
     private $animalModel;
     private $treatmentModel;
-    private $medicineModel;
     
     public function __construct() {
         $this->authorize(ROLE_ADMIN);
@@ -15,7 +13,6 @@ class AdminController extends Controller {
         $this->clientModel = new Client();
         $this->animalModel = new Animal();
         $this->treatmentModel = new Treatment();
-        $this->medicineModel = new Medicine();
     }
     
     public function dashboard() {
@@ -82,40 +79,7 @@ class AdminController extends Controller {
         $this->view('admin/clients');
     }
     
-    public function medicines() {
-        $this->setTitle('Manage Medicines');
-        
-        $page = $this->get('page', 1);
-        $search = $this->get('search');
-        $type = $this->get('type');
-        
-        $conditions = [];
-        if ($type) {
-            $conditions['type'] = $type;
-        }
-        
-        if ($search) {
-            $medicines = $this->medicineModel->searchMedicines($search);
-            $pagination = null;
-        } else {
-            $result = $this->medicineModel->paginate($page, RECORDS_PER_PAGE, $conditions, 'name ASC');
-            $medicines = $result['data'];
-            $pagination = $result['pagination'];
-        }
-        
-        $this->setData('medicines', $medicines);
-        $this->setData('pagination', $pagination);
-        $this->setData('search', $search);
-        $this->setData('type', $type);
-        $this->setData('medicineTypes', [
-            MEDICINE_ANTIBIOTIC => 'Antibiotic',
-            MEDICINE_VACCINE => 'Vaccine',
-            MEDICINE_SUPPLEMENT => 'Supplement',
-            MEDICINE_ANESTHETIC => 'Anesthetic'
-        ]);
-        $this->view('admin/medicines');
-    }
-    
+
     public function reports() {
         $this->setTitle('Reports');
         
@@ -139,6 +103,7 @@ class AdminController extends Controller {
         $this->setData('clientStats', $clientStats);
         $this->view('admin/reports');
     }
+
     
     private function getBillingStats($startDate, $endDate) {
         $sql = "SELECT 
@@ -153,5 +118,105 @@ class AdminController extends Controller {
         
         return fetchAll($sql, ['start_date' => $startDate, 'end_date' => $endDate]);
     }
+
+        public function animalAssignments() {
+        requireLogin();
+        $this->authorize([ROLE_ADMIN]);
+        
+        $unassignedAnimals = $this->animalModel->getUnassignedAnimals();
+        $veterinarians = $this->animalModel->getAvailableVeterinarians();
+        $currentAssignments = $this->animalModel->getVeterinaryAssignments();
+        
+        $this->setTitle('Animal Assignment Management');
+        $this->setData('unassignedAnimals', $unassignedAnimals);
+        $this->setData('veterinarians', $veterinarians);
+        $this->setData('currentAssignments', $currentAssignments);
+        $this->view('admin/animal-assignments');
+    }
+    
+    /**
+     * Assign animal to veterinary
+     */
+    public function assignAnimal() {
+        requireLogin();
+        $this->authorize([ROLE_ADMIN]);
+        
+        if (!$this->isPost()) {
+            $this->redirect('/admin/animal-assignments');
+            return;
+        }
+        
+        try {
+            $this->validateCsrf();
+            
+            $animalId = $this->input('animal_id');
+            $veterinaryId = $this->input('veterinary_id');
+            
+            if (empty($animalId) || empty($veterinaryId)) {
+                $this->setFlash('error', 'Please select both animal and veterinary');
+                $this->redirect('/admin/animal-assignments');
+                return;
+            }
+            
+            $assigned = $this->animalModel->assignToVeterinary($animalId, $veterinaryId);
+            
+            if ($assigned) {
+                // Log the assignment
+                $animal = $this->animalModel->find($animalId);
+                $veterinary = $this->userModel->find($veterinaryId);
+                
+                $vetName = !empty($veterinary['first_name']) ? 
+                    $veterinary['first_name'] . ' ' . $veterinary['last_name'] : 
+                    $veterinary['username'];
+                
+                logActivity("Animal '{$animal['name']}' assigned to veterinary '{$vetName}' by admin");
+                $this->setFlash('success', 'Animal assigned to veterinary successfully');
+            } else {
+                $this->setFlash('error', 'Failed to assign animal to veterinary');
+            }
+            
+            $this->redirect('/admin/animal-assignments');
+            
+        } catch (Exception $e) {
+            logError("Animal assignment error: " . $e->getMessage());
+            $this->setFlash('error', 'An error occurred while assigning animal');
+            $this->redirect('/admin/animal-assignments');
+        }
+    }
+    
+    /**
+     * Unassign animal from veterinary
+     */
+    public function unassignAnimal($animalId) {
+        requireLogin();
+        $this->authorize([ROLE_ADMIN]);
+        
+        if (!$this->isPost()) {
+            $this->redirect('/admin/animal-assignments');
+            return;
+        }
+        
+        try {
+            $this->validateCsrf();
+            
+            $unassigned = $this->animalModel->unassignFromVeterinary($animalId);
+            
+            if ($unassigned) {
+                $animal = $this->animalModel->find($animalId);
+                logActivity("Animal '{$animal['name']}' unassigned from veterinary by admin");
+                $this->setFlash('success', 'Animal unassigned successfully');
+            } else {
+                $this->setFlash('error', 'Failed to unassign animal');
+            }
+            
+            $this->redirect('/admin/animal-assignments');
+            
+        } catch (Exception $e) {
+            logError("Animal unassignment error: " . $e->getMessage());
+            $this->setFlash('error', 'An error occurred while unassigning animal');
+            $this->redirect('/admin/animal-assignments');
+        }
+    }
 }
 ?>
+
