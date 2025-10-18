@@ -186,5 +186,22 @@ class Client extends Model {
         
         return $errors;
     }
+
+ // In Client.php - Add this method
+    public function getActiveClients() {
+        try {
+            $sql = "SELECT c.*, u.first_name, u.last_name, u.email, u.phone 
+                    FROM {$this->table} c 
+                    JOIN users u ON c.user_id = u.user_id 
+                    WHERE u.is_active = 1 
+                    ORDER BY u.first_name, u.last_name";
+            return fetchAll($sql);
+        } catch (Exception $e) {
+            logError("Get active clients error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    
 }
 ?>

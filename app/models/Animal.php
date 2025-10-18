@@ -368,7 +368,100 @@ class Animal extends Model {
     /**
      * Get assignment statistics
      */
-    public function getAssignmentStats() {
+
+    /**
+     * Get animal medication history
+     */
+    public function getMedicationHistory($animalId) {
+        $sql = "SELECT t.*, 
+                    u.first_name as vet_first_name,
+                    u.last_name as vet_last_name,
+                    'treatment' as type
+                FROM treatments t 
+                JOIN users u ON t.veterinary_id = u.user_id
+                WHERE t.animal_id = ? AND t.medication_prescribed IS NOT NULL
+                UNION ALL
+                SELECT v.*,
+                    u.first_name as vet_first_name,
+                    u.last_name as vet_last_name,
+                    'vaccine' as type
+                FROM vaccines v
+                JOIN users u ON v.administered_by = u.user_id
+                WHERE v.animal_id = ?
+                ORDER BY created_at DESC";
+        
+        return fetchAll($sql, [$animalId, $animalId]);
+    }
+
+    /**
+     * Get active medications for animal
+     */
+    public function getActiveMedications($animalId) {
+        $sql = "SELECT t.*, 
+                    u.first_name as vet_first_name,
+                    u.last_name as vet_last_name
+                FROM treatments t 
+                JOIN users u ON t.veterinary_id = u.user_id
+                WHERE t.animal_id = ? 
+                AND t.medication_prescribed IS NOT NULL 
+                AND t.medication_prescribed != ''
+                AND t.status IN ('ongoing', 'follow_up')
+                ORDER BY t.treatment_date DESC";
+        
+        return fetchAll($sql, [$animalId]);
+    }
+
+    /**
+     * Update animal status
+     */
+    public function updateAnimalStatus($animalId, $status) {
+        return $this->update($animalId, ['status' => $status]);
+    }
+
+
+
+    /**
+     * Get species statistics
+     */
+    public function getSpeciesStats() {
+        $sql = "SELECT species, COUNT(*) as count 
+                FROM {$this->table} 
+                WHERE status = 'active' 
+                GROUP BY species 
+                ORDER BY count DESC";
+        
+        return fetchAll($sql);
+    }
+
+  
+
+/**
+ * Get veterinary workload statistics with error handling
+ */
+public function getVeterinaryWorkload() {
+    try {
+        $sql = "SELECT u.user_id, u.first_name, u.last_name, 
+                       COUNT(DISTINCT a.animal_id) as assigned_animals,
+                       COUNT(DISTINCT t.treatment_id) as active_treatments
+                FROM users u
+                LEFT JOIN animals a ON u.user_id = a.assigned_veterinary AND a.status = 'active'
+                LEFT JOIN treatments t ON u.user_id = t.veterinary_id AND t.status IN ('ongoing', 'follow_up')
+                WHERE u.role = 'veterinary' AND u.is_active = 1
+                GROUP BY u.user_id, u.first_name, u.last_name
+                ORDER BY assigned_animals DESC";
+        
+        return fetchAll($sql);
+    } catch (Exception $e) {
+        logError("Veterinary workload query error: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Get assignment statistics with error handling
+ */
+public function getAssignmentStats() {
+    try {
         $stats = [];
         
         // Total animals
@@ -388,7 +481,139 @@ class Animal extends Model {
         $stats['total_veterinarians'] = $result['count'] ?? 0;
         
         return $stats;
+    } catch (Exception $e) {
+        logError("Assignment stats query error: " . $e->getMessage());
+        return [
+            'total_animals' => 0,
+            'assigned_animals' => 0,
+            'unassigned_animals' => 0,
+            'total_veterinarians' => 0
+        ];
     }
+}
+
+/**
+ * Get all animals with details for admin - with error handling
+ */
+public function getAllAnimalsWithDetails($filters = []) {
+    try {
+        $sql = "SELECT a.*, 
+                    c.client_id,
+                    u.first_name as client_first_name, 
+                    u.last_name as client_last_name,
+                    u.email as client_email,
+                    u.phone as client_phone,
+                    vet.first_name as vet_first_name,
+                    vet.last_name as vet_last_name
+                FROM {$this->table} a 
+                JOIN clients c ON a.client_id = c.client_id 
+                JOIN users u ON c.user_id = u.user_id
+                LEFT JOIN users vet ON a.assigned_veterinary = vet.user_id
+                WHERE a.status = 'active'";
+        
+        $params = [];
+        
+        // Apply filters
+        if (!empty($filters['status'])) {
+            $sql .= " AND a.status = :status";
+            $params['status'] = $filters['status'];
+        }
+        
+        if (!empty($filters['species'])) {
+            $sql .= " AND a.species = :species";
+            $params['species'] = $filters['species'];
+        }
+        
+        if (!empty($filters['assigned_veterinary'])) {
+            if ($filters['assigned_veterinary'] === 'unassigned') {
+                $sql .= " AND a.assigned_veterinary IS NULL";
+            } else {
+                $sql .= " AND a.assigned_veterinary = :veterinary_id";
+                $params['veterinary_id'] = $filters['assigned_veterinary'];
+            }
+        }
+        
+        $sql .= " ORDER BY a.created_at DESC";
+        
+        $animals = fetchAll($sql, $params);
+        
+        // Add treatment and vaccine counts separately to avoid complex joins
+        foreach ($animals as &$animal) {
+            $animal['treatment_count'] = $this->countTreatments($animal['animal_id']);
+            $animal['vaccine_count'] = $this->countVaccines($animal['animal_id']);
+        }
+        
+        return $animals;
+    } catch (Exception $e) {
+        logError("Get animals with details error: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Count treatments for an animal
+ */
+private function countTreatments($animalId) {
+    try {
+        $sql = "SELECT COUNT(*) as count FROM treatments WHERE animal_id = ?";
+        $result = fetchOne($sql, [$animalId]);
+        return $result['count'] ?? 0;
+    } catch (Exception $e) {
+        return 0;
+    }
+}
+
+/**
+ * Count vaccines for an animal
+ */
+private function countVaccines($animalId) {
+    try {
+        $sql = "SELECT COUNT(*) as count FROM vaccines WHERE animal_id = ?";
+        $result = fetchOne($sql, [$animalId]);
+        return $result['count'] ?? 0;
+    } catch (Exception $e) {
+        return 0;
+    }
+}
+
+/**
+ * Get assignment history with error handling
+ */
+public function getAssignmentHistory($animalId) {
+    try {
+        $sql = "SELECT ah.*,
+                    u1.first_name as assigned_by_first_name,
+                    u1.last_name as assigned_by_last_name,
+                    u2.first_name as vet_first_name,
+                    u2.last_name as vet_last_name
+                FROM animal_assignments_history ah
+                LEFT JOIN users u1 ON ah.assigned_by = u1.user_id
+                LEFT JOIN users u2 ON ah.veterinary_id = u2.user_id
+                WHERE ah.animal_id = ?
+                ORDER BY ah.assigned_at DESC";
+        
+        return fetchAll($sql, [$animalId]);
+    } catch (Exception $e) {
+        logError("Assignment history query error: " . $e->getMessage());
+        return [];
+    }
+}
+
+/**
+ * Log assignment in history with error handling
+ */
+public function logAssignment($animalId, $veterinaryId, $assignedBy, $action = 'assigned') {
+    try {
+        $sql = "INSERT INTO animal_assignments_history 
+                (animal_id, veterinary_id, assigned_by, action, assigned_at) 
+                VALUES (?, ?, ?, ?, NOW())";
+        
+        return execute($sql, [$animalId, $veterinaryId, $assignedBy, $action]);
+    } catch (Exception $e) {
+        logError("Assignment logging error: " . $e->getMessage());
+        return false;
+    }
+}
 }
 
 

@@ -107,7 +107,11 @@ try {
     $router->dispatch($url);
     
 } catch (Exception $e) {
-    http_response_code($e->getCode() ?: 500);
+    $errorCode = $e->getCode();
+    if (!is_numeric($errorCode) || $errorCode < 100 || $errorCode > 599) {
+        $errorCode = 500;
+    }
+    http_response_code((int)$errorCode);
     
     if (isAjaxRequest()) {
         header('Content-Type: application/json');

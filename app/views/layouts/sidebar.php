@@ -44,6 +44,7 @@
                 </ul>
             </li>
             
+            <!-- Animal Management Menu -->
             <li class="nav-item sidebar-nav-item">
                 <a href="#" class="nav-link">
                     <i class="fas fa-paw"></i>
@@ -52,27 +53,33 @@
                 </a>
                 <ul class="nav sub-group-menu">
                     <li class="nav-item">
-                        <a href="<?php echo url('/animals'); ?>" class="nav-link">
+                        <a href="<?php echo url('/admin/animals'); ?>" class="nav-link <?php echo ($current_page == 'admin_animals') ? 'active' : ''; ?>">
                             <i class="fas fa-list"></i>
                             <span>All Animals</span>
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a href="<?php echo url('/admin/animal-assignments'); ?>" class="nav-link <?php echo ($current_page == 'admin_assignments') ? 'active' : ''; ?>">
+                            <i class="fas fa-user-md"></i>
+                            <span>Animal Assignments</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo url('/admin/animals/veterinary-workload'); ?>" class="nav-link <?php echo ($current_page == 'admin_animals_workload') ? 'active' : ''; ?>">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Veterinary Workload</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="<?php echo url('/animals/create'); ?>" class="nav-link">
                             <i class="fas fa-plus-circle"></i>
-                            <span>Add Animal</span>
+                            <span>Add New Animal</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?php echo url('/animals/breeds'); ?>" class="nav-link">
-                            <i class="fas fa-dna"></i>
-                            <span>Breeds Management</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/animals/species'); ?>" class="nav-link">
-                            <i class="fas fa-dog"></i>
-                            <span>Species Types</span>
+                        <a href="<?php echo url('/animals'); ?>" class="nav-link">
+                            <i class="fas fa-search"></i>
+                            <span>Search Animals</span>
                         </a>
                     </li>
                 </ul>

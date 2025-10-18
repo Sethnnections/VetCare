@@ -24,14 +24,14 @@ $current_page = 'admin_users_create';
                     <?php endif; ?>
 
                     <div class="row justify-content-center">
-                        <div class="col-md-8">
+                        <div class="col-md-12">
                             <div class="card">
                                 <div class="card-body">
                                     <form action="<?php echo url('/admin/users/store'); ?>" method="POST">
                                         <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
                                         
                                         <div class="row">
-                                            <div class="col-md-6">
+                                            <div class="col-md-12">
                                                 <div class="form-group mb-3">
                                                     <label for="first_name" class="form-label">First Name</label>
                                                     <input type="text" class="form-control <?php echo isset($errors['first_name']) ? 'is-invalid' : ''; ?>" 
@@ -41,7 +41,7 @@ $current_page = 'admin_users_create';
                                                     <?php endif; ?>
                                                 </div>
                                             </div>
-                                            <div class="col-md-6">
+                                            <div class="col-md-12">
                                                 <div class="form-group mb-3">
                                                     <label for="last_name" class="form-label">Last Name</label>
                                                     <input type="text" class="form-control <?php echo isset($errors['last_name']) ? 'is-invalid' : ''; ?>" 

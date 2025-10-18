@@ -331,5 +331,48 @@ $routes = [
         'controller' => 'User',
         'action' => 'resetPassword'
     ],
+
+    // Admin Animal Management Routes
+'/admin/animals' => [
+    'controller' => 'AdminAnimal',
+    'action' => 'index'
+],
+'/admin/animals/{id}' => [
+    'controller' => 'AdminAnimal',
+    'action' => 'show'
+    ],
+    '/admin/animals/{id}/assign-veterinary' => [
+        'controller' => 'AdminAnimal',
+        'action' => 'assignVeterinary'
+    ],
+    '/admin/animals/{id}/unassign-veterinary' => [
+        'controller' => 'AdminAnimal',
+        'action' => 'unassignVeterinary'
+    ],
+    '/admin/animals/{id}/activate' => [
+        'controller' => 'AdminAnimal',
+        'action' => 'activate'
+    ],
+    '/admin/animals/{id}/deactivate' => [
+        'controller' => 'AdminAnimal',
+        'action' => 'deactivate'
+    ],
+    '/admin/animals/{id}/medication-history' => [
+        'controller' => 'AdminAnimal',
+        'action' => 'medicationHistory'
+    ],
+    '/admin/animals/veterinary-workload' => [
+        'controller' => 'AdminAnimal',
+        'action' => 'veterinaryWorkload'
+    ],
+    '/admin/animals/{id}/toggle-status' => [
+        'controller' => 'AdminAnimal',
+        'action' => 'toggleStatus'
+    ],
+    '/admin/animals/{id}/quick-assign' => [
+        'controller' => 'AdminAnimal',
+        'action' => 'quickAssign'
+    ],
+
 ];
 ?>
