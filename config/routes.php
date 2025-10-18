@@ -256,6 +256,11 @@ $routes = [
         'action' => 'updateProfile'
     ],
 
+    '/client/animals/{id}/medical-history' => [
+        'controller' => 'Animal',
+        'action' => 'clientMedicalHistory'
+    ],
+ 
     // Veterinary Animal Routes - ASSIGNED ANIMALS ONLY
     '/veterinary/animals' => [
     'controller' => 'Animal',
@@ -373,6 +378,8 @@ $routes = [
         'controller' => 'AdminAnimal',
         'action' => 'quickAssign'
     ],
+    // Add these to your routes array
+
 
 ];
 ?>

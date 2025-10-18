@@ -614,7 +614,47 @@ public function logAssignment($animalId, $veterinaryId, $assignedBy, $action = '
         return false;
     }
 }
+
+/**
+ * Get animal medical history for client view
+ */
+public function getAnimalMedicalHistory($animalId, $clientId = null) {
+    try {
+        // Verify animal belongs to client if clientId is provided
+        if ($clientId) {
+            $animal = $this->find($animalId);
+            if (!$animal || $animal['client_id'] != $clientId) {
+                return ['treatments' => [], 'vaccines' => []];
+            }
+        }
+        
+        // Get treatments with veterinary info
+        $treatmentSql = "SELECT t.*, 
+                         CONCAT(u.first_name, ' ', u.last_name) as veterinary_name
+                         FROM treatments t 
+                         LEFT JOIN users u ON t.veterinary_id = u.user_id
+                         WHERE t.animal_id = ? 
+                         ORDER BY t.treatment_date DESC";
+        $treatments = fetchAll($treatmentSql, [$animalId]);
+        
+        // Get vaccines with admin info
+        $vaccineSql = "SELECT v.*,
+                       CONCAT(u.first_name, ' ', u.last_name) as administered_by_name
+                       FROM vaccines v 
+                       LEFT JOIN users u ON v.administered_by = u.user_id
+                       WHERE v.animal_id = ? 
+                       ORDER BY v.vaccine_date DESC";
+        $vaccines = fetchAll($vaccineSql, [$animalId]);
+        
+        return [
+            'treatments' => $treatments,
+            'vaccines' => $vaccines
+        ];
+        
+    } catch (Exception $e) {
+        logError("Animal medical history error: " . $e->getMessage());
+        return ['treatments' => [], 'vaccines' => []];
+    }
 }
-
-
+}
 ?>

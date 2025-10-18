@@ -69,3 +69,8 @@
 [2025-10-17 16:51:32] ACTIVITY: System - User logged in: sb@vetelinary.com (ID: 6)
 [2025-10-18 09:22:54] ACTIVITY: System - User logged out: sb@vetelinary.com (ID: 6)
 [2025-10-18 09:23:01] ACTIVITY: System - User logged in: admin@vet.com (ID: 1)
+[2025-10-18 15:57:38] ACTIVITY: System - User logged out: admin@vet.com (ID: 1)
+[2025-10-18 15:57:47] ACTIVITY: System - User logged in: sb@vetelinary.com (ID: 6)
+[2025-10-18 15:58:06] ACTIVITY: System - User logged out: sb@vetelinary.com (ID: 6)
+[2025-10-18 16:00:14] ACTIVITY: System - User logged in: sp@outlook.com (ID: 10)
+[2025-10-18 16:01:39] ACTIVITY: System - Animal created: Zigge by client ID: 6

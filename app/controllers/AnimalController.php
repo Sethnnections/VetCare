@@ -561,29 +561,6 @@ class AnimalController extends Controller {
         }
     }
 
-    public function clientMedicalHistory($id) {
-        requireLogin();
-        $this->authorize([ROLE_CLIENT]);
-        
-        $clientId = $this->clientModel->getClientIdByUserId(getCurrentUserId());
-        $animal = $this->animalModel->find($id);
-        
-        // Check if animal belongs to client
-        if (!$animal || $animal['client_id'] != $clientId) {
-            $this->setFlash('error', 'Animal not found or access denied');
-            $this->redirect('/client/animals');
-            return;
-        }
-        
-        $treatments = $this->animalModel->getAnimalTreatments($id);
-        $vaccines = $this->animalModel->getAnimalVaccinations($id);
-        
-        $this->setTitle('Medical History: ' . $animal['name']);
-        $this->setData('animal', $animal);
-        $this->setData('treatments', $treatments);
-        $this->setData('vaccines', $vaccines);
-        $this->view('client/animals/medical-history', 'dashboard');
-    }
 
     // AJAX method to get client's animals
     public function clientAnimalsAjax() {
@@ -614,7 +591,6 @@ class AnimalController extends Controller {
 
 
     // Veterinary-specific animal method
-    // Veterinary-specific animal methods - SEE ONLY ASSIGNED ANIMALS
     public function veterinaryIndex() {
         requireLogin();
         $this->authorize([ROLE_VETERINARY]);
@@ -635,13 +611,43 @@ class AnimalController extends Controller {
             });
         }
         
+        // Calculate stats for the view
+        $animalsWithTreatments = 0;
+        $animalsNeedingVaccines = 0;
+        $animalsUpToDate = 0;
+        
+        // Enhance animal data with additional information
+        foreach ($assignedAnimals as &$animal) {
+            // Get last treatment
+            $lastTreatment = $this->animalModel->getLastTreatment($animal['animal_id']);
+            if ($lastTreatment) {
+                $animal['last_treatment_date'] = $lastTreatment['treatment_date'];
+                $animal['last_treatment_type'] = $lastTreatment['diagnosis'] ?? 'Treatment';
+                $animalsWithTreatments++;
+            }
+            
+            // Get vaccination status
+            $nextVaccine = $this->animalModel->getNextVaccination($animal['animal_id']);
+            if ($nextVaccine) {
+                $animal['health_status'] = 'Up to date';
+                $animalsUpToDate++;
+            } else {
+                $animal['health_status'] = 'Vaccine needed';
+                $animalsNeedingVaccines++;
+            }
+        }
+        
+        $stats = [
+            'total' => count($assignedAnimals),
+            'with_treatments' => $animalsWithTreatments,
+            'needing_vaccines' => $animalsNeedingVaccines,
+            'up_to_date' => $animalsUpToDate
+        ];
+        
         $this->setTitle('My Assigned Animals');
         $this->setData('animals', $assignedAnimals);
         $this->setData('search', $search);
-        $this->setData('stats', [
-            'total' => count($assignedAnimals),
-            'active' => count($assignedAnimals) // All assigned are active
-        ]);
+        $this->setData('stats', $stats);
         $this->view('veterinary/animals/index', 'dashboard');
     }
 
@@ -823,5 +829,30 @@ class AnimalController extends Controller {
         $this->setData('recentTreatments', $recentTreatments);
         $this->view('veterinary/animals/assigned', 'dashboard');
     }
+
+    public function clientMedicalHistory($id) {
+    requireLogin();
+    $this->authorize([ROLE_CLIENT]);
+    
+    $userId = $_SESSION['user_id'];
+    $clientId = $this->clientModel->getClientIdByUserId($userId);
+    $animal = $this->animalModel->find($id);
+    
+    // Check if animal belongs to client
+    if (!$animal || $animal['client_id'] != $clientId) {
+        $this->setFlash('error', 'Animal not found or access denied');
+        $this->redirect('/client/animals');
+        return;
+    }
+    
+    // Get medical history using the new method
+    $medicalHistory = $this->animalModel->getAnimalMedicalHistory($id, $clientId);
+    
+    $this->setTitle('Medical History: ' . $animal['name']);
+    $this->setData('animal', $animal);
+    $this->setData('treatments', $medicalHistory['treatments']);
+    $this->setData('vaccines', $medicalHistory['vaccines']);
+    $this->view('client/animals/medical-history', 'dashboard');
+}
 }
 ?>
