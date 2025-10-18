@@ -374,4 +374,48 @@ class User extends Model {
         
         return $user;
     }
+
+    // Add to User.php model
+    public function getAllUsersWithFilters($page = 1, $perPage = 15, $whereClause = '', $params = []) {
+        $offset = ($page - 1) * $perPage;
+        
+        $sql = "SELECT * FROM {$this->table}";
+        if (!empty($whereClause)) {
+            $sql .= " {$whereClause}";
+        }
+        $sql .= " ORDER BY created_at DESC LIMIT :limit OFFSET :offset";
+        
+        $stmt = $this->db->prepare($sql);
+        
+        // Add limit and offset to params
+        $params['limit'] = $perPage;
+        $params['offset'] = $offset;
+        
+        $stmt->execute($params);
+        $users = $stmt->fetchAll();
+        
+        // Get total count for pagination
+        $countSql = "SELECT COUNT(*) as total FROM {$this->table}";
+        if (!empty($whereClause)) {
+            $countSql .= " {$whereClause}";
+        }
+        $countStmt = $this->db->prepare($countSql);
+        $countStmt->execute(array_diff_key($params, ['limit' => 0, 'offset' => 0]));
+        $total = $countStmt->fetch()['total'];
+        
+        return [
+            'data' => array_map([$this, 'hideFields'], $users),
+            'total' => $total,
+            'page' => $page,
+            'per_page' => $perPage,
+            'total_pages' => ceil($total / $perPage)
+        ];
+    }
+
+    public function getUserActivityLogs($userId) {
+        $sql = "SELECT * FROM system_logs WHERE user_id = ? ORDER BY created_at DESC LIMIT 10";
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([$userId]);
+        return $stmt->fetchAll();
+    }
 }

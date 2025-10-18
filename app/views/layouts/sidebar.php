@@ -30,33 +30,15 @@
                 </a>
                 <ul class="nav sub-group-menu">
                     <li class="nav-item">
-                        <a href="<?php echo url('/users/create'); ?>" class="nav-link">
+                        <a href="<?php echo url('/admin/users/create'); ?>" class="nav-link">
                             <i class="fas fa-user-plus"></i>
-                            <span>Register Staff</span>
+                            <span>Add New User</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?php echo url('/users'); ?>" class="nav-link">
+                        <a href="<?php echo url('/admin/users'); ?>" class="nav-link">
                             <i class="fas fa-users"></i>
                             <span>All Users</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/users/veterinarians'); ?>" class="nav-link">
-                            <i class="fas fa-user-md"></i>
-                            <span>Veterinarians</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/users/clients'); ?>" class="nav-link">
-                            <i class="fas fa-user-friends"></i>
-                            <span>Clients</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/users/roles'); ?>" class="nav-link">
-                            <i class="fas fa-user-tag"></i>
-                            <span>Role Management</span>
                         </a>
                     </li>
                 </ul>

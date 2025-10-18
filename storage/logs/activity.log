@@ -67,3 +67,5 @@
 [2025-10-17 16:47:36] ACTIVITY: System - Animal 'Bruce' assigned to veterinary 'Steve Biko' by admin
 [2025-10-17 16:51:27] ACTIVITY: System - User logged out: admin@vet.com (ID: 1)
 [2025-10-17 16:51:32] ACTIVITY: System - User logged in: sb@vetelinary.com (ID: 6)
+[2025-10-18 09:22:54] ACTIVITY: System - User logged out: sb@vetelinary.com (ID: 6)
+[2025-10-18 09:23:01] ACTIVITY: System - User logged in: admin@vet.com (ID: 1)

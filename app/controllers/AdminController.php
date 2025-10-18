@@ -15,7 +15,7 @@ class AdminController extends Controller {
         $this->treatmentModel = new Treatment();
     }
     
-    public function dashboard() {
+       public function dashboard() {
         $this->setTitle('Admin Dashboard');
         
         // Get statistics
@@ -34,7 +34,7 @@ class AdminController extends Controller {
         
         $this->setData('stats', $stats);
         $this->setData('recentTreatments', $recentTreatments);
-        $this->view('admin/dashboard');
+        $this->view('admin/dashboard', 'dashboard');
     }
     
     public function users() {
@@ -55,9 +55,10 @@ class AdminController extends Controller {
         $this->setData('users', $users);
         $this->setData('pagination', $pagination);
         $this->setData('search', $search);
-        $this->view('admin/users');
+        $this->view('admin/users', 'dashboard');
     }
     
+   
     public function clients() {
         $this->setTitle('Manage Clients');
         

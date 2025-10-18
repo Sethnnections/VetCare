@@ -294,6 +294,42 @@ $routes = [
         'action' => 'unassignAnimal'
     ],
 
-    // In config/routes.php - Add these routes 
+    // Admin User Management Routes
+    '/admin/users' => [
+        'controller' => 'User',
+        'action' => 'index'
+    ],
+    '/admin/users/create' => [
+        'controller' => 'User',
+        'action' => 'create'
+    ],
+    '/admin/users/store' => [
+        'controller' => 'User',
+        'action' => 'store'
+    ],
+    '/admin/users/{id}' => [
+        'controller' => 'User',
+        'action' => 'show'
+    ],
+    '/admin/users/{id}/edit' => [
+        'controller' => 'User',
+        'action' => 'edit'
+    ],
+    '/admin/users/{id}/update' => [
+        'controller' => 'User',
+        'action' => 'update'
+    ],
+    '/admin/users/{id}/deactivate' => [
+        'controller' => 'User',
+        'action' => 'deactivate'
+    ],
+    '/admin/users/{id}/activate' => [
+        'controller' => 'User',
+        'action' => 'activate'
+    ],
+    '/admin/users/{id}/reset-password' => [
+        'controller' => 'User',
+        'action' => 'resetPassword'
+    ],
 ];
 ?>
