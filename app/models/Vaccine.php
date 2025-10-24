@@ -68,44 +68,44 @@ class Vaccine extends Model {
         return fetchOne($sql, ['vaccine_id' => $vaccineId]);
     }
     
+
+    /**
+     * Get vaccines by animal with administrator details 
+     */
     public function getVaccinesByAnimal($animalId) {
-        $sql = "SELECT v.*, u.name as veterinary_name
-                FROM {$this->table} v
+        $sql = "SELECT v.*, 
+                    CONCAT(u.first_name, ' ', u.last_name) as administered_by_name
+                FROM {$this->table} v 
                 JOIN users u ON v.administered_by = u.user_id
-                WHERE v.animal_id = :animal_id
+                WHERE v.animal_id = :animal_id 
                 ORDER BY v.vaccine_date DESC";
         return fetchAll($sql, ['animal_id' => $animalId]);
     }
+
     
+    /**
+     * Get upcoming vaccinations using view
+     */
     public function getUpcomingVaccinations($days = 30) {
-        $sql = "SELECT v.*, 
-                       a.name as animal_name, a.species, a.breed,
-                       c.name as client_name, c.phone as client_phone,
-                       u.name as veterinary_name
-                FROM {$this->table} v
-                JOIN animals a ON v.animal_id = a.animal_id
-                JOIN clients c ON a.client_id = c.client_id
-                JOIN users u ON v.administered_by = u.user_id
-                WHERE v.next_due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL :days DAY)
-                AND v.status != 'completed'
-                ORDER BY v.next_due_date ASC";
+        $sql = "SELECT * FROM vaccine_details_view 
+                WHERE next_due_date BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL :days DAY)
+                AND vaccine_status = 'completed'
+                ORDER BY next_due_date ASC";
         return fetchAll($sql, ['days' => $days]);
     }
     
+    /**
+     * Get overdue vaccinations using view
+     */
     public function getOverdueVaccinations() {
-        $sql = "SELECT v.*, 
-                       a.name as animal_name, a.species, a.breed,
-                       c.name as client_name, c.phone as client_phone,
-                       u.name as veterinary_name
-                FROM {$this->table} v
-                JOIN animals a ON v.animal_id = a.animal_id
-                JOIN clients c ON a.client_id = c.client_id
-                JOIN users u ON v.administered_by = u.user_id
-                WHERE v.next_due_date < CURDATE()
-                AND v.status != 'completed'
-                ORDER BY v.next_due_date ASC";
+        $sql = "SELECT * FROM vaccine_details_view 
+                WHERE next_due_date < CURDATE()
+                AND vaccine_status = 'completed'
+                ORDER BY next_due_date ASC";
         return fetchAll($sql);
     }
+    
+
     
     public function markAsCompleted($vaccineId) {
         return $this->update($vaccineId, ['status' => 'completed']);
@@ -314,5 +314,6 @@ class Vaccine extends Model {
                 return '<span class="badge bg-secondary">Unknown</span>';
         }
     }
+    
 }
 ?>

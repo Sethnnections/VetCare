@@ -10,32 +10,6 @@ class Client extends Model {
         parent::__construct();
     }
     
-    // Business logic methods
-    public function getClientByUserId($userId) {
-        error_log("=== CLIENT MODEL DEBUG ===");
-        error_log("User ID: " . $userId);
-        
-        $sql = "SELECT c.*, u.first_name, u.last_name, u.email, u.phone, u.address, u.profile_picture
-                FROM {$this->table} c 
-                JOIN users u ON c.user_id = u.user_id 
-                WHERE c.user_id = ?";
-        
-        error_log("SQL: " . $sql);
-        
-        $result = fetchOne($sql, [$userId]);
-        
-        error_log("Query result: " . print_r($result, true));
-        error_log("Result type: " . gettype($result));
-        error_log("Is result array? " . (is_array($result) ? 'Yes' : 'No'));
-        
-        if (is_array($result)) {
-            error_log("Result keys: " . implode(', ', array_keys($result)));
-        } else {
-            error_log("No client profile found for user ID: " . $userId);
-        }
-        
-        return $result;
-    }
 
     public function getClientAnimals($clientId) {
         $sql = "SELECT * FROM animals WHERE client_id = ? AND status = 'active' ORDER BY name";
@@ -91,18 +65,7 @@ class Client extends Model {
         return $result ? $result['client_id'] : null;
     }
     
-    // Additional methods that might be needed
-    public function searchClients($term) {
-        $sql = "SELECT c.*, u.first_name, u.last_name, u.email, u.phone 
-                FROM {$this->table} c 
-                JOIN users u ON c.user_id = u.user_id 
-                WHERE u.first_name LIKE :term 
-                OR u.last_name LIKE :term 
-                OR u.email LIKE :term 
-                OR u.phone LIKE :term 
-                ORDER BY u.first_name, u.last_name";
-        return fetchAll($sql, ['term' => "%{$term}%"]);
-    }
+  
     
     public function getStats() {
         $total = $this->count();
@@ -187,21 +150,59 @@ class Client extends Model {
         return $errors;
     }
 
- // In Client.php - Add this method
-    public function getActiveClients() {
-        try {
-            $sql = "SELECT c.*, u.first_name, u.last_name, u.email, u.phone 
-                    FROM {$this->table} c 
-                    JOIN users u ON c.user_id = u.user_id 
-                    WHERE u.is_active = 1 
-                    ORDER BY u.first_name, u.last_name";
-            return fetchAll($sql);
-        } catch (Exception $e) {
-            logError("Get active clients error: " . $e->getMessage());
-            return [];
+
+
+
+        /**
+     * Get client by user ID using view
+     */
+    public function getClientByUserId($userId) {
+        error_log("=== CLIENT MODEL DEBUG ===");
+        error_log("User ID: " . $userId);
+        
+        $sql = "SELECT * FROM client_details_view WHERE user_id = ?";
+        
+        error_log("SQL: " . $sql);
+        
+        $result = fetchOne($sql, [$userId]);
+        
+        error_log("Query result: " . print_r($result, true));
+        error_log("Result type: " . gettype($result));
+        error_log("Is result array? " . (is_array($result) ? 'Yes' : 'No'));
+        
+        if (is_array($result)) {
+            error_log("Result keys: " . implode(', ', array_keys($result)));
+        } else {
+            error_log("No client profile found for user ID: " . $userId);
         }
+        
+        return $result;
     }
 
-    
+    /**
+     * Search clients using view
+     */
+    public function searchClients($term) {
+        $sql = "SELECT * FROM client_details_view 
+                WHERE first_name LIKE :term 
+                OR last_name LIKE :term 
+                OR full_name LIKE :term 
+                OR email LIKE :term 
+                OR phone LIKE :term 
+                ORDER BY first_name, last_name";
+        return fetchAll($sql, ['term' => "%{$term}%"]);
+    }
+
+    /**
+     * Get active clients using view
+     */
+    public function getActiveClients() {
+        $sql = "SELECT * FROM client_details_view 
+                WHERE is_active = 1 
+                ORDER BY first_name, last_name";
+        return fetchAll($sql);
+    }
+
+        
 }
 ?>

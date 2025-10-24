@@ -1,0 +1,11 @@
+admn 
+email admin@vet.com
+pass admin123
+
+vet
+email sb@vetelinary.com
+pass sb@vetelinary.com
+
+client
+email client@outlook.com
+pass client@outlook.com

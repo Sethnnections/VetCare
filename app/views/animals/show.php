@@ -4,7 +4,7 @@ $treatments = $treatments ?? [];
 $vaccines = $vaccines ?? [];
 $lastTreatment = $lastTreatment ?? [];
 $nextVaccination = $nextVaccination ?? [];
-$current_page = 'animals';
+$current_page = 'animals_show';
 ?>
 
 <div class="container-fluid">
@@ -112,13 +112,6 @@ $current_page = 'animals';
                                             <div class="col-sm-8"><?php echo htmlspecialchars($animal['client_phone']); ?></div>
                                         </div>
                                     <?php endif; ?>
-                                    
-                                    <?php if (isset($animal['emergency_contact'])): ?>
-                                        <div class="row mb-3">
-                                            <div class="col-sm-4 fw-bold">Emergency Contact:</div>
-                                            <div class="col-sm-8"><?php echo htmlspecialchars($animal['emergency_contact']); ?></div>
-                                        </div>
-                                    <?php endif; ?>
                                 </div>
                             </div>
 
@@ -165,25 +158,6 @@ $current_page = 'animals';
                                            class="btn btn-info">
                                             <i class="fas fa-file-medical me-1"></i>Medical History
                                         </a>
-                                        
-                                        <!-- Admin only actions -->
-                                        <?php if (getCurrentUserRole() === ROLE_ADMIN): ?>
-                                            <?php if (empty($animal['assigned_veterinary'])): ?>
-                                                <a href="<?php echo url('/admin/animal-assignments'); ?>" 
-                                                   class="btn btn-warning">
-                                                    <i class="fas fa-user-md me-1"></i>Assign Veterinary
-                                                </a>
-                                            <?php else: ?>
-                                                <form action="<?php echo url('/admin/animal-assignments/unassign/' . $animal['animal_id']); ?>" 
-                                                      method="POST" class="d-grid">
-                                                    <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
-                                                    <button type="submit" class="btn btn-outline-warning" 
-                                                            onclick="return confirm('Unassign veterinary from this animal?')">
-                                                        <i class="fas fa-user-times me-1"></i>Unassign Veterinary
-                                                    </button>
-                                                </form>
-                                            <?php endif; ?>
-                                        <?php endif; ?>
                                     </div>
                                 </div>
                             </div>
@@ -268,7 +242,7 @@ $current_page = 'animals';
                                                     <td><?php echo htmlspecialchars($vaccine['vaccine_name']); ?></td>
                                                     <td><?php echo htmlspecialchars($vaccine['vaccine_type'] ?? 'N/A'); ?></td>
                                                     <td>
-                                                        <?php if ($vaccine['next_due_date']): ?>
+                                                        <?php if (!empty($vaccine['next_due_date'])): ?>
                                                             <?php echo formatDate($vaccine['next_due_date']); ?>
                                                         <?php else: ?>
                                                             N/A
@@ -288,6 +262,31 @@ $current_page = 'animals';
                                             </a>
                                         </div>
                                     <?php endif; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <?php endif; ?>
+
+                    <!-- Empty State for Treatments and Vaccines -->
+                    <?php if (empty($treatments) && empty($vaccines)): ?>
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body text-center py-5">
+                                    <i class="fas fa-file-medical fa-3x text-muted mb-3"></i>
+                                    <h4>No Medical Records Yet</h4>
+                                    <p class="text-muted">This animal doesn't have any treatments or vaccinations recorded yet.</p>
+                                    <div class="d-flex justify-content-center gap-2">
+                                        <a href="<?php echo url('/treatments/create?animal_id=' . $animal['animal_id']); ?>" 
+                                           class="btn btn-primary">
+                                            <i class="fas fa-stethoscope me-1"></i>Add First Treatment
+                                        </a>
+                                        <a href="<?php echo url('/vaccines/create?animal_id=' . $animal['animal_id']); ?>" 
+                                           class="btn btn-success">
+                                            <i class="fas fa-syringe me-1"></i>Add First Vaccination
+                                        </a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

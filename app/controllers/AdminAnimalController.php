@@ -77,7 +77,8 @@ class AdminAnimalController extends Controller {
         $assignmentHistory = $this->animalModel->getAssignmentHistory($id);
         $veterinarians = $this->userModel->getUsersByRole('veterinary');
         
-        $this->setTitle('Manage Animal: ' . $animal['name']);
+        // FIX: Use animal_name instead of name
+        $this->setTitle('Manage Animal: ' . $animal['animal_name']);
         $this->setData('animal', $animal);
         $this->setData('treatments', $treatments);
         $this->setData('vaccines', $vaccines);

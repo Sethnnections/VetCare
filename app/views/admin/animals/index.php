@@ -189,7 +189,33 @@ $current_page = 'animals';
                                                         <?php endif; ?>
                                                     </div>
                                                 </td>
-                                            </tr>
+                                                <td>
+                                                    <?php if ($animal['assigned_veterinary']): ?>
+                                                        <span class="badge bg-success">
+                                                            <?php echo htmlspecialchars($animal['vet_first_name'] . ' ' . $animal['vet_last_name']); ?>
+                                                        </span>
+                                                        <form action="<?php echo url('/admin/animals/' . $animal['animal_id'] . '/unassign-veterinary'); ?>" method="POST" class="d-inline">
+                                                            <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                                                            <button type="submit" class="btn btn-sm btn-outline-danger" title="Unassign">
+                                                                <i class="fas fa-times"></i>
+                                                            </button>
+                                                        </form>
+                                                    <?php else: ?>
+                                                        <form action="<?php echo url('/admin/animals/' . $animal['animal_id'] . '/assign-veterinary'); ?>" method="POST" class="d-inline">
+                                                            <input type="hidden" name="csrf_token" value="<?php echo generateCsrfToken(); ?>">
+                                                            <select name="veterinary_id" class="form-select form-select-sm d-inline w-auto" required>
+                                                                <option value="">Assign to...</option>
+                                                                <?php foreach ($veterinarians as $vet): ?>
+                                                                <option value="<?php echo $vet['user_id']; ?>">
+                                                                    <?php echo htmlspecialchars($vet['first_name'] . ' ' . $vet['last_name']); ?>
+                                                                </option>
+                                                                <?php endforeach; ?>
+                                                            </select>
+                                                            <button type="submit" class="btn btn-sm btn-primary">Assign</button>
+                                                        </form>
+                                                    <?php endif; ?>
+                                                </td>
+                                                                                            </tr>
                                             <?php endforeach; ?>
                                         </tbody>
                                     </table>

@@ -11,3 +11,12 @@
                 FROM animals a 
                 JOIN clients c ON a.client_id = c.client_id 
                 WHERE a.animal_id = :animal_id
+[2025-10-24 09:54:11] ERROR: Database fetchOne error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'c.name' in 'field list' | SQL: SELECT a.*, c.name as client_name, c.phone as client_phone 
+                FROM animals a 
+                JOIN clients c ON a.client_id = c.client_id 
+                WHERE a.animal_id = :animal_id
+[2025-10-24 10:54:10] ERROR: Database fetchAll error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'u.name' in 'field list' | SQL: SELECT v.*, u.name as veterinary_name
+                FROM vaccines v
+                JOIN users u ON v.administered_by = u.user_id
+                WHERE v.animal_id = :animal_id
+                ORDER BY v.vaccine_date DESC

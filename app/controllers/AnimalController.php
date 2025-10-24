@@ -95,7 +95,7 @@ class AnimalController extends Controller {
         }
     }
     
-    // Show animal details
+        // Show animal details
     public function show($id) {
         requireLogin();
         
@@ -107,12 +107,13 @@ class AnimalController extends Controller {
             return;
         }
         
+        // These should now work with the fixed models
         $treatments = $this->treatmentModel->getTreatmentsByAnimal($id);
         $vaccines = $this->vaccineModel->getVaccinesByAnimal($id);
         $lastTreatment = $this->animalModel->getLastTreatment($id);
         $nextVaccination = $this->animalModel->getNextVaccination($id);
         
-        $this->setTitle('Animal: ' . $animal['name']);
+        $this->setTitle('Animal: ' . $animal['animal_name']);
         $this->setData('animal', $animal);
         $this->setData('treatments', $treatments);
         $this->setData('vaccines', $vaccines);
@@ -120,12 +121,11 @@ class AnimalController extends Controller {
         $this->setData('nextVaccination', $nextVaccination);
         $this->view('animals/show');
     }
-    
-    // Show edit animal form
+
     public function edit($id) {
         requireLogin();
         
-        $animal = $this->animalModel->find($id);
+        $animal = $this->animalModel->getAnimalData($id);
         
         if (!$animal) {
             $this->setFlash('error', 'Animal not found');
@@ -135,12 +135,12 @@ class AnimalController extends Controller {
         
         $clients = $this->clientModel->getActiveClients();
         
-        $this->setTitle('Edit Animal: ' . $animal['name']);
+        $this->setTitle('Edit Animal: ' . $animal['animal_name']);
         $this->setData('animal', $animal);
         $this->setData('clients', $clients);
         $this->view('animals/edit');
     }
-    
+        
     // Update animal
     public function update($id) {
         requireLogin();

@@ -285,20 +285,6 @@ $routes = [
         'action' => 'assignToVeterinary'
     ],
 
-    // Admin Assignment Routes
-    '/admin/animal-assignments' => [
-        'controller' => 'Admin',
-        'action' => 'animalAssignments'
-    ],
-    '/admin/animal-assignments/assign' => [
-        'controller' => 'Admin',
-        'action' => 'assignAnimal'
-    ],
-    '/admin/animal-assignments/unassign/{id}' => [
-        'controller' => 'Admin',
-        'action' => 'unassignAnimal'
-    ],
-
     // Admin User Management Routes
     '/admin/users' => [
         'controller' => 'User',
@@ -378,8 +364,20 @@ $routes = [
         'controller' => 'AdminAnimal',
         'action' => 'quickAssign'
     ],
-    // Add these to your routes array
 
+    // Add to your existing routes array
+'admin/animal-assignments' => [
+    'controller' => 'AdminAssignment',
+    'action' => 'index'
+],
+'admin/animal-assignments/assign' => [
+    'controller' => 'AdminAssignment', 
+    'action' => 'assign'
+],
+'admin/animal-assignments/unassign/{id}' => [
+    'controller' => 'AdminAssignment',
+    'action' => 'unassign'
+],
 
 ];
 ?>

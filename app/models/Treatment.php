@@ -68,13 +68,29 @@ class Treatment extends Model {
                 WHERE t.treatment_id = :treatment_id";
         return fetchOne($sql, ['treatment_id' => $treatmentId]);
     }
-    
+
+        /**
+     * Get treatments by animal using view
+     */
     public function getTreatmentsByAnimal($animalId) {
-        $sql = "SELECT t.*, u.name as veterinary_name
-                FROM {$this->table} t
-                JOIN users u ON t.veterinary_id = u.user_id
-                WHERE t.animal_id = :animal_id
-                ORDER BY t.treatment_date DESC";
+        $sql = "SELECT * FROM treatment_details_view 
+                WHERE animal_id = :animal_id 
+                ORDER BY treatment_date DESC";
+        return fetchAll($sql, ['animal_id' => $animalId]);
+    }
+
+    /**
+     * Get treatment history using view
+     */
+    public function getTreatmentHistory($animalId, $limit = null) {
+        $sql = "SELECT * FROM treatment_details_view 
+                WHERE animal_id = :animal_id 
+                ORDER BY treatment_date DESC";
+        
+        if ($limit) {
+            $sql .= " LIMIT " . (int)$limit;
+        }
+        
         return fetchAll($sql, ['animal_id' => $animalId]);
     }
     
@@ -152,20 +168,7 @@ class Treatment extends Model {
         return $this->create($treatmentData);
     }
     
-    public function getTreatmentHistory($animalId, $limit = 10) {
-        $sql = "SELECT t.*, u.name as veterinary_name
-                FROM {$this->table} t
-                JOIN users u ON t.veterinary_id = u.user_id
-                WHERE t.animal_id = :animal_id
-                ORDER BY t.treatment_date DESC
-                LIMIT :limit";
-        
-        $stmt = $this->query($sql, ['animal_id' => $animalId]);
-        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
-        $stmt->execute();
-        
-        return $stmt->fetchAll();
-    }
+
     
     public function getTreatmentsByDateRange($startDate, $endDate, $veterinaryId = null) {
         $sql = "SELECT t.*, 
@@ -302,6 +305,8 @@ class Treatment extends Model {
         
         return $stats;
     }
+
+
     
     // Load treatment data into object properties
     public function load($treatmentData) {
