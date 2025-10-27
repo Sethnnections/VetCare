@@ -691,6 +691,45 @@ public function getAnimalData($animalId) {
     
     return false;
 }
-
+/**
+ * Get all active animals with client information
+ */
+public function getActiveAnimals() {
+    try {
+        $sql = "SELECT a.*, 
+                       CONCAT(u.first_name, ' ', u.last_name) as client_name,
+                       u.phone as client_phone,
+                       u.email as client_email
+                FROM {$this->table} a 
+                JOIN clients c ON a.client_id = c.client_id 
+                JOIN users u ON c.user_id = u.user_id 
+                WHERE a.status = 'active' 
+                ORDER BY a.name";
+        
+        return fetchAll($sql);
+    } catch (Exception $e) {
+        logError("Get active animals error: " . $e->getMessage());
+        return [];
+    }
+}
+/**
+ * Get all inactive animals with client information
+ */
+public function getInactiveAnimals() {
+    try {
+        $sql = "SELECT a.*, 
+                       CONCAT(u.first_name, ' ', u.last_name) as client_name
+                FROM {$this->table} a 
+                JOIN clients c ON a.client_id = c.client_id 
+                JOIN users u ON c.user_id = u.user_id 
+                WHERE a.status = 'inactive' 
+                ORDER BY a.name";
+        
+        return fetchAll($sql);
+    } catch (Exception $e) {
+        logError("Get inactive animals error: " . $e->getMessage());
+        return [];
+    }
+}
 }
 ?>

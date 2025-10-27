@@ -1,6 +1,4 @@
 <?php
-// app/models/Treatment.php
-
 class Treatment extends Model {
     protected $table = 'treatments';
     protected $primaryKey = 'treatment_id';
@@ -10,196 +8,348 @@ class Treatment extends Model {
         'status', 'notes', 'cost'
     ];
     
-    // Treatment properties
-    private $treatmentId;
-    private $animalId;
-    private $veterinaryId;
-    private $diagnosis;
-    private $treatmentDetails;
-    private $medicationPrescribed;
-    private $treatmentDate;
-    private $followUpDate;
-    private $status;
-    private $notes;
-    private $cost;
-    private $createdAt;
-    private $updatedAt;
+    // Get all treatments with details (for admin)
+    public function getAllTreatmentsWithDetails($page = 1, $perPage = 15, $search = null, $status = null) {
+        $offset = ($page - 1) * $perPage;
+        
+        $sql = "SELECT * FROM treatment_details_view WHERE 1=1";
+        $params = [];
+        
+        if ($search) {
+            $sql .= " AND (diagnosis LIKE ? OR animal_name LIKE ? OR client_full_name LIKE ?)";
+            $searchTerm = "%{$search}%";
+            $params = array_merge($params, [$searchTerm, $searchTerm, $searchTerm]);
+        }
+        
+        if ($status) {
+            $sql .= " AND treatment_status = ?";
+            $params[] = $status;
+        }
+        
+        $sql .= " ORDER BY treatment_date DESC LIMIT ? OFFSET ?";
+        $params[] = $perPage;
+        $params[] = $offset;
+        
+        $data = fetchAll($sql, $params);
+        
+        // Get total count
+        $countSql = "SELECT COUNT(*) as total FROM treatment_details_view WHERE 1=1";
+        $countParams = [];
+        
+        if ($search) {
+            $countSql .= " AND (diagnosis LIKE ? OR animal_name LIKE ? OR client_full_name LIKE ?)";
+            $searchTerm = "%{$search}%";
+            $countParams = array_merge($countParams, [$searchTerm, $searchTerm, $searchTerm]);
+        }
+        
+        if ($status) {
+            $countSql .= " AND treatment_status = ?";
+            $countParams[] = $status;
+        }
+        
+        $totalResult = fetchOne($countSql, $countParams);
+        $total = $totalResult['total'] ?? 0;
+        
+        return [
+            'data' => $data,
+            'total' => $total,
+            'total_pages' => ceil($total / $perPage)
+        ];
+    }
     
-    // Getters
-    public function getTreatmentId() { return $this->treatmentId; }
-    public function getAnimalId() { return $this->animalId; }
-    public function getVeterinaryId() { return $this->veterinaryId; }
-    public function getDiagnosis() { return $this->diagnosis; }
-    public function getTreatmentDetails() { return $this->treatmentDetails; }
-    public function getMedicationPrescribed() { return $this->medicationPrescribed; }
-    public function getTreatmentDate() { return $this->treatmentDate; }
-    public function getFollowUpDate() { return $this->followUpDate; }
-    public function getStatus() { return $this->status; }
-    public function getNotes() { return $this->notes; }
-    public function getCost() { return $this->cost; }
-    public function getCreatedAt() { return $this->createdAt; }
-    public function getUpdatedAt() { return $this->updatedAt; }
+    // Get treatments by veterinary
+    public function getTreatmentsByVeterinary($veterinaryId, $page = 1, $perPage = 15, $search = null, $status = null) {
+        $offset = ($page - 1) * $perPage;
+        
+        $sql = "SELECT * FROM treatment_details_view WHERE veterinary_id = ?";
+        $params = [$veterinaryId];
+        
+        if ($search) {
+            $sql .= " AND (diagnosis LIKE ? OR animal_name LIKE ? OR client_full_name LIKE ?)";
+            $searchTerm = "%{$search}%";
+            $params = array_merge($params, [$searchTerm, $searchTerm, $searchTerm]);
+        }
+        
+        if ($status) {
+            $sql .= " AND treatment_status = ?";
+            $params[] = $status;
+        }
+        
+        $sql .= " ORDER BY treatment_date DESC LIMIT ? OFFSET ?";
+        $params[] = $perPage;
+        $params[] = $offset;
+        
+        $data = fetchAll($sql, $params);
+        
+        // Get total count
+        $countSql = "SELECT COUNT(*) as total FROM treatment_details_view WHERE veterinary_id = ?";
+        $countParams = [$veterinaryId];
+        
+        if ($search) {
+            $countSql .= " AND (diagnosis LIKE ? OR animal_name LIKE ? OR client_full_name LIKE ?)";
+            $searchTerm = "%{$search}%";
+            $countParams = array_merge($countParams, [$searchTerm, $searchTerm, $searchTerm]);
+        }
+        
+        if ($status) {
+            $countSql .= " AND treatment_status = ?";
+            $countParams[] = $status;
+        }
+        
+        $totalResult = fetchOne($countSql, $countParams);
+        $total = $totalResult['total'] ?? 0;
+        
+        return [
+            'data' => $data,
+            'total' => $total,
+            'total_pages' => ceil($total / $perPage)
+        ];
+    }
     
-    // Setters
-    public function setTreatmentId($treatmentId) { $this->treatmentId = $treatmentId; }
-    public function setAnimalId($animalId) { $this->animalId = (int)$animalId; }
-    public function setVeterinaryId($veterinaryId) { $this->veterinaryId = (int)$veterinaryId; }
-    public function setDiagnosis($diagnosis) { $this->diagnosis = sanitize($diagnosis); }
-    public function setTreatmentDetails($treatmentDetails) { $this->treatmentDetails = sanitize($treatmentDetails); }
-    public function setMedicationPrescribed($medicationPrescribed) { $this->medicationPrescribed = sanitize($medicationPrescribed); }
-    public function setTreatmentDate($treatmentDate) { $this->treatmentDate = $treatmentDate; }
-    public function setFollowUpDate($followUpDate) { $this->followUpDate = $followUpDate; }
-    public function setStatus($status) { $this->status = sanitize($status); }
-    public function setNotes($notes) { $this->notes = sanitize($notes); }
-    public function setCost($cost) { $this->cost = (float)$cost; }
-    public function setCreatedAt($createdAt) { $this->createdAt = $createdAt; }
-    public function setUpdatedAt($updatedAt) { $this->updatedAt = $updatedAt; }
+    // Get treatments by client
+    public function getTreatmentsByClient($clientId, $page = 1, $perPage = 15, $search = null, $status = null) {
+        $offset = ($page - 1) * $perPage;
+        
+        $sql = "SELECT tdv.* FROM treatment_details_view tdv 
+                JOIN animals a ON tdv.animal_id = a.animal_id 
+                WHERE a.client_id = ?";
+        $params = [$clientId];
+        
+        if ($search) {
+            $sql .= " AND (tdv.diagnosis LIKE ? OR tdv.animal_name LIKE ?)";
+            $searchTerm = "%{$search}%";
+            $params = array_merge($params, [$searchTerm, $searchTerm]);
+        }
+        
+        if ($status) {
+            $sql .= " AND tdv.treatment_status = ?";
+            $params[] = $status;
+        }
+        
+        $sql .= " ORDER BY tdv.treatment_date DESC LIMIT ? OFFSET ?";
+        $params[] = $perPage;
+        $params[] = $offset;
+        
+        $data = fetchAll($sql, $params);
+        
+        // Get total count
+        $countSql = "SELECT COUNT(*) as total FROM treatment_details_view tdv 
+                     JOIN animals a ON tdv.animal_id = a.animal_id 
+                     WHERE a.client_id = ?";
+        $countParams = [$clientId];
+        
+        if ($search) {
+            $countSql .= " AND (tdv.diagnosis LIKE ? OR tdv.animal_name LIKE ?)";
+            $searchTerm = "%{$search}%";
+            $countParams = array_merge($countParams, [$searchTerm, $searchTerm]);
+        }
+        
+        if ($status) {
+            $countSql .= " AND tdv.treatment_status = ?";
+            $countParams[] = $status;
+        }
+        
+        $totalResult = fetchOne($countSql, $countParams);
+        $total = $totalResult['total'] ?? 0;
+        
+        return [
+            'data' => $data,
+            'total' => $total,
+            'total_pages' => ceil($total / $perPage)
+        ];
+    }
     
-    // Business logic methods
+    // Get treatment with full details
     public function getTreatmentWithDetails($treatmentId) {
-        $sql = "SELECT t.*, 
-                       a.name as animal_name, a.species, a.breed,
-                       c.name as client_name, c.phone as client_phone,
-                       u.name as veterinary_name
-                FROM {$this->table} t
-                JOIN animals a ON t.animal_id = a.animal_id
-                JOIN clients c ON a.client_id = c.client_id
-                JOIN users u ON t.veterinary_id = u.user_id
-                WHERE t.treatment_id = :treatment_id";
-        return fetchOne($sql, ['treatment_id' => $treatmentId]);
+        $sql = "SELECT * FROM treatment_details_view WHERE treatment_id = ?";
+        return fetchOne($sql, [$treatmentId]);
     }
-
-        /**
-     * Get treatments by animal using view
-     */
-    public function getTreatmentsByAnimal($animalId) {
-        $sql = "SELECT * FROM treatment_details_view 
-                WHERE animal_id = :animal_id 
-                ORDER BY treatment_date DESC";
-        return fetchAll($sql, ['animal_id' => $animalId]);
+    
+    // Create new treatment
+    public function createTreatment($data) {
+        return $this->create($data);
     }
-
-    /**
-     * Get treatment history using view
-     */
-    public function getTreatmentHistory($animalId, $limit = null) {
-        $sql = "SELECT * FROM treatment_details_view 
-                WHERE animal_id = :animal_id 
-                ORDER BY treatment_date DESC";
+    
+ 
+    // Mark treatment as completed
+    public function markAsCompleted($id) {
+        return $this->update($id, ['status' => 'completed', 'follow_up_date' => null]);
+    }
+    
+    // Schedule follow-up
+    public function scheduleFollowUp($id, $followUpDate, $notes = null) {
+        $data = [
+            'status' => 'follow_up',
+            'follow_up_date' => $followUpDate
+        ];
         
-        if ($limit) {
-            $sql .= " LIMIT " . (int)$limit;
+        if ($notes) {
+            $data['notes'] = $notes;
         }
         
-        return fetchAll($sql, ['animal_id' => $animalId]);
+        return $this->update($id, $data);
     }
     
-    public function getTreatmentsByVeterinary($veterinaryId) {
-        $sql = "SELECT t.*, 
-                       a.name as animal_name, a.species,
-                       c.name as client_name
-                FROM {$this->table} t
-                JOIN animals a ON t.animal_id = a.animal_id
-                JOIN clients c ON a.client_id = c.client_id
-                WHERE t.veterinary_id = :veterinary_id
-                ORDER BY t.treatment_date DESC";
-        return fetchAll($sql, ['veterinary_id' => $veterinaryId]);
-    }
-    
+    // Get upcoming follow-ups
     public function getUpcomingFollowUps($veterinaryId = null) {
-        $sql = "SELECT t.*, 
-                       a.name as animal_name, a.species,
-                       c.name as client_name, c.phone as client_phone
-                FROM {$this->table} t
-                JOIN animals a ON t.animal_id = a.animal_id
-                JOIN clients c ON a.client_id = c.client_id
-                WHERE t.follow_up_date IS NOT NULL 
-                AND t.follow_up_date >= CURDATE()
-                AND t.status != :completed_status";
+        $sql = "SELECT * FROM treatment_progress_view 
+                WHERE follow_up_date >= CURDATE() 
+                AND treatment_status != 'completed'";
         
-        $params = ['completed_status' => STATUS_COMPLETED];
+        $params = [];
         
         if ($veterinaryId) {
-            $sql .= " AND t.veterinary_id = :veterinary_id";
-            $params['veterinary_id'] = $veterinaryId;
+            $sql .= " AND veterinary_id = ?";
+            $params[] = $veterinaryId;
         }
         
-        $sql .= " ORDER BY t.follow_up_date ASC";
+        $sql .= " ORDER BY follow_up_date ASC";
         
         return fetchAll($sql, $params);
     }
     
+    // Get overdue follow-ups
     public function getOverdueFollowUps($veterinaryId = null) {
-        $sql = "SELECT t.*, 
-                       a.name as animal_name, a.species,
-                       c.name as client_name, c.phone as client_phone
-                FROM {$this->table} t
-                JOIN animals a ON t.animal_id = a.animal_id
-                JOIN clients c ON a.client_id = c.client_id
-                WHERE t.follow_up_date IS NOT NULL 
-                AND t.follow_up_date < CURDATE()
-                AND t.status != :completed_status";
+        $sql = "SELECT * FROM treatment_progress_view 
+                WHERE follow_up_date < CURDATE() 
+                AND treatment_status != 'completed'";
         
-        $params = ['completed_status' => STATUS_COMPLETED];
+        $params = [];
         
         if ($veterinaryId) {
-            $sql .= " AND t.veterinary_id = :veterinary_id";
-            $params['veterinary_id'] = $veterinaryId;
+            $sql .= " AND veterinary_id = ?";
+            $params[] = $veterinaryId;
         }
         
-        $sql .= " ORDER BY t.follow_up_date ASC";
+        $sql .= " ORDER BY follow_up_date ASC";
         
         return fetchAll($sql, $params);
     }
-    
-    public function markAsCompleted($treatmentId) {
-        return $this->update($treatmentId, ['status' => STATUS_COMPLETED]);
-    }
-    
-    public function markAsFollowUp($treatmentId) {
-        return $this->update($treatmentId, ['status' => TREATMENT_FOLLOW_UP]);
-    }
-    
-    public function createTreatment($treatmentData) {
-        // Set default values
-        $treatmentData['treatment_date'] = $treatmentData['treatment_date'] ?? getCurrentDate();
-        $treatmentData['status'] = $treatmentData['status'] ?? TREATMENT_ONGOING;
-        
-        return $this->create($treatmentData);
-    }
-    
 
-    
-    public function getTreatmentsByDateRange($startDate, $endDate, $veterinaryId = null) {
-        $sql = "SELECT t.*, 
-                       a.name as animal_name, a.species,
-                       c.name as client_name,
-                       u.name as veterinary_name
-                FROM {$this->table} t
-                JOIN animals a ON t.animal_id = a.animal_id
-                JOIN clients c ON a.client_id = c.client_id
-                JOIN users u ON t.veterinary_id = u.user_id
-                WHERE t.treatment_date BETWEEN :start_date AND :end_date";
+    // Get animals for treatment creation based on role
+    public function getAnimalsForTreatment($userRole, $userId) {
+        if ($userRole === ROLE_VETERINARY) {
+            $sql = "SELECT a.*, CONCAT(u.first_name, ' ', u.last_name) as client_name 
+                    FROM animals a 
+                    JOIN clients c ON a.client_id = c.client_id 
+                    JOIN users u ON c.user_id = u.user_id 
+                    WHERE a.assigned_veterinary = ? AND a.status = 'active' 
+                    ORDER BY a.name";
+            return fetchAll($sql, [$userId]);
+        } else {
+            $sql = "SELECT a.*, CONCAT(u.first_name, ' ', u.last_name) as client_name 
+                    FROM animals a 
+                    JOIN clients c ON a.client_id = c.client_id 
+                    JOIN users u ON c.user_id = u.user_id 
+                    WHERE a.status = 'active' 
+                    ORDER BY a.name";
+            return fetchAll($sql);
+        }
+    }
+
+    // Get treatment by ID with full details
+    public function getTreatmentById($treatmentId) {
+        $sql = "SELECT * FROM treatment_details_view WHERE treatment_id = ?";
+        return fetchOne($sql, [$treatmentId]);
+    }
+
+    // Update treatment
+    public function updateTreatment($id, $data) {
+        return $this->update($id, $data);
+    }
+
+    // Get follow-ups for veterinary
+    public function getVeterinaryFollowUps($veterinaryId = null) {
+        $sql = "SELECT * FROM treatment_progress_view 
+                WHERE follow_up_date IS NOT NULL 
+                AND treatment_status != 'completed'";
         
-        $params = ['start_date' => $startDate, 'end_date' => $endDate];
+        $params = [];
         
         if ($veterinaryId) {
-            $sql .= " AND t.veterinary_id = :veterinary_id";
-            $params['veterinary_id'] = $veterinaryId;
+            $sql .= " AND veterinary_id = ?";
+            $params[] = $veterinaryId;
         }
         
-        $sql .= " ORDER BY t.treatment_date DESC";
+        $sql .= " ORDER BY follow_up_date ASC";
         
         return fetchAll($sql, $params);
     }
     
-    public function getTreatmentCostByPeriod($startDate, $endDate) {
-        $sql = "SELECT SUM(cost) as total_cost, COUNT(*) as treatment_count
-                FROM {$this->table}
-                WHERE treatment_date BETWEEN :start_date AND :end_date
-                AND cost > 0";
+    // Get treatment statistics
+    public function getTreatmentStats($userRole, $userId = null) {
+        $stats = [];
         
-        return fetchOne($sql, ['start_date' => $startDate, 'end_date' => $endDate]);
+        switch ($userRole) {
+            case ROLE_ADMIN:
+                // Admin sees all stats
+                $sql = "SELECT 
+                        COUNT(*) as total_treatments,
+                        SUM(CASE WHEN status = 'ongoing' THEN 1 ELSE 0 END) as ongoing_treatments,
+                        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_treatments,
+                        SUM(CASE WHEN status = 'follow_up' THEN 1 ELSE 0 END) as follow_up_treatments,
+                        AVG(cost) as avg_cost,
+                        SUM(cost) as total_revenue
+                    FROM treatments";
+                $stats = fetchOne($sql);
+                break;
+                
+            case ROLE_VETERINARY:
+                // Veterinary sees their own stats
+                $sql = "SELECT 
+                        COUNT(*) as total_treatments,
+                        SUM(CASE WHEN status = 'ongoing' THEN 1 ELSE 0 END) as ongoing_treatments,
+                        SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed_treatments,
+                        SUM(CASE WHEN status = 'follow_up' THEN 1 ELSE 0 END) as follow_up_treatments,
+                        AVG(cost) as avg_cost,
+                        SUM(cost) as total_revenue
+                    FROM treatments 
+                    WHERE veterinary_id = ?";
+                $stats = fetchOne($sql, [$userId]);
+                break;
+                
+            case ROLE_CLIENT:
+                // Client sees their animal stats
+                $clientId = (new Client())->getClientIdByUserId($userId);
+                if ($clientId) {
+                    $sql = "SELECT 
+                            COUNT(*) as total_treatments,
+                            SUM(CASE WHEN t.status = 'ongoing' THEN 1 ELSE 0 END) as ongoing_treatments,
+                            SUM(CASE WHEN t.status = 'completed' THEN 1 ELSE 0 END) as completed_treatments,
+                            SUM(CASE WHEN t.status = 'follow_up' THEN 1 ELSE 0 END) as follow_up_treatments,
+                            AVG(t.cost) as avg_cost,
+                            SUM(t.cost) as total_cost
+                        FROM treatments t
+                        JOIN animals a ON t.animal_id = a.animal_id
+                        WHERE a.client_id = ?";
+                    $stats = fetchOne($sql, [$clientId]);
+                }
+                break;
+        }
+        
+        return $stats ?: [
+            'total_treatments' => 0,
+            'ongoing_treatments' => 0,
+            'completed_treatments' => 0,
+            'follow_up_treatments' => 0,
+            'avg_cost' => 0,
+            'total_revenue' => 0,
+            'total_cost' => 0
+        ];
+    }
+    
+    // Search treatments
+    public function searchTreatments($term) {
+        $sql = "SELECT * FROM treatment_details_view 
+                WHERE diagnosis LIKE ? 
+                OR animal_name LIKE ? 
+                OR client_full_name LIKE ?
+                OR vet_full_name LIKE ?
+                ORDER BY treatment_date DESC 
+                LIMIT 50";
+        
+        $searchTerm = "%{$term}%";
+        return fetchAll($sql, [$searchTerm, $searchTerm, $searchTerm, $searchTerm]);
     }
     
     // Validation
@@ -207,8 +357,12 @@ class Treatment extends Model {
         $errors = [];
         
         // Required fields
-        $required = ['animal_id', 'veterinary_id', 'diagnosis', 'treatment_details'];
-        $errors = array_merge($errors, validateRequired($required, $data));
+        $required = ['animal_id', 'veterinary_id', 'diagnosis', 'treatment_details', 'treatment_date'];
+        foreach ($required as $field) {
+            if (empty($data[$field])) {
+                $errors[$field] = 'This field is required';
+            }
+        }
         
         // Validate animal exists
         if (!empty($data['animal_id'])) {
@@ -218,31 +372,22 @@ class Treatment extends Model {
             }
         }
         
-        // Validate veterinary exists
+        // Validate veterinary exists and is veterinary role
         if (!empty($data['veterinary_id'])) {
             $userModel = new User();
-            $vet = $userModel->find($data['veterinary_id']);
-            if (!$vet || $vet['role'] !== ROLE_VETERINARY) {
+            $veterinary = $userModel->find($data['veterinary_id']);
+            if (!$veterinary || $veterinary['role'] != ROLE_VETERINARY) {
                 $errors['veterinary_id'] = 'Invalid veterinary selected';
             }
         }
         
-        // Validate treatment date
-        if (!empty($data['treatment_date'])) {
-            $treatmentDate = strtotime($data['treatment_date']);
-            if (!$treatmentDate) {
-                $errors['treatment_date'] = 'Invalid treatment date';
-            }
+        // Validate dates
+        if (!empty($data['treatment_date']) && !strtotime($data['treatment_date'])) {
+            $errors['treatment_date'] = 'Invalid treatment date';
         }
         
-        // Validate follow-up date
-        if (!empty($data['follow_up_date'])) {
-            $followUpDate = strtotime($data['follow_up_date']);
-            if (!$followUpDate) {
-                $errors['follow_up_date'] = 'Invalid follow-up date';
-            } elseif (isset($data['treatment_date']) && $followUpDate <= strtotime($data['treatment_date'])) {
-                $errors['follow_up_date'] = 'Follow-up date must be after treatment date';
-            }
+        if (!empty($data['follow_up_date']) && !strtotime($data['follow_up_date'])) {
+            $errors['follow_up_date'] = 'Invalid follow-up date';
         }
         
         // Validate cost
@@ -250,122 +395,9 @@ class Treatment extends Model {
             $errors['cost'] = 'Cost must be a positive number';
         }
         
-        // Validate status
-        if (!empty($data['status'])) {
-            $allowedStatuses = [TREATMENT_ONGOING, TREATMENT_COMPLETED, TREATMENT_FOLLOW_UP];
-            if (!in_array($data['status'], $allowedStatuses)) {
-                $errors['status'] = 'Invalid status selected';
-            }
-        }
-        
         return $errors;
     }
-    
-    // Search treatments
-    public function searchTreatments($term) {
-        $sql = "SELECT t.*, 
-                       a.name as animal_name, a.species,
-                       c.name as client_name,
-                       u.name as veterinary_name
-                FROM {$this->table} t
-                JOIN animals a ON t.animal_id = a.animal_id
-                JOIN clients c ON a.client_id = c.client_id
-                JOIN users u ON t.veterinary_id = u.user_id
-                WHERE t.diagnosis LIKE :term
-                OR t.treatment_details LIKE :term
-                OR t.medication_prescribed LIKE :term
-                OR a.name LIKE :term
-                OR c.name LIKE :term
-                ORDER BY t.treatment_date DESC";
-        
-        return fetchAll($sql, ['term' => "%{$term}%"]);
-    }
-    
-    // Get treatment statistics
-    public function getStats() {
-        $stats = [
-            'total' => $this->count(),
-            'ongoing' => $this->count(['status' => TREATMENT_ONGOING]),
-            'completed' => $this->count(['status' => STATUS_COMPLETED]),
-            'follow_up' => $this->count(['status' => TREATMENT_FOLLOW_UP])
-        ];
-        
-        // Get treatments this month
-        $startOfMonth = date('Y-m-01');
-        $endOfMonth = date('Y-m-t');
-        $sql = "SELECT COUNT(*) as count FROM {$this->table} 
-                WHERE treatment_date BETWEEN :start AND :end";
-        $thisMonth = fetchOne($sql, ['start' => $startOfMonth, 'end' => $endOfMonth]);
-        $stats['this_month'] = $thisMonth['count'] ?? 0;
-        
-        // Get most common diagnoses
-        $sql = "SELECT diagnosis, COUNT(*) as count FROM {$this->table} 
-                GROUP BY diagnosis ORDER BY count DESC LIMIT 5";
-        $stats['common_diagnoses'] = fetchAll($sql);
-        
-        return $stats;
-    }
-
 
     
-    // Load treatment data into object properties
-    public function load($treatmentData) {
-        if (is_array($treatmentData)) {
-            $this->setTreatmentId($treatmentData['treatment_id'] ?? null);
-            $this->setAnimalId($treatmentData['animal_id'] ?? null);
-            $this->setVeterinaryId($treatmentData['veterinary_id'] ?? null);
-            $this->setDiagnosis($treatmentData['diagnosis'] ?? '');
-            $this->setTreatmentDetails($treatmentData['treatment_details'] ?? '');
-            $this->setMedicationPrescribed($treatmentData['medication_prescribed'] ?? '');
-            $this->setTreatmentDate($treatmentData['treatment_date'] ?? null);
-            $this->setFollowUpDate($treatmentData['follow_up_date'] ?? null);
-            $this->setStatus($treatmentData['status'] ?? TREATMENT_ONGOING);
-            $this->setNotes($treatmentData['notes'] ?? '');
-            $this->setCost($treatmentData['cost'] ?? 0);
-            $this->setCreatedAt($treatmentData['created_at'] ?? null);
-            $this->setUpdatedAt($treatmentData['updated_at'] ?? null);
-        }
-        return $this;
-    }
-    
-    // Convert object to array
-    public function toArray() {
-        return [
-            'treatment_id' => $this->treatmentId,
-            'animal_id' => $this->animalId,
-            'veterinary_id' => $this->veterinaryId,
-            'diagnosis' => $this->diagnosis,
-            'treatment_details' => $this->treatmentDetails,
-            'medication_prescribed' => $this->medicationPrescribed,
-            'treatment_date' => $this->treatmentDate,
-            'follow_up_date' => $this->followUpDate,
-            'status' => $this->status,
-            'notes' => $this->notes,
-            'cost' => $this->cost,
-            'created_at' => $this->createdAt,
-            'updated_at' => $this->updatedAt
-        ];
-    }
-    
-    public function isCompleted() {
-        return $this->status === STATUS_COMPLETED;
-    }
-    
-    public function needsFollowUp() {
-        return $this->followUpDate && strtotime($this->followUpDate) <= time() && !$this->isCompleted();
-    }
-    
-    public function getStatusBadge() {
-        switch ($this->status) {
-            case TREATMENT_ONGOING:
-                return '<span class="badge bg-warning">Ongoing</span>';
-            case STATUS_COMPLETED:
-                return '<span class="badge bg-success">Completed</span>';
-            case TREATMENT_FOLLOW_UP:
-                return '<span class="badge bg-info">Follow-up Required</span>';
-            default:
-                return '<span class="badge bg-secondary">Unknown</span>';
-        }
-    }
 }
 ?>

@@ -423,5 +423,63 @@ $routes = [
     'controller' => 'Appointment',
     'action' => 'checkAvailability'
 ],
+// Treatment Routes
+'/treatments' => [
+    'controller' => 'Treatment',
+    'action' => 'index'
+],
+'/treatments/create' => [
+    'controller' => 'Treatment',
+    'action' => 'create'
+],
+'/treatments/store' => [
+    'controller' => 'Treatment',
+    'action' => 'store'
+],
+'/treatments/{id}' => [
+    'controller' => 'Treatment',
+    'action' => 'show'
+],
+'/treatments/{id}/edit' => [
+    'controller' => 'Treatment',
+    'action' => 'edit'
+],
+'/treatments/{id}/update' => [
+    'controller' => 'Treatment',
+    'action' => 'update'
+],
+'/treatments/{id}/complete' => [
+    'controller' => 'Treatment',
+    'action' => 'complete'
+],
+'/treatments/{id}/schedule-followup' => [
+    'controller' => 'Treatment',
+    'action' => 'scheduleFollowUp'
+],
+'/treatments/follow-ups' => [
+    'controller' => 'Treatment',
+    'action' => 'followUps'
+],
+'/api/treatments/by-animal/{id}' => [
+    'controller' => 'Treatment',
+    'action' => 'byAnimal'
+],
+'/api/treatments/search' => [
+    'controller' => 'Treatment',
+    'action' => 'search'
+],
+'/api/treatments/stats' => [
+    'controller' => 'Treatment',
+    'action' => 'stats'
+],
+
+'/api/treatments/export' => [
+    'controller' => 'Treatment',
+    'action' => 'export'
+],
+'/api/animals/{id}' => [
+    'controller' => 'Treatment',
+    'action' => 'getAnimalData'
+],
 ];
 ?>
