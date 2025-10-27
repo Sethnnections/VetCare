@@ -2,13 +2,20 @@
     <div class="mobile-sidebar-header d-md-none">
         <div class="header-logo">
             <a href="<?php echo url('/dashboard'); ?>">
-                <img src="<?php echo url('/img/logo.png'); ?>" alt="logo">
+                <img src="<?php echo url('/assets/logo.png'); ?>" alt="logo" onerror="this.src='<?php echo url('/img/logo.png'); ?>'">
             </a>
         </div>
     </div>
-    <a href="<?php echo url('/dashboard'); ?>">
-        <img src="<?php echo url('/img/logo.png'); ?>" alt="logo" style="width: 200px; height: 220px; padding: 10px; margin-left: 10px;">
-    </a>
+    
+    <!-- Logo Section -->
+    <div class="sidebar-logo text-center py-3">
+        <a href="<?php echo url('/dashboard'); ?>">
+            <img src="<?php echo url('/assets/logo.png'); ?>" alt="Veterinary IMS" 
+                 style="max-width: 180px; height: auto; padding: 10px;"
+                 onerror="this.src='<?php echo url('/img/logo.png'); ?>'; this.style.width='180px'">
+        </a>
+    </div>
+
     <div class="sidebar-menu-content">
         <ul class="nav nav-sidebar-menu sidebar-toggle-view">
             <li class="nav-item">
@@ -20,8 +27,62 @@
             
             <?php $current_role = $_SESSION['role'] ?? 'client'; ?>
             
-            <?php if($current_role == 'admin'): ?>
+            <!-- ==================== APPOINTMENTS MENU - SIMPLIFIED ==================== -->
+            <li class="nav-item sidebar-nav-item <?php echo (strpos($current_page, 'appointments') !== false) ? 'active' : ''; ?>">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Appointments</span>
+                    <i class="fas fa-chevron-down float-end"></i>
+                </a>
+                <ul class="nav sub-group-menu">
+                    <li class="nav-item">
+                        <a href="<?php echo url('/appointments'); ?>" class="nav-link <?php echo ($current_page == 'appointments') ? 'active' : ''; ?>">
+                            <i class="fas fa-list"></i>
+                            <span>All Appointments</span>
+                        </a>
+                    </li>
+                    
+                    <?php if($current_role != 'client'): ?>
+                    <li class="nav-item">
+                        <a href="<?php echo url('/appointments/create'); ?>" class="nav-link <?php echo ($current_page == 'appointments_create') ? 'active' : ''; ?>">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Schedule Appointment</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo url('/appointments/calendar'); ?>" class="nav-link <?php echo ($current_page == 'appointments_calendar') ? 'active' : ''; ?>">
+                            <i class="fas fa-calendar"></i>
+                            <span>Calendar View</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo url('/appointments/today'); ?>" class="nav-link <?php echo ($current_page == 'appointments_today') ? 'active' : ''; ?>">
+                            <i class="fas fa-calendar-day"></i>
+                            <span>Today's Schedule</span>
+                        </a>
+                    </li>
+                    <?php else: ?>
+                    <li class="nav-item">
+                        <a href="<?php echo url('/appointments/book'); ?>" class="nav-link <?php echo ($current_page == 'appointments_book') ? 'active' : ''; ?>">
+                            <i class="fas fa-calendar-plus"></i>
+                            <span>Book Appointment</span>
+                        </a>
+                    </li>
+                    <?php endif; ?>
+                    
+                    <?php if($current_role == 'admin'): ?>
+                    <li class="nav-item">
+                        <a href="<?php echo url('/appointments/reports'); ?>" class="nav-link <?php echo ($current_page == 'appointments_reports') ? 'active' : ''; ?>">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Appointment Reports</span>
+                        </a>
+                    </li>
+                    <?php endif; ?>
+                </ul>
+            </li>
+
             <!-- ==================== ADMIN MENU ==================== -->
+            <?php if($current_role == 'admin'): ?>
             <li class="nav-item sidebar-nav-item">
                 <a href="#" class="nav-link">
                     <i class="fas fa-users-cog"></i>
@@ -44,7 +105,6 @@
                 </ul>
             </li>
             
-            <!-- Animal Management Menu -->
             <li class="nav-item sidebar-nav-item">
                 <a href="#" class="nav-link">
                     <i class="fas fa-paw"></i>
@@ -53,303 +113,29 @@
                 </a>
                 <ul class="nav sub-group-menu">
                     <li class="nav-item">
-                        <a href="<?php echo url('/admin/animals'); ?>" class="nav-link <?php echo ($current_page == 'admin_animals') ? 'active' : ''; ?>">
+                        <a href="<?php echo url('/admin/animals'); ?>" class="nav-link">
                             <i class="fas fa-list"></i>
                             <span>All Animals</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?php echo url('/admin/animal-assignments'); ?>" class="nav-link <?php echo ($current_page == 'admin_assignments') ? 'active' : ''; ?>">
+                        <a href="<?php echo url('/admin/animal-assignments'); ?>" class="nav-link">
                             <i class="fas fa-user-md"></i>
                             <span>Animal Assignments</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/admin/animals/veterinary-workload'); ?>" class="nav-link <?php echo ($current_page == 'admin_animals_workload') ? 'active' : ''; ?>">
-                            <i class="fas fa-chart-bar"></i>
-                            <span>Veterinary Workload</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/animals/create'); ?>" class="nav-link">
-                            <i class="fas fa-plus-circle"></i>
-                            <span>Add New Animal</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/animals'); ?>" class="nav-link">
-                            <i class="fas fa-search"></i>
-                            <span>Search Animals</span>
-                        </a>
-                    </li>
                 </ul>
             </li>
-            
-            <li class="nav-item sidebar-nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-stethoscope"></i>
-                    <span>Treatment Management</span>
-                    <i class="fas fa-chevron-down float-end"></i>
-                </a>
-                <ul class="nav sub-group-menu">
-                    <li class="nav-item">
-                        <a href="<?php echo url('/treatments'); ?>" class="nav-link">
-                            <i class="fas fa-list"></i>
-                            <span>All Treatments</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/treatments/create'); ?>" class="nav-link">
-                            <i class="fas fa-plus-circle"></i>
-                            <span>New Treatment</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/treatments/types'); ?>" class="nav-link">
-                            <i class="fas fa-tags"></i>
-                            <span>Treatment Types</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/treatments/schedule'); ?>" class="nav-link">
-                            <i class="fas fa-calendar-check"></i>
-                            <span>Treatment Schedule</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            
-            <li class="nav-item sidebar-nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-pills"></i>
-                    <span>Medicine & Inventory</span>
-                    <i class="fas fa-chevron-down float-end"></i>
-                </a>
-                <ul class="nav sub-group-menu">
-                    <li class="nav-item">
-                        <a href="<?php echo url('/medicines'); ?>" class="nav-link">
-                            <i class="fas fa-capsules"></i>
-                            <span>Medicine Inventory</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/medicines/create'); ?>" class="nav-link">
-                            <i class="fas fa-plus-circle"></i>
-                            <span>Add Medicine</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/medicines/categories'); ?>" class="nav-link">
-                            <i class="fas fa-tags"></i>
-                            <span>Medicine Categories</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/medicines/stock'); ?>" class="nav-link">
-                            <i class="fas fa-boxes"></i>
-                            <span>Stock Management</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/medicines/expired'); ?>" class="nav-link">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            <span>Expired Medicines</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <li class="nav-item sidebar-nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-syringe"></i>
-                    <span>Vaccinations</span>
-                    <i class="fas fa-chevron-down float-end"></i>
-                </a>
-                <ul class="nav sub-group-menu">
-                    <li class="nav-item">
-                        <a href="<?php echo url('/vaccines'); ?>" class="nav-link">
-                            <i class="fas fa-list"></i>
-                            <span>All Vaccinations</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/vaccines/schedule'); ?>" class="nav-link">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span>Vaccination Schedule</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/vaccines/types'); ?>" class="nav-link">
-                            <i class="fas fa-vial"></i>
-                            <span>Vaccine Types</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <li class="nav-item sidebar-nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-file-invoice-dollar"></i>
-                    <span>Billing & Payments</span>
-                    <i class="fas fa-chevron-down float-end"></i>
-                </a>
-                <ul class="nav sub-group-menu">
-                    <li class="nav-item">
-                        <a href="<?php echo url('/billings'); ?>" class="nav-link">
-                            <i class="fas fa-receipt"></i>
-                            <span>All Invoices</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/billings/create'); ?>" class="nav-link">
-                            <i class="fas fa-plus-circle"></i>
-                            <span>Create Invoice</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/billings/payments'); ?>" class="nav-link">
-                            <i class="fas fa-credit-card"></i>
-                            <span>Payment History</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/billings/reports'); ?>" class="nav-link">
-                            <i class="fas fa-chart-line"></i>
-                            <span>Revenue Reports</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <li class="nav-item sidebar-nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Reports & Analytics</span>
-                    <i class="fas fa-chevron-down float-end"></i>
-                </a>
-                <ul class="nav sub-group-menu">
-                    <li class="nav-item">
-                        <a href="<?php echo url('/reports'); ?>" class="nav-link">
-                            <i class="fas fa-chart-pie"></i>
-                            <span>Overview Reports</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/reports/treatments'); ?>" class="nav-link">
-                            <i class="fas fa-stethoscope"></i>
-                            <span>Treatment Reports</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/reports/financial'); ?>" class="nav-link">
-                            <i class="fas fa-money-bill-wave"></i>
-                            <span>Financial Reports</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/reports/inventory'); ?>" class="nav-link">
-                            <i class="fas fa-boxes"></i>
-                            <span>Inventory Reports</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <li class="nav-item">
-                <a href="<?php echo url('/admin/settings'); ?>" class="nav-link">
-                    <i class="fas fa-cogs"></i>
-                    <span>System Settings</span>
-                </a>
-            </li>
+            <?php endif; ?>
 
             <!-- ==================== VETERINARY MENU ==================== -->
-            <?php elseif($current_role == 'veterinary'): ?>
-                <!-- ==================== VETERINARY MENU ==================== -->
-                <li class="nav-item <?php echo ($current_page == 'veterinary_animals') ? 'active' : ''; ?>">
-                    <a href="<?php echo url('/veterinary/animals'); ?>" class="nav-link <?php echo ($current_page == 'veterinary_animals') ? 'active' : ''; ?>">
-                        <i class="fas fa-paw"></i>
-                        <span>My Assigned Animals</span>
-                    </a>
-                </li>
-
-                <li class="nav-item sidebar-nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-stethoscope"></i>
-                        <span>Treatment Management</span>
-                        <i class="fas fa-chevron-down float-end"></i>
-                    </a>
-                    <ul class="nav sub-group-menu">
-                        <li class="nav-item">
-                            <a href="<?php echo url('/treatments'); ?>" class="nav-link">
-                                <i class="fas fa-list"></i>
-                                <span>All Treatments</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?php echo url('/treatments/create'); ?>" class="nav-link">
-                                <i class="fas fa-plus-circle"></i>
-                                <span>New Treatment</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?php echo url('/treatments/my-treatments'); ?>" class="nav-link">
-                                <i class="fas fa-user-md"></i>
-                                <span>My Treatments</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="nav-item sidebar-nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-pills"></i>
-                        <span>Medicine Management</span>
-                        <i class="fas fa-chevron-down float-end"></i>
-                    </a>
-                    <ul class="nav sub-group-menu">
-                        <li class="nav-item">
-                            <a href="<?php echo url('/medicines'); ?>" class="nav-link">
-                                <i class="fas fa-capsules"></i>
-                                <span>Medicine Inventory</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?php echo url('/medicines/prescribe'); ?>" class="nav-link">
-                                <i class="fas fa-prescription"></i>
-                                <span>Prescribe Medicine</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="nav-item sidebar-nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="fas fa-syringe"></i>
-                        <span>Vaccinations</span>
-                        <i class="fas fa-chevron-down float-end"></i>
-                    </a>
-                    <ul class="nav sub-group-menu">
-                        <li class="nav-item">
-                            <a href="<?php echo url('/vaccines'); ?>" class="nav-link">
-                                <i class="fas fa-list"></i>
-                                <span>All Vaccinations</span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="<?php echo url('/vaccines/administer'); ?>" class="nav-link">
-                                <i class="fas fa-syringe"></i>
-                                <span>Administer Vaccine</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li>
-
-                <li class="nav-item">
-                    <a href="<?php echo url('/veterinary/schedule'); ?>" class="nav-link">
-                        <i class="fas fa-calendar-day"></i>
-                        <span>My Schedule</span>
-                    </a>
-                </li>
+            <?php if($current_role == 'veterinary'): ?>
+            <li class="nav-item">
+                <a href="<?php echo url('/veterinary/animals'); ?>" class="nav-link">
+                    <i class="fas fa-paw"></i>
+                    <span>My Assigned Animals</span>
+                </a>
+            </li>
 
             <li class="nav-item sidebar-nav-item">
                 <a href="#" class="nav-link">
@@ -370,94 +156,13 @@
                             <span>New Treatment</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/treatments/my-treatments'); ?>" class="nav-link">
-                            <i class="fas fa-user-md"></i>
-                            <span>My Treatments</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/treatments/pending'); ?>" class="nav-link">
-                            <i class="fas fa-clock"></i>
-                            <span>Pending Treatments</span>
-                        </a>
-                    </li>
                 </ul>
             </li>
+            <?php endif; ?>
 
-            <li class="nav-item sidebar-nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-pills"></i>
-                    <span>Medicine Management</span>
-                    <i class="fas fa-chevron-down float-end"></i>
-                </a>
-                <ul class="nav sub-group-menu">
-                    <li class="nav-item">
-                        <a href="<?php echo url('/medicines'); ?>" class="nav-link">
-                            <i class="fas fa-capsules"></i>
-                            <span>Medicine Inventory</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/medicines/prescribe'); ?>" class="nav-link">
-                            <i class="fas fa-prescription"></i>
-                            <span>Prescribe Medicine</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/medicines/dispense'); ?>" class="nav-link">
-                            <i class="fas fa-pills"></i>
-                            <span>Dispense Medicine</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <li class="nav-item sidebar-nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-syringe"></i>
-                    <span>Vaccinations</span>
-                    <i class="fas fa-chevron-down float-end"></i>
-                </a>
-                <ul class="nav sub-group-menu">
-                    <li class="nav-item">
-                        <a href="<?php echo url('/vaccines'); ?>" class="nav-link">
-                            <i class="fas fa-list"></i>
-                            <span>All Vaccinations</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/vaccines/administer'); ?>" class="nav-link">
-                            <i class="fas fa-syringe"></i>
-                            <span>Administer Vaccine</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/vaccines/schedule'); ?>" class="nav-link">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span>Vaccination Schedule</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <li class="nav-item">
-                <a href="<?php echo url('/veterinary/patients'); ?>" class="nav-link">
-                    <i class="fas fa-heartbeat"></i>
-                    <span>Patient Records</span>
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a href="<?php echo url('/veterinary/schedule'); ?>" class="nav-link">
-                    <i class="fas fa-calendar-day"></i>
-                    <span>My Schedule</span>
-                </a>
-            </li>
-
-            <?php else: ?>
             <!-- ==================== CLIENT MENU ==================== -->
-            <li class="nav-item sidebar-nav-item <?php echo (in_array($current_page, ['client_animals', 'client_animals_add'])) ? 'active' : ''; ?>">
+            <?php if($current_role == 'client'): ?>
+            <li class="nav-item sidebar-nav-item">
                 <a href="#" class="nav-link">
                     <i class="fas fa-paw"></i>
                     <span>My Animals</span>
@@ -465,33 +170,21 @@
                 </a>
                 <ul class="nav sub-group-menu">
                     <li class="nav-item">
-                        <a href="<?php echo url('/client/animals'); ?>" class="nav-link <?php echo ($current_page == 'client_animals') ? 'active' : ''; ?>">
+                        <a href="<?php echo url('/client/animals'); ?>" class="nav-link">
                             <i class="fas fa-list"></i>
                             <span>My Pets</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a href="<?php echo url('/client/animals/add'); ?>" class="nav-link <?php echo ($current_page == 'client_animals_add') ? 'active' : ''; ?>">
+                        <a href="<?php echo url('/client/animals/add'); ?>" class="nav-link">
                             <i class="fas fa-plus-circle"></i>
                             <span>Add Animal</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/client/animals/medical-records'); ?>" class="nav-link">
-                            <i class="fas fa-file-medical"></i>
-                            <span>Medical Records</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/client/animals/vaccinations'); ?>" class="nav-link">
-                            <i class="fas fa-syringe"></i>
-                            <span>Vaccination History</span>
                         </a>
                     </li>
                 </ul>
             </li>
 
-            <li class="nav-item sidebar-nav-item <?php echo ($current_page == 'profile') ? 'active' : ''; ?>">
+            <li class="nav-item sidebar-nav-item">
                 <a href="#" class="nav-link">
                     <i class="fas fa-user"></i>
                     <span>My Profile</span>
@@ -499,7 +192,7 @@
                 </a>
                 <ul class="nav sub-group-menu">
                     <li class="nav-item">
-                        <a href="<?php echo url('/client/profile'); ?>" class="nav-link <?php echo ($current_page == 'profile') ? 'active' : ''; ?>">
+                        <a href="<?php echo url('/client/profile'); ?>" class="nav-link">
                             <i class="fas fa-user-circle"></i>
                             <span>View Profile</span>
                         </a>
@@ -510,187 +203,11 @@
                             <span>Edit Profile</span>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/auth/change-password'); ?>" class="nav-link">
-                            <i class="fas fa-key"></i>
-                            <span>Change Password</span>
-                        </a>
-                    </li>
                 </ul>
             </li>
-
-            <li class="nav-item sidebar-nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-calendar-check"></i>
-                    <span>My Appointments</span>
-                    <i class="fas fa-chevron-down float-end"></i>
-                </a>
-                <ul class="nav sub-group-menu">
-                    <li class="nav-item">
-                        <a href="<?php echo url('/client/appointments'); ?>" class="nav-link">
-                            <i class="fas fa-list"></i>
-                            <span>All Appointments</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/client/appointments/book'); ?>" class="nav-link">
-                            <i class="fas fa-calendar-plus"></i>
-                            <span>Book Appointment</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/client/appointments/history'); ?>" class="nav-link">
-                            <i class="fas fa-history"></i>
-                            <span>Appointment History</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <li class="nav-item sidebar-nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-file-invoice"></i>
-                    <span>My Bills & Payments</span>
-                    <i class="fas fa-chevron-down float-end"></i>
-                </a>
-                <ul class="nav sub-group-menu">
-                    <li class="nav-item">
-                        <a href="<?php echo url('/client/bills'); ?>" class="nav-link">
-                            <i class="fas fa-receipt"></i>
-                            <span>All Bills</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/client/bills/pending'); ?>" class="nav-link">
-                            <i class="fas fa-clock"></i>
-                            <span>Pending Payments</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/client/bills/history'); ?>" class="nav-link">
-                            <i class="fas fa-history"></i>
-                            <span>Payment History</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
-            <li class="nav-item sidebar-nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-bell"></i>
-                    <span>My Reminders</span>
-                    <i class="fas fa-chevron-down float-end"></i>
-                </a>
-                <ul class="nav sub-group-menu">
-                    <li class="nav-item">
-                        <a href="<?php echo url('/client/reminders'); ?>" class="nav-link">
-                            <i class="fas fa-list"></i>
-                            <span>All Reminders</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/client/reminders/vaccination'); ?>" class="nav-link">
-                            <i class="fas fa-syringe"></i>
-                            <span>Vaccination Reminders</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/client/reminders/appointment'); ?>" class="nav-link">
-                            <i class="fas fa-calendar-alt"></i>
-                            <span>Appointment Reminders</span>
-                        </a>
-                    </li>
-                </ul>
-            </li>
-
             <?php endif; ?>
 
-            <!-- ==================== COMMON MENU ITEMS ==================== -->
-            <li class="nav-item sidebar-nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-calendar-alt"></i>
-                    <span>Appointments</span>
-                    <i class="fas fa-chevron-down float-end"></i>
-                </a>
-                <ul class="nav sub-group-menu">
-                    <li class="nav-item">
-                        <a href="<?php echo url('/appointments'); ?>" class="nav-link">
-                            <i class="fas fa-list"></i>
-                            <span>All Appointments</span>
-                        </a>
-                    </li>
-                    <?php if($current_role != 'client'): ?>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/appointments/create'); ?>" class="nav-link">
-                            <i class="fas fa-plus-circle"></i>
-                            <span>Schedule Appointment</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/appointments/calendar'); ?>" class="nav-link">
-                            <i class="fas fa-calendar"></i>
-                            <span>Calendar View</span>
-                        </a>
-                    </li>
-                    <?php else: ?>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/appointments/book'); ?>" class="nav-link">
-                            <i class="fas fa-calendar-plus"></i>
-                            <span>Book Appointment</span>
-                        </a>
-                    </li>
-                    <?php endif; ?>
-                </ul>
-            </li>
-
-            <li class="nav-item sidebar-nav-item">
-                <a href="#" class="nav-link">
-                    <i class="fas fa-bell"></i>
-                    <span>Reminders</span>
-                    <i class="fas fa-chevron-down float-end"></i>
-                </a>
-                <ul class="nav sub-group-menu">
-                    <?php if($current_role == 'client'): ?>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/client/reminders'); ?>" class="nav-link">
-                            <i class="fas fa-list"></i>
-                            <span>My Reminders</span>
-                        </a>
-                    </li>
-                    <?php else: ?>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/reminders'); ?>" class="nav-link">
-                            <i class="fas fa-list"></i>
-                            <span>All Reminders</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="<?php echo url('/reminders/create'); ?>" class="nav-link">
-                            <i class="fas fa-plus-circle"></i>
-                            <span>Create Reminder</span>
-                        </a>
-                    </li>
-                    <?php endif; ?>
-                </ul>
-            </li>
-
-            <li class="nav-item">
-                <a href="<?php echo url('/feedback'); ?>" class="nav-link">
-                    <i class="fas fa-comment"></i>
-                    <span>Feedback</span>
-                </a>
-            </li>
-            
-            <?php if($current_role == 'admin'): ?>
-            <li class="nav-item">
-                <a href="<?php echo url('/auth/profile'); ?>" class="nav-link">
-                    <i class="fas fa-user-cog"></i>
-                    <span>Account Settings</span>
-                </a>
-            </li>
-            <?php endif; ?>
-            
-            <!-- Logout Button at Bottom -->
+            <!-- Logout Button -->
             <li class="nav-item sidebar-footer">
                 <a href="<?php echo url('/logout'); ?>" class="nav-link logout-btn">
                     <i class="fas fa-sign-out-alt"></i>
@@ -702,42 +219,118 @@
 </div>
 
 <style>
-/* Ensure proper sidebar highlighting */
-.sidebar-nav-item.active > .nav-link {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-left: 3px solid #fff;
+/* Sidebar Styling */
+#sidebar {
+    background: linear-gradient(135deg, #134d60 0%, #0d3a4d 100%);
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
 }
 
-.sidebar-nav-item.active .sub-group-menu {
-    display: block;
+.sidebar-logo {
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    margin-bottom: 10px;
+}
+
+.sidebar-logo img {
+    transition: transform 0.3s ease;
+}
+
+.sidebar-logo img:hover {
+    transform: scale(1.05);
+}
+
+/* Menu Item Styling */
+.nav-sidebar-menu .nav-link {
+    color: #e9ecef;
+    padding: 12px 20px;
+    margin: 2px 10px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    border: none;
+}
+
+.nav-sidebar-menu .nav-link:hover {
+    background: rgba(253, 116, 42, 0.9);
+    color: white;
+    transform: translateX(5px);
+}
+
+.nav-sidebar-menu .nav-link.active {
+    background: rgba(253, 116, 42, 0.9);
+    color: white;
+    box-shadow: 0 2px 8px rgba(253, 116, 42, 0.3);
+}
+
+.nav-sidebar-menu .nav-link i {
+    width: 20px;
+    margin-right: 12px;
+    font-size: 16px;
+}
+
+/* Sub-menu Styling */
+.sub-group-menu {
+    background: rgba(13, 58, 77, 0.8);
+    margin: 0;
+    padding: 5px 0;
+    border-radius: 0 0 8px 8px;
+}
+
+.sub-group-menu .nav-link {
+    padding: 10px 20px 10px 50px;
+    margin: 0;
+    border-radius: 0;
+    font-size: 0.9em;
+    border-left: 3px solid transparent;
+}
+
+.sub-group-menu .nav-link:hover {
+    background: rgba(253, 116, 42, 0.7);
+    transform: translateX(0);
+    border-left-color: #fd742a;
 }
 
 .sub-group-menu .nav-link.active {
-    background-color: rgba(255, 255, 255, 0.2);
-    border-left: 3px solid #fff;
+    background: rgba(253, 116, 42, 0.8);
+    border-left-color: #fff;
 }
 
-/* Smooth transitions */
-.sidebar-nav-item .nav-link {
-    transition: all 0.3s ease;
+/* Dropdown Arrow Animation */
+.sidebar-nav-item > .nav-link .fa-chevron-down {
+    transition: transform 0.3s ease;
 }
 
-.sub-group-menu {
-    transition: all 0.3s ease;
+.sidebar-nav-item.active > .nav-link .fa-chevron-down {
+    transform: rotate(180deg);
 }
 
-/* Logout button styling */
+/* Logout Button */
 .sidebar-footer {
     margin-top: auto;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 10px;
 }
 
 .logout-btn {
     color: #ff6b6b !important;
+    background: rgba(255, 107, 107, 0.1) !important;
 }
 
 .logout-btn:hover {
-    background-color: rgba(255, 107, 107, 0.1) !important;
+    background: rgba(255, 107, 107, 0.2) !important;
+    color: #ff5252 !important;
+}
+
+/* Mobile Responsive */
+@media (max-width: 767.98px) {
+    .sidebar-logo img {
+        max-width: 140px;
+    }
+    
+    .nav-sidebar-menu .nav-link {
+        padding: 10px 15px;
+        margin: 1px 5px;
+    }
 }
 </style>
 
@@ -746,48 +339,61 @@ document.addEventListener('DOMContentLoaded', function() {
     // Auto-expand active menu items
     const activeMenuItems = document.querySelectorAll('.sidebar-nav-item.active');
     activeMenuItems.forEach(item => {
-        const link = item.querySelector('.nav-link');
-        if (link) {
-            link.classList.remove('collapsed');
-            const subMenu = item.querySelector('.sub-group-menu');
-            if (subMenu) {
-                subMenu.style.display = 'block';
-            }
+        const subMenu = item.querySelector('.sub-group-menu');
+        if (subMenu) {
+            subMenu.style.display = 'block';
         }
     });
 
-    // Handle menu toggle
+    // Handle menu toggle with smooth animation
     const menuToggles = document.querySelectorAll('.sidebar-nav-item > .nav-link');
     menuToggles.forEach(toggle => {
         toggle.addEventListener('click', function(e) {
-            e.preventDefault();
-            const parent = this.parentElement;
-            const subMenu = parent.querySelector('.sub-group-menu');
-            
-            if (subMenu) {
-                const isActive = parent.classList.contains('active');
+            if (this.getAttribute('href') === '#') {
+                e.preventDefault();
+                const parent = this.parentElement;
+                const subMenu = parent.querySelector('.sub-group-menu');
                 
-                // Close all other menus
-                document.querySelectorAll('.sidebar-nav-item').forEach(item => {
-                    if (item !== parent) {
-                        item.classList.remove('active');
-                        const otherSubMenu = item.querySelector('.sub-group-menu');
-                        if (otherSubMenu) {
-                            otherSubMenu.style.display = 'none';
+                if (subMenu) {
+                    const isActive = parent.classList.contains('active');
+                    
+                    // Close all other menus
+                    document.querySelectorAll('.sidebar-nav-item').forEach(item => {
+                        if (item !== parent) {
+                            item.classList.remove('active');
+                            const otherSubMenu = item.querySelector('.sub-group-menu');
+                            if (otherSubMenu) {
+                                otherSubMenu.style.display = 'none';
+                            }
                         }
+                    });
+                    
+                    // Toggle current menu
+                    if (!isActive) {
+                        parent.classList.add('active');
+                        subMenu.style.display = 'block';
+                    } else {
+                        parent.classList.remove('active');
+                        subMenu.style.display = 'none';
                     }
-                });
-                
-                // Toggle current menu
-                if (!isActive) {
-                    parent.classList.add('active');
-                    subMenu.style.display = 'block';
-                } else {
-                    parent.classList.remove('active');
-                    subMenu.style.display = 'none';
                 }
             }
         });
+    });
+
+    // Set current page for appointments
+    const currentPath = window.location.pathname;
+    const navLinks = document.querySelectorAll('.nav-link[href]');
+    navLinks.forEach(link => {
+        if (link.getAttribute('href') === currentPath) {
+            link.classList.add('active');
+            // Also activate parent menu items
+            let parent = link.closest('.sub-group-menu');
+            if (parent) {
+                parent.previousElementSibling.classList.add('active');
+                parent.parentElement.classList.add('active');
+            }
+        }
     });
 });
 </script>

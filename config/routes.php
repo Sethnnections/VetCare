@@ -378,6 +378,50 @@ $routes = [
     'controller' => 'AdminAssignment',
     'action' => 'unassign'
 ],
-
+// Appointment Routes
+'/appointments' => [
+    'controller' => 'Appointment',
+    'action' => 'index'
+],
+'/appointments/calendar' => [
+    'controller' => 'Appointment',
+    'action' => 'calendar'
+],
+'/appointments/create' => [
+    'controller' => 'Appointment',
+    'action' => 'create'
+],
+'/appointments/book' => [
+    'controller' => 'Appointment',
+    'action' => 'book'
+],
+'/appointments/today' => [
+    'controller' => 'Appointment',
+    'action' => 'today'
+],
+'/appointments/reports' => [
+    'controller' => 'Appointment',
+    'action' => 'reports'
+],
+'/appointments/store' => [
+    'controller' => 'Appointment',
+    'action' => 'store'
+],
+'/appointments/{id}' => [
+    'controller' => 'Appointment',
+    'action' => 'show'
+],
+'/appointments/{id}/update-status' => [
+    'controller' => 'Appointment',
+    'action' => 'updateStatus'
+],
+'/api/appointments/time-slots' => [
+    'controller' => 'Appointment',
+    'action' => 'getTimeSlots'
+],
+'/api/appointments/check-availability' => [
+    'controller' => 'Appointment',
+    'action' => 'checkAvailability'
+],
 ];
 ?>

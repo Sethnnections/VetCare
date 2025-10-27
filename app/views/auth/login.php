@@ -10,8 +10,10 @@
             <div class="col-md-6 left-panel">
                 <div class="logo-container">
                     <div class="logo">
-                        <div style="width:200px; height:200px; background: #fec525; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 20px;">
-                            <i class="fas fa-paw" style="font-size: 80px; color: #134d60;"></i>
+                        <div style="width:200px; height:200px; background: #fec525; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 10px;">
+                        <img src="<?php echo url('/assets/logo.png'); ?>" alt="Veterinary IMS" 
+                        style="max-width: 180px; height: auto; padding: 4px;"
+                        onerror="this.onerror=null; this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgwIiBoZWlnaHQ9IjE4MCIgdmlld0JveD0iMCAwIDE4MCAxODAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxODAiIGhlaWdodD0iMTgwIiByeD0iMTAiIGZpbGw9IiMxMzRENjAiLz4KPHRleHQgeD0iOTAiIHk9IjEwMCIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSJ3aGl0ZSIgdGV4dC1hbmNob3I9Im1pZGRsZSI+VkVUICBJTVM8L3RleHQ+Cjwvc3ZnPgo='">
                         </div>
                     </div>
                     <h1 class="system-title">VetCare</h1>
