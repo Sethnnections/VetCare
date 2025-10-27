@@ -481,5 +481,103 @@ $routes = [
     'controller' => 'Treatment',
     'action' => 'getAnimalData'
 ],
+// Vaccine Routes
+'/vaccinations' => [
+    'controller' => 'Vaccine',
+    'action' => 'index'
+],
+'/vaccinations/create' => [
+    'controller' => 'Vaccine',
+    'action' => 'create'
+],
+'/vaccinations/store' => [
+    'controller' => 'Vaccine', 
+    'action' => 'store'
+],
+'/vaccinations/calendar' => [
+    'controller' => 'Vaccine',
+    'action' => 'calendar'
+],
+'/vaccinations/upcoming' => [
+    'controller' => 'Vaccine',
+    'action' => 'upcoming'
+],
+'/vaccinations/{id}' => [
+    'controller' => 'Vaccine',
+    'action' => 'show'
+],
+'/vaccinations/{id}/edit' => [
+    'controller' => 'Vaccine',
+    'action' => 'edit'
+],
+'/vaccinations/{id}/update' => [
+    'controller' => 'Vaccine',
+    'action' => 'update'
+],
+'/vaccinations/{id}/complete' => [
+    'controller' => 'Vaccine',
+    'action' => 'complete'
+],
+'/api/vaccinations/calendar-events' => [
+    'controller' => 'Vaccine',
+    'action' => 'calendarEvents'
+],
+'/api/vaccinations/search' => [
+    'controller' => 'Vaccine',
+    'action' => 'search'
+],
+'/api/vaccinations/stats' => [
+    'controller' => 'Vaccine',
+    'action' => 'stats'
+],
+
+// Client vaccination routes
+'/client/vaccinations' => [
+    'controller' => 'Vaccine',
+    'action' => 'clientIndex'
+],
+
+// Enhanced vaccination routes
+'/vaccinations/record-process' => [
+    'controller' => 'Vaccine',
+    'action' => 'recordWithProcess'
+],
+'/vaccinations/{id}/summary' => [
+    'controller' => 'Vaccine', 
+    'action' => 'summary'
+],
+'/vaccinations/{id}/certificate' => [
+    'controller' => 'Vaccine',
+    'action' => 'generateCertificate'
+],
+'/vaccinations/{id}/reaction' => [
+    'controller' => 'Vaccine',
+    'action' => 'recordReaction'
+],
+'/vaccinations/{id}/verify' => [
+    'controller' => 'Vaccine',
+    'action' => 'verify'
+],
+'/animals/{id}/vaccination-report' => [
+    'controller' => 'Vaccine',
+    'action' => 'animalReport'
+],
+// Add to routes array
+'/vaccinations/analytics' => [
+    'controller' => 'Vaccine',
+    'action' => 'analytics'
+],
+'/api/vaccinations/monthly-stats' => [
+    'controller' => 'Vaccine', 
+    'action' => 'monthlyStats'
+],
+'/vaccinations/send-reminders' => [
+    'controller' => 'Vaccine',
+    'action' => 'sendReminders'
+],
+'/vaccinations/schedule' => [
+    'controller' => 'Vaccine',
+    'action' => 'create' // Use create action instead
+],
 ];
 ?>

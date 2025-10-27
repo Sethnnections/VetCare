@@ -184,6 +184,52 @@
             </li>
             <?php endif; ?>
 
+            <!-- ==================== VACCINATION MANAGEMENT ==================== -->
+            <?php if ($current_role == 'admin'): ?>
+            <li class="nav-item sidebar-nav-item <?php echo (strpos($current_page, 'vaccinations') !== false) ? 'active' : ''; ?>">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-syringe"></i>
+                    <span>Vaccination Management</span>
+                    <i class="fas fa-chevron-down float-end"></i>
+                </a>
+                <ul class="nav sub-group-menu">
+                    <li><a href="<?php echo url('/vaccinations'); ?>" class="nav-link"><i class="fas fa-list"></i>All Vaccinations</a></li>
+                    <li><a href="<?php echo url('/vaccinations/create'); ?>" class="nav-link"><i class="fas fa-plus-circle"></i>Record Vaccination</a></li>
+                    <li><a href="<?php echo url('/vaccinations/schedule'); ?>" class="nav-link"><i class="fas fa-calendar-plus"></i>Schedule</a></li>
+                    <li><a href="<?php echo url('/vaccinations/calendar'); ?>" class="nav-link"><i class="fas fa-calendar"></i>Calendar</a></li>
+                    <li><a href="<?php echo url('/vaccinations/upcoming'); ?>" class="nav-link"><i class="fas fa-bell"></i>Upcoming & Overdue</a></li>
+                </ul>
+            </li>
+
+            <?php elseif ($current_role == 'veterinary'): ?>
+            <li class="nav-item sidebar-nav-item <?php echo (strpos($current_page, 'vaccinations') !== false) ? 'active' : ''; ?>">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-syringe"></i>
+                    <span>Vaccinations</span>
+                    <i class="fas fa-chevron-down float-end"></i>
+                </a>
+                <ul class="nav sub-group-menu">
+                    <li><a href="<?php echo url('/vaccinations'); ?>" class="nav-link"><i class="fas fa-list"></i>My Vaccinations</a></li>
+                    <li><a href="<?php echo url('/vaccinations/create'); ?>" class="nav-link"><i class="fas fa-plus-circle"></i>Record Vaccination</a></li>
+                    <li><a href="<?php echo url('/vaccinations/calendar'); ?>" class="nav-link"><i class="fas fa-calendar"></i>Calendar</a></li>
+                    <li><a href="<?php echo url('/vaccinations/upcoming'); ?>" class="nav-link"><i class="fas fa-bell"></i>Upcoming & Overdue</a></li>
+                </ul>
+            </li>
+
+            <?php elseif ($current_role == 'client'): ?>
+            <li class="nav-item sidebar-nav-item <?php echo (strpos($current_page, 'vaccinations') !== false) ? 'active' : ''; ?>">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-syringe"></i>
+                    <span>My Vaccinations</span>
+                    <i class="fas fa-chevron-down float-end"></i>
+                </a>
+                <ul class="nav sub-group-menu">
+                    <li><a href="<?php echo url('/client/vaccinations'); ?>" class="nav-link"><i class="fas fa-list"></i>Vaccination History</a></li>
+                    <li><a href="<?php echo url('/vaccinations/calendar'); ?>" class="nav-link"><i class="fas fa-calendar"></i>Vaccination Schedule</a></li>
+                </ul>
+            </li>
+            <?php endif; ?>
+
             <!-- ==================== CLIENT MENU ==================== -->
             <?php if($current_role == 'client'): ?>
             <li class="nav-item sidebar-nav-item">
