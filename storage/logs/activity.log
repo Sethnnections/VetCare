@@ -110,3 +110,7 @@
 [2025-10-27 16:17:04] ACTIVITY: System - User logged in: client@outlook.com (ID: 7)
 [2025-10-27 16:17:07] ACTIVITY: System - User logged out: client@outlook.com (ID: 7)
 [2025-10-27 16:17:13] ACTIVITY: System - User logged in: sb@vetelinary.com (ID: 6)
+[2025-10-27 22:53:05] ACTIVITY: System - User logged out: sb@vetelinary.com (ID: 6)
+[2025-10-27 22:53:27] ACTIVITY: System - User logged in: client@outlook.com (ID: 7)
+[2025-10-27 22:53:59] ACTIVITY: System - User logged out: client@outlook.com (ID: 7)
+[2025-10-27 22:54:07] ACTIVITY: System - User logged in: admin@vet.com (ID: 1)

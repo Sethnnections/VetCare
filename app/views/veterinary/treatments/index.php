@@ -5,15 +5,7 @@ $current_page = 'veterinary_treatments';
 <div class="container-fluid">
     <div class="page-header">
         <div class="row align-items-center">
-            <div class="col">
-                <h1 class="page-title">My Treatments</h1>
-                <nav aria-label="breadcrumb">
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="<?php echo url('/veterinary/dashboard'); ?>">Dashboard</a></li>
-                        <li class="breadcrumb-item active">Treatments</li>
-                    </ol>
-                </nav>
-            </div>
+            
             <div class="col-auto">
                 <a href="<?php echo url('/treatments/create'); ?>" class="btn btn-primary">
                     <i class="fas fa-plus me-2"></i>New Treatment

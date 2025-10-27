@@ -579,5 +579,21 @@ $routes = [
     'controller' => 'Vaccine',
     'action' => 'create' // Use create action instead
 ],
+
+
+
+// Analytics API Routes
+'/api/analytics/admin' => [
+    'controller' => 'Analytics',
+    'action' => 'getAdminAnalytics'
+],
+'/api/analytics/veterinary' => [
+    'controller' => 'Analytics',
+    'action' => 'getVeterinaryAnalytics'
+],
+'/api/analytics/client' => [
+    'controller' => 'Analytics',
+    'action' => 'getClientAnalytics'
+],
 ];
 ?>

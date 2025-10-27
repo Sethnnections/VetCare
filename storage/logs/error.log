@@ -30,3 +30,23 @@
                     OR (appointment_time < DATE_ADD(:time, INTERVAL :duration MINUTE) AND DATE_ADD(appointment_time, INTERVAL duration MINUTE) >= DATE_ADD(:time, INTERVAL :duration MINUTE))
                     OR (appointment_time >= :time AND DATE_ADD(appointment_time, INTERVAL duration MINUTE) <= DATE_ADD(:time, INTERVAL :duration MINUTE))
                 )
+[2025-10-27 22:08:46] ERROR: Database fetchOne error: SQLSTATE[HY093]: Invalid parameter number | SQL: SELECT COUNT(*) as conflict_count 
+                FROM appointments 
+                WHERE veterinary_id = :veterinary_id 
+                AND appointment_date = :appointment_date 
+                AND status IN ('scheduled', 'confirmed')
+                AND (
+                    (appointment_time <= :time AND DATE_ADD(appointment_time, INTERVAL duration MINUTE) > :time)
+                    OR (appointment_time < DATE_ADD(:time, INTERVAL :duration MINUTE) AND DATE_ADD(appointment_time, INTERVAL duration MINUTE) >= DATE_ADD(:time, INTERVAL :duration MINUTE))
+                    OR (appointment_time >= :time AND DATE_ADD(appointment_time, INTERVAL duration MINUTE) <= DATE_ADD(:time, INTERVAL :duration MINUTE))
+                )
+[2025-10-27 22:09:20] ERROR: Database fetchOne error: SQLSTATE[HY093]: Invalid parameter number | SQL: SELECT COUNT(*) as conflict_count 
+                FROM appointments 
+                WHERE veterinary_id = :veterinary_id 
+                AND appointment_date = :appointment_date 
+                AND status IN ('scheduled', 'confirmed')
+                AND (
+                    (appointment_time <= :time AND DATE_ADD(appointment_time, INTERVAL duration MINUTE) > :time)
+                    OR (appointment_time < DATE_ADD(:time, INTERVAL :duration MINUTE) AND DATE_ADD(appointment_time, INTERVAL duration MINUTE) >= DATE_ADD(:time, INTERVAL :duration MINUTE))
+                    OR (appointment_time >= :time AND DATE_ADD(appointment_time, INTERVAL duration MINUTE) <= DATE_ADD(:time, INTERVAL :duration MINUTE))
+                )

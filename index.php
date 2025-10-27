@@ -76,6 +76,7 @@ $modelFiles = [
     'Billing.php',
     'Reminder.php',
     'Appointment.php',
+    'Analytics.php'
 ];
 
 foreach ($modelFiles as $modelFile) {

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 27, 2025 at 03:27 PM
+-- Generation Time: Oct 27, 2025 at 10:19 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -97,7 +97,22 @@ INSERT INTO `animals` (`animal_id`, `client_id`, `assigned_veterinary`, `name`, 
 (3, 2, 5, 'Buddy', 'dog', 'Labrador Retriever', 'male', '2019-11-10', 'Yellow', 28.00, 'MICRO003', 'active', NULL, '2025-10-13 14:07:25', '2025-10-17 14:00:25'),
 (4, 2, 5, 'Mittens', 'cat', 'Domestic Shorthair', 'female', '2022-01-05', 'Tabby', 3.80, NULL, 'active', NULL, '2025-10-13 14:07:25', '2025-10-17 14:00:25'),
 (5, 3, 6, 'Bruce', 'dog', 'German Shaperd', 'female', '2025-01-01', 'Black and White', 50.00, '1000973478489', 'active', 'Clean', '2025-10-17 12:52:04', '2025-10-17 14:47:36'),
-(6, 6, 4, 'Zigge', 'horse', 'Brazil', 'male', '2025-01-01', 'Black and White', 50.00, 'WEEF5567G', 'active', 'Nope', '2025-10-18 14:01:39', '2025-10-24 07:54:10');
+(6, 6, 4, 'Zigge', 'horse', 'Brazil', 'male', '2025-01-01', 'Black and White', 50.00, 'WEEF5567G', 'active', 'Nope', '2025-10-18 14:01:39', '2025-10-24 07:54:10'),
+(7, 17, 4, 'Simba', 'dog', 'German Shepherd', 'male', '2021-05-10', 'Black/Tan', 38.20, 'MW2024001', 'active', 'Very protective, good with children', '2024-01-25 08:00:00', '2025-10-27 21:16:28'),
+(8, 18, 5, 'Bella', 'dog', 'Labrador Mix', 'female', '2022-02-15', 'Golden Brown', 29.80, 'MW2024002', 'active', 'Energetic and playful', '2024-02-10 09:30:00', '2025-10-27 21:16:28'),
+(9, 19, 6, 'Rocky', 'dog', 'Rottweiler', 'male', '2020-11-20', 'Black/Brown', 45.50, 'MW2024003', 'active', 'Well-trained guard dog', '2024-02-28 12:15:00', '2025-10-27 21:16:28'),
+(10, 20, 4, 'Luna', 'dog', 'Mixed Breed', 'female', '2021-08-05', 'Brown/White', 23.40, 'MW2024004', 'active', 'Rescued from streets', '2024-03-05 07:45:00', '2025-10-27 21:16:28'),
+(11, 21, 5, 'Charlie', 'dog', 'Terrier Mix', 'male', '2023-01-12', 'White/Brown', 12.30, 'MW2024005', 'active', 'Young and curious', '2024-03-20 14:20:00', '2025-10-27 21:16:28'),
+(12, 22, 6, 'Whiskers', 'cat', 'Domestic Shorthair', 'male', '2022-04-18', 'Orange Tabby', 4.50, 'MW2024006', 'active', 'Indoor cat, very calm', '2024-04-02 11:10:00', '2025-10-27 21:16:28'),
+(13, 23, 4, 'Misty', 'cat', 'Persian Mix', 'female', '2021-12-03', 'White/Grey', 3.80, 'MW2024007', 'active', 'Requires regular grooming', '2024-04-15 08:30:00', '2025-10-27 21:16:28'),
+(14, 24, 5, 'Shadow', 'cat', 'Black Domestic', 'male', '2020-09-25', 'Black', 5.20, 'MW2024008', 'active', 'Outdoor hunter', '2024-05-01 09:45:00', '2025-10-27 21:16:28'),
+(15, 25, 6, 'Princess', 'cat', 'Calico', 'female', '2023-03-08', 'Tri-color', 3.50, 'MW2024009', 'active', 'Very affectionate', '2024-05-12 13:20:00', '2025-10-27 21:16:28'),
+(16, 26, 4, 'Coco', 'bird', 'African Grey Parrot', 'female', '2019-07-14', 'Grey/Red', 0.45, 'MW2024010', 'active', 'Can speak several words', '2024-05-20 06:15:00', '2025-10-27 21:16:28'),
+(17, 17, 5, 'Fluffy', 'rabbit', 'Flemish Giant', 'male', '2023-02-28', 'Brown', 6.50, 'MW2024011', 'active', 'Very large breed', '2024-06-05 10:40:00', '2025-10-27 21:16:28'),
+(18, 18, 6, 'Rex', 'dog', 'Bulldog Mix', 'male', '2022-11-11', 'Brindle', 28.00, 'MW2024012', 'active', 'Breathing monitored', '2024-06-18 12:55:00', '2025-10-27 21:16:28'),
+(19, 19, 4, 'Daisy', 'dog', 'Beagle', 'female', '2023-05-22', 'Tri-color', 11.50, 'MW2024013', 'active', 'Excellent nose', '2024-07-01 08:10:00', '2025-10-27 21:16:28'),
+(20, 20, 5, 'Max', 'dog', 'Boxer', 'male', '2022-06-30', 'Fawn', 32.00, 'MW2024014', 'active', 'Athletic and strong', '2024-07-15 14:30:00', '2025-10-27 21:16:28'),
+(21, 21, 6, 'Molly', 'dog', 'Cocker Spaniel', 'female', '2021-04-12', 'Golden', 15.20, 'MW2024015', 'active', 'Loves water', '2024-08-02 07:25:00', '2025-10-27 21:16:28');
 
 -- --------------------------------------------------------
 
@@ -216,7 +231,37 @@ INSERT INTO `appointments` (`appointment_id`, `animal_id`, `client_id`, `veterin
 (1, 1, 1, 4, '2025-10-28', '10:00:00', 30, 'consultation', 'Routine checkup', 'scheduled', NULL, 0, 1, '2025-10-27 08:54:42', '2025-10-27 08:54:42'),
 (2, 2, 1, 4, '2025-10-28', '11:00:00', 45, 'vaccination', 'Annual vaccination', 'scheduled', NULL, 0, 1, '2025-10-27 08:54:42', '2025-10-27 08:54:42'),
 (3, 3, 2, 5, '2025-10-29', '14:30:00', 60, 'grooming', 'Full grooming service', 'confirmed', NULL, 0, 1, '2025-10-27 08:54:42', '2025-10-27 08:54:42'),
-(4, 6, 3, 4, '2025-10-31', '11:00:00', 30, 'consultation', 'Animal check up', 'scheduled', 'it looks strange', 0, 1, '2025-10-27 08:56:41', '2025-10-27 08:56:41');
+(4, 6, 3, 4, '2025-10-31', '11:00:00', 30, 'consultation', 'Animal check up', 'scheduled', 'it looks strange', 0, 1, '2025-10-27 08:56:41', '2025-10-27 08:56:41'),
+(5, 1, 1, 4, '2024-09-15', '09:00:00', 30, 'consultation', 'Annual checkup', 'completed', 'All vitals normal', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(6, 2, 1, 5, '2024-09-20', '10:30:00', 45, 'vaccination', 'Rabies booster', 'completed', 'No adverse reactions', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(7, 3, 2, 6, '2024-09-25', '14:00:00', 60, '', 'Teeth cleaning', 'completed', 'Minor tartar removed', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(8, 4, 2, 4, '2024-10-01', '11:00:00', 30, 'consultation', 'Skin irritation check', 'completed', 'Prescribed ointment', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(9, 5, 3, 5, '2024-10-05', '15:30:00', 45, 'vaccination', 'Annual vaccines', 'completed', 'All up to date', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(10, 6, 3, 6, '2024-10-23', '09:30:00', 30, 'consultation', 'Weight check', 'completed', 'Slight weight gain', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(11, 7, 1, 4, '2024-10-24', '13:00:00', 45, 'grooming', 'Full grooming service', 'completed', 'Coat in good condition', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(12, 8, 2, 5, '2024-10-25', '10:00:00', 30, 'consultation', 'Follow-up checkup', 'completed', 'Recovery progressing well', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(13, 9, 2, 6, '2024-10-28', '16:00:00', 30, 'consultation', 'Routine wellness check', 'scheduled', 'First appointment', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(14, 10, 3, 4, '2024-10-29', '09:30:00', 60, 'surgery', 'Spaying procedure', 'confirmed', 'Pre-surgery tests completed', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(15, 11, 1, 5, '2024-10-30', '14:30:00', 45, 'vaccination', 'Puppy shots series', 'scheduled', 'Second round of vaccines', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(16, 12, 2, 6, '2024-10-31', '11:00:00', 30, 'consultation', 'Behavioral consultation', 'confirmed', 'Excessive barking concerns', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(17, 13, 3, 4, '2024-11-01', '15:00:00', 30, 'consultation', 'Nutrition consultation', 'scheduled', 'Diet planning needed', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(18, 14, 1, 5, '2024-11-04', '10:30:00', 60, 'grooming', 'Nail trim and bath', 'scheduled', 'Regular grooming', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(19, 15, 2, 6, '2024-11-05', '13:30:00', 45, 'vaccination', 'Rabies vaccine', 'scheduled', 'Annual booster due', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(20, 16, 3, 4, '2024-11-06', '09:00:00', 30, 'checkup', 'Post-surgery follow-up', 'scheduled', '2 weeks post-op', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(21, 17, 1, 5, '2024-11-08', '14:00:00', 30, 'consultation', 'Senior wellness exam', 'scheduled', 'Geriatric screening', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(22, 18, 2, 6, '2024-11-11', '16:30:00', 45, 'emergency', 'Limping investigation', 'scheduled', 'Possible injury', 0, 1, '2025-10-27 21:16:28', '2025-10-27 21:16:28'),
+(23, 1, 1, 4, '2024-11-12', '09:00:00', 30, 'consultation', 'Routine checkup', 'scheduled', NULL, 0, 1, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(24, 2, 1, 5, '2024-11-13', '10:30:00', 45, 'consultation', 'Allergy follow-up', 'scheduled', NULL, 0, 1, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(25, 3, 2, 6, '2024-11-14', '14:00:00', 30, 'checkup', 'Post-surgery final check', 'scheduled', NULL, 0, 1, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(26, 4, 2, 4, '2024-11-15', '11:00:00', 60, '', 'Teeth cleaning', 'scheduled', NULL, 0, 1, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(27, 5, 3, 5, '2024-11-18', '15:30:00', 30, 'consultation', 'General wellness', 'scheduled', NULL, 0, 1, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(28, 6, 6, 6, '2024-11-19', '09:30:00', 45, 'grooming', 'Full grooming service', 'scheduled', NULL, 0, 1, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(29, 7, 17, 4, '2024-11-20', '13:00:00', 30, 'consultation', 'Skin check', 'scheduled', NULL, 0, 1, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(30, 8, 18, 5, '2024-11-21', '10:00:00', 45, 'vaccination', 'Annual booster', 'scheduled', NULL, 0, 1, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(31, 9, 19, 6, '2024-11-22', '16:00:00', 30, 'consultation', 'Weight management check', 'scheduled', NULL, 0, 1, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(32, 10, 20, 4, '2024-11-25', '09:30:00', 30, 'checkup', 'Senior wellness exam', 'scheduled', NULL, 0, 1, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(33, 11, 21, 5, '2024-11-26', '14:30:00', 45, 'consultation', 'Digestive health check', 'scheduled', NULL, 0, 1, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(34, 12, 22, 6, '2024-11-27', '11:00:00', 30, 'consultation', 'Behavioral follow-up', 'scheduled', NULL, 0, 1, '2025-10-27 21:16:32', '2025-10-27 21:16:32');
 
 -- --------------------------------------------------------
 
@@ -321,7 +366,27 @@ INSERT INTO `billings` (`billing_id`, `animal_id`, `treatment_id`, `billing_date
 (1, 1, 1, '2024-01-15', '2024-02-14', 25.00, 2.00, 0.00, 27.00, 'paid', 'cash', NULL, NULL, NULL, '2025-10-13 14:07:26', '2025-10-13 14:07:26'),
 (2, 1, 2, '2024-02-20', '2024-03-21', 45.50, 3.64, 5.00, 44.14, 'paid', 'mobile_money', NULL, NULL, NULL, '2025-10-13 14:07:26', '2025-10-13 14:07:26'),
 (3, 2, 3, '2024-01-10', '2024-02-09', 120.00, 9.60, 0.00, 129.60, 'paid', 'cash', NULL, NULL, NULL, '2025-10-13 14:07:26', '2025-10-13 14:07:26'),
-(4, 3, 4, '2024-03-01', '2024-03-31', 85.00, 6.80, 0.00, 91.80, 'pending', NULL, NULL, NULL, NULL, '2025-10-13 14:07:26', '2025-10-13 14:07:26');
+(4, 3, 4, '2024-03-01', '2024-03-31', 85.00, 6.80, 0.00, 91.80, 'pending', NULL, NULL, NULL, NULL, '2025-10-13 14:07:26', '2025-10-13 14:07:26'),
+(5, 1, 5, '2024-09-15', '2024-10-15', 12500.00, 0.00, 0.00, 12500.00, 'paid', 'mobile_money', '2024-09-15', NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(6, 2, 6, '2024-09-20', '2024-10-20', 8500.00, 0.00, 0.00, 8500.00, 'paid', 'cash', '2024-09-20', NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(7, 3, 7, '2024-09-25', '2024-10-25', 25000.00, 0.00, 2500.00, 22500.00, 'paid', 'mobile_money', '2024-09-25', NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(8, 4, 8, '2024-10-01', '2024-10-31', 15000.00, 0.00, 0.00, 15000.00, 'paid', 'bank_transfer', '2024-10-05', NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(9, 5, 9, '2024-10-05', '2024-11-04', 10500.00, 0.00, 0.00, 10500.00, 'paid', 'mobile_money', '2024-10-05', NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(10, 6, 10, '2024-10-23', '2024-11-22', 8000.00, 0.00, 0.00, 8000.00, 'paid', 'cash', '2024-10-23', NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(11, 7, 11, '2024-10-24', '2024-11-23', 6500.00, 0.00, 0.00, 6500.00, 'paid', 'mobile_money', '2024-10-24', NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(12, 8, 12, '2024-10-25', '2024-11-24', 5000.00, 0.00, 0.00, 5000.00, 'paid', 'cash', '2024-10-25', NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(13, 9, 13, '2024-10-20', '2024-11-19', 18000.00, 0.00, 0.00, 18000.00, 'pending', NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(14, 10, 14, '2024-10-22', '2024-11-21', 12000.00, 0.00, 0.00, 12000.00, 'pending', NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(15, 11, 15, '2024-10-10', '2024-11-09', 16500.00, 0.00, 1500.00, 15000.00, 'paid', 'mobile_money', '2024-10-10', NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(16, 12, 16, '2024-10-12', '2024-11-11', 22000.00, 0.00, 0.00, 22000.00, 'paid', 'bank_transfer', '2024-10-15', NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(17, 13, 17, '2024-10-15', '2024-11-14', 9500.00, 0.00, 0.00, 9500.00, 'paid', 'cash', '2024-10-15', NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(18, 14, 18, '2024-10-18', '2024-11-17', 28000.00, 0.00, 3000.00, 25000.00, 'pending', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(19, 15, 19, '2024-10-21', '2024-11-20', 11000.00, 0.00, 0.00, 11000.00, 'paid', 'mobile_money', '2024-10-21', NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(20, 1, 20, '2024-09-28', '2024-10-28', 7500.00, 0.00, 0.00, 7500.00, 'paid', 'cash', '2024-09-28', NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(21, 2, 21, '2024-10-03', '2024-11-02', 35000.00, 0.00, 5000.00, 30000.00, 'pending', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(22, 3, 22, '2024-10-08', '2024-11-07', 45000.00, 0.00, 0.00, 45000.00, 'paid', 'bank_transfer', '2024-10-08', NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(23, 4, 23, '2024-10-14', '2024-11-13', 32000.00, 0.00, 2000.00, 30000.00, 'paid', 'mobile_money', '2024-10-14', NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(24, 5, 24, '2024-10-16', '2024-11-15', 8500.00, 0.00, 0.00, 8500.00, 'paid', 'cash', '2024-10-16', NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32');
 
 --
 -- Triggers `billings`
@@ -373,7 +438,17 @@ INSERT INTO `clients` (`client_id`, `user_id`, `emergency_contact`, `preferred_c
 (3, 7, '+265 882 279 994', 'phone', 'Im happy', '2025-10-14 19:26:11', '2025-10-17 08:05:50'),
 (4, 8, NULL, 'phone', NULL, '2025-10-15 13:01:45', '2025-10-15 13:01:45'),
 (5, 9, NULL, 'phone', NULL, '2025-10-16 16:28:30', '2025-10-16 16:28:30'),
-(6, 10, NULL, 'phone', NULL, '2025-10-18 13:59:56', '2025-10-18 13:59:56');
+(6, 10, NULL, 'phone', NULL, '2025-10-18 13:59:56', '2025-10-18 13:59:56'),
+(17, 35, '+265 881 234 567', 'phone', 'Prefers morning appointments', '2025-10-27 21:16:26', '2025-10-27 21:16:27'),
+(18, 36, '+265 882 345 678', 'sms', 'Works full-time, evening appointments preferred', '2025-10-27 21:16:26', '2025-10-27 21:16:27'),
+(19, 37, '+265 883 456 789', 'email', 'Prefers email communication', '2025-10-27 21:16:26', '2025-10-27 21:16:27'),
+(20, 38, '+265 884 567 890', 'phone', 'Has multiple animals, regular customer', '2025-10-27 21:16:26', '2025-10-27 21:16:28'),
+(21, 39, '+265 885 678 901', 'sms', 'First-time pet owner', '2025-10-27 21:16:26', '2025-10-27 21:16:28'),
+(22, 40, '+265 886 789 012', 'phone', 'Experienced dog breeder', '2025-10-27 21:16:26', '2025-10-27 21:16:28'),
+(23, 41, '+265 887 890 123', 'email', 'Travels frequently for work', '2025-10-27 21:16:26', '2025-10-27 21:16:28'),
+(24, 42, '+265 888 901 234', 'phone', 'Very attentive pet parent', '2025-10-27 21:16:26', '2025-10-27 21:16:28'),
+(25, 43, '+265 889 012 345', 'sms', 'Budget-conscious, asks about costs', '2025-10-27 21:16:26', '2025-10-27 21:16:28'),
+(26, 44, '+265 880 123 456', 'phone', 'Rescues stray animals regularly', '2025-10-27 21:16:26', '2025-10-27 21:16:28');
 
 --
 -- Triggers `clients`
@@ -393,6 +468,21 @@ CREATE TRIGGER `before_client_delete` BEFORE DELETE ON `clients` FOR EACH ROW BE
 END
 $$
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `client_activity_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `client_activity_view` (
+`client_id` int(11)
+,`client_name` varchar(101)
+,`total_animals` bigint(21)
+,`total_treatments` bigint(21)
+,`total_spent` decimal(32,2)
+,`last_visit` date
+);
 
 -- --------------------------------------------------------
 
@@ -475,7 +565,94 @@ INSERT INTO `reminders` (`reminder_id`, `animal_id`, `reminder_type`, `reminder_
 (3, 2, 'treatment_followup', '2025-10-13', '2024-01-24', 'Treatment Follow-up: Spaying', 'Follow-up required for treatment: Spaying', 'pending', 'medium', NULL, NULL, 'treatment', 3, '2025-10-13 14:07:25', '2025-10-13 14:07:25'),
 (4, 1, 'vaccination', '2025-10-13', '2025-01-15', 'Vaccination Due: Rabies Vaccine', 'Rabies Vaccine vaccination is due for animal ID: 1', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-13 14:07:25', '2025-10-13 14:07:25'),
 (5, 1, 'vaccination', '2025-10-13', '2025-01-15', 'Vaccination Due: DHPP Vaccine', 'DHPP Vaccine vaccination is due for animal ID: 1', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-13 14:07:25', '2025-10-13 14:07:25'),
-(6, 2, 'vaccination', '2025-10-13', '2025-01-10', 'Vaccination Due: FVRCP Vaccine', 'FVRCP Vaccine vaccination is due for animal ID: 2', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-13 14:07:25', '2025-10-13 14:07:25');
+(6, 2, 'vaccination', '2025-10-13', '2025-01-10', 'Vaccination Due: FVRCP Vaccine', 'FVRCP Vaccine vaccination is due for animal ID: 2', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-13 14:07:25', '2025-10-13 14:07:25'),
+(7, 2, 'treatment_followup', '2025-10-27', '2025-09-20', 'Treatment Follow-up: Rabies vaccination', 'Follow-up required for treatment: Rabies vaccination', 'pending', 'medium', NULL, NULL, 'treatment', 6, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(8, 4, 'treatment_followup', '2025-10-27', '2024-10-15', 'Treatment Follow-up: Allergic dermatitis', 'Follow-up required for treatment: Allergic dermatitis', 'pending', 'medium', NULL, NULL, 'treatment', 8, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(9, 6, 'treatment_followup', '2025-10-27', '2024-11-23', 'Treatment Follow-up: Weight management', 'Follow-up required for treatment: Weight management', 'pending', 'medium', NULL, NULL, 'treatment', 10, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(10, 9, 'treatment_followup', '2025-10-27', '2024-11-05', 'Treatment Follow-up: Upper respiratory infection', 'Follow-up required for treatment: Upper respiratory infection', 'pending', 'medium', NULL, NULL, 'treatment', 13, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(11, 10, 'treatment_followup', '2025-10-27', '2024-11-06', 'Treatment Follow-up: Ear infection', 'Follow-up required for treatment: Ear infection', 'pending', 'medium', NULL, NULL, 'treatment', 14, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(12, 1, 'vaccination', '2025-10-27', '2025-09-15', 'Vaccination Due: Rabies Vaccine', 'Rabies Vaccine vaccination is due for animal ID: 1', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(13, 2, 'vaccination', '2025-10-27', '2025-09-20', 'Vaccination Due: Rabies Vaccine', 'Rabies Vaccine vaccination is due for animal ID: 2', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(14, 3, 'vaccination', '2025-10-27', '2025-08-10', 'Vaccination Due: Rabies Vaccine', 'Rabies Vaccine vaccination is due for animal ID: 3', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(15, 1, 'vaccination', '2025-10-27', '2025-09-15', 'Vaccination Due: DHPP Vaccine', 'DHPP Vaccine vaccination is due for animal ID: 1', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(16, 2, 'vaccination', '2025-10-27', '2025-09-20', 'Vaccination Due: DHPP Vaccine', 'DHPP Vaccine vaccination is due for animal ID: 2', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(17, 4, 'vaccination', '2025-10-27', '2025-07-15', 'Vaccination Due: DHPP Vaccine', 'DHPP Vaccine vaccination is due for animal ID: 4', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(18, 5, 'vaccination', '2025-10-27', '2025-10-05', 'Vaccination Due: FVRCP Vaccine', 'FVRCP Vaccine vaccination is due for animal ID: 5', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(19, 6, 'vaccination', '2025-10-27', '2025-08-20', 'Vaccination Due: FVRCP Vaccine', 'FVRCP Vaccine vaccination is due for animal ID: 6', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(20, 1, 'vaccination', '2025-10-27', '2025-09-15', 'Vaccination Due: Bordetella Vaccine', 'Bordetella Vaccine vaccination is due for animal ID: 1', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(21, 2, 'vaccination', '2025-10-27', '2025-09-20', 'Vaccination Due: Bordetella Vaccine', 'Bordetella Vaccine vaccination is due for animal ID: 2', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(22, 1, 'vaccination', '2025-08-15', '2025-09-15', 'Rabies Vaccine Due', 'Annual rabies vaccination is due for Simba', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(23, 2, 'vaccination', '2025-08-20', '2025-09-20', 'Rabies Vaccine Due', 'Annual rabies vaccination is due for Bella', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(24, 5, 'vaccination', '2025-09-05', '2025-10-05', 'FVRCP Vaccine Due', 'Annual FVRCP vaccination is due', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(25, 6, 'treatment_followup', '2024-11-15', '2024-11-23', 'Weight Check Follow-up', 'Follow-up weight check for diet monitoring', 'pending', 'medium', NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(26, 9, 'treatment_followup', '2024-10-30', '2024-11-05', 'URI Treatment Check', 'Check respiratory infection recovery progress', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(27, 10, 'treatment_followup', '2024-11-01', '2024-11-06', 'Ear Infection Follow-up', 'Verify ear infection has cleared', 'pending', 'medium', NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(28, 11, 'appointment', '2024-10-28', '2024-10-30', 'Upcoming Appointment', 'Vaccination appointment scheduled', 'pending', 'medium', NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(29, 12, 'appointment', '2024-10-29', '2024-10-31', 'Upcoming Appointment', 'Behavioral consultation scheduled', 'pending', 'medium', NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(30, 13, 'appointment', '2024-10-30', '2024-11-01', 'Upcoming Appointment', 'Nutrition consultation scheduled', 'pending', 'low', NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(31, 9, 'billing', '2024-11-10', '2024-11-19', 'Payment Due', 'Treatment payment due for URI treatment', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(32, 10, 'billing', '2024-11-12', '2024-11-21', 'Payment Due', 'Treatment payment due for ear infection', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(33, 1, 'general', '2024-11-15', '2024-12-01', 'Heartworm Prevention', 'Monthly heartworm prevention medication due', 'pending', 'medium', NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(34, 2, 'general', '2024-11-20', '2024-12-05', 'Flea Treatment', 'Monthly flea and tick prevention due', 'pending', 'low', NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
+(35, 11, 'treatment_followup', '2025-10-27', '2024-10-17', 'Treatment Follow-up: Gastrointestinal upset', 'Follow-up required for treatment: Gastrointestinal upset', 'pending', 'medium', NULL, NULL, 'treatment', 15, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(36, 12, 'treatment_followup', '2025-10-27', '2024-10-26', 'Treatment Follow-up: Laceration repair', 'Follow-up required for treatment: Laceration repair', 'pending', 'medium', NULL, NULL, 'treatment', 16, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(37, 13, 'treatment_followup', '2025-10-27', '2024-11-15', 'Treatment Follow-up: Parasite treatment', 'Follow-up required for treatment: Parasite treatment', 'pending', 'medium', NULL, NULL, 'treatment', 17, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(38, 14, 'treatment_followup', '2025-10-27', '2024-11-18', 'Treatment Follow-up: Arthritis management', 'Follow-up required for treatment: Arthritis management', 'pending', 'medium', NULL, NULL, 'treatment', 18, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(39, 15, 'treatment_followup', '2025-10-27', '2024-10-28', 'Treatment Follow-up: Eye infection', 'Follow-up required for treatment: Eye infection', 'pending', 'medium', NULL, NULL, 'treatment', 19, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(40, 2, 'treatment_followup', '2025-10-27', '2024-11-03', 'Treatment Follow-up: Skin allergy test', 'Follow-up required for treatment: Skin allergy test', 'pending', 'medium', NULL, NULL, 'treatment', 21, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(41, 3, 'treatment_followup', '2025-10-27', '2024-10-22', 'Treatment Follow-up: Spay surgery', 'Follow-up required for treatment: Spay surgery', 'pending', 'medium', NULL, NULL, 'treatment', 22, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(42, 4, 'vaccination', '2025-10-27', '2025-07-15', 'Vaccination Due: Rabies Vaccine', 'Rabies Vaccine vaccination is due for animal ID: 4', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(43, 7, 'vaccination', '2025-10-27', '2025-09-10', 'Vaccination Due: FVRCP Vaccine', 'FVRCP Vaccine vaccination is due for animal ID: 7', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(44, 8, 'vaccination', '2025-10-27', '2025-09-12', 'Vaccination Due: FVRCP Vaccine', 'FVRCP Vaccine vaccination is due for animal ID: 8', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(45, 9, 'vaccination', '2025-10-27', '2025-09-18', 'Vaccination Due: Rabies Vaccine', 'Rabies Vaccine vaccination is due for animal ID: 9', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(46, 10, 'vaccination', '2025-10-27', '2025-09-22', 'Vaccination Due: DHPP Vaccine', 'DHPP Vaccine vaccination is due for animal ID: 10', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(47, 11, 'vaccination', '2025-10-27', '2025-09-25', 'Vaccination Due: DHPP Vaccine', 'DHPP Vaccine vaccination is due for animal ID: 11', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(48, 12, 'vaccination', '2025-10-27', '2025-10-01', 'Vaccination Due: Rabies Vaccine', 'Rabies Vaccine vaccination is due for animal ID: 12', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(49, 13, 'vaccination', '2025-10-27', '2025-10-03', 'Vaccination Due: DHPP Vaccine', 'DHPP Vaccine vaccination is due for animal ID: 13', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(50, 14, 'vaccination', '2025-10-27', '2025-10-05', 'Vaccination Due: Bordetella Vaccine', 'Bordetella Vaccine vaccination is due for animal ID: 14', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(51, 15, 'vaccination', '2025-10-27', '2025-10-08', 'Vaccination Due: Leptospirosis Vaccine', 'Leptospirosis Vaccine vaccination is due for animal ID: 15', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(52, 1, 'vaccination', '2025-10-27', '2025-09-15', 'Vaccination Due: Leptospirosis Vaccine', 'Leptospirosis Vaccine vaccination is due for animal ID: 1', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(53, 2, 'vaccination', '2025-10-27', '2025-09-20', 'Vaccination Due: Canine Influenza Vaccine', 'Canine Influenza Vaccine vaccination is due for animal ID: 2', 'pending', 'high', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(54, 3, 'vaccination', '2025-07-10', '2025-08-10', 'Rabies Vaccine Due', 'Annual rabies vaccination due for Rocky', 'pending', 'high', NULL, NULL, 'vaccine', 3, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(55, 4, 'vaccination', '2025-06-15', '2025-07-15', 'DHPP Vaccine Due', 'Annual DHPP vaccination due for Luna', 'pending', 'high', NULL, NULL, 'vaccine', 6, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(56, 7, 'vaccination', '2025-08-10', '2025-09-10', 'FVRCP Vaccine Due', 'Annual FVRCP vaccination due for Misty', 'pending', 'high', NULL, NULL, 'vaccine', NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(57, 11, 'treatment_followup', '2024-11-10', '2024-11-15', 'Parasite Check', 'Follow-up fecal test for parasite treatment', 'pending', 'medium', NULL, NULL, 'treatment', NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(58, 14, 'treatment_followup', '2024-11-13', '2024-11-18', 'Arthritis Check', 'Assess pain management effectiveness', 'pending', 'medium', NULL, NULL, 'treatment', NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(59, 2, 'treatment_followup', '2024-10-28', '2024-11-03', 'Allergy Assessment', 'Review diet trial results', 'pending', 'medium', NULL, NULL, 'treatment', NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(60, 4, 'appointment', '2024-11-12', '2024-11-15', 'Dental Appointment', 'Teeth cleaning scheduled', 'pending', 'medium', NULL, NULL, 'appointment', NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(61, 8, 'appointment', '2024-11-18', '2024-11-21', 'Vaccination Appointment', 'Annual booster due', 'pending', 'high', NULL, NULL, 'appointment', NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(62, 14, 'billing', '2024-11-10', '2024-11-17', 'Payment Reminder', 'Arthritis treatment payment pending', 'pending', 'high', NULL, NULL, 'billing', NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(63, 2, 'billing', '2024-10-25', '2024-11-02', 'Payment Reminder', 'Allergy test payment pending', 'pending', 'high', NULL, NULL, 'billing', NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(64, 11, 'general', '2024-11-25', '2024-12-10', 'Diet Review', 'Schedule diet consultation', 'pending', 'low', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(65, 14, 'general', '2024-11-28', '2024-12-15', 'Joint Supplement', 'Reorder joint supplement medication', 'pending', 'medium', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(66, 3, 'general', '2024-11-05', '2024-11-20', 'Activity Monitor', 'Monitor activity post-surgery', 'pending', 'medium', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32');
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `revenue_analytics_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `revenue_analytics_view` (
+`month` varchar(7)
+,`total_bills` bigint(21)
+,`total_revenue` decimal(32,2)
+,`paid_revenue` decimal(32,2)
+,`pending_revenue` decimal(32,2)
+,`avg_bill_amount` decimal(14,6)
+);
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `species_analytics_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `species_analytics_view` (
+`species` varchar(50)
+,`animal_count` bigint(21)
+,`percentage` decimal(26,2)
+);
 
 -- --------------------------------------------------------
 
@@ -548,7 +725,16 @@ INSERT INTO `system_logs` (`log_id`, `level`, `message`, `context`, `user_id`, `
 (48, 'INFO', 'User login: Steve Biko (sb@vetelinary.com)', '{\"last_login\": \"2025-10-27 16:01:57\"}', 6, NULL, '2025-10-27 14:01:57'),
 (49, 'INFO', 'User login: Seko Mwalwen (client@outlook.com)', '{\"last_login\": \"2025-10-27 16:05:48\"}', 7, NULL, '2025-10-27 14:05:48'),
 (50, 'INFO', 'User login: Seko Mwalwen (client@outlook.com)', '{\"last_login\": \"2025-10-27 16:17:04\"}', 7, NULL, '2025-10-27 14:17:04'),
-(51, 'INFO', 'User login: Steve Biko (sb@vetelinary.com)', '{\"last_login\": \"2025-10-27 16:17:13\"}', 6, NULL, '2025-10-27 14:17:13');
+(51, 'INFO', 'User login: Steve Biko (sb@vetelinary.com)', '{\"last_login\": \"2025-10-27 16:17:13\"}', 6, NULL, '2025-10-27 14:17:13'),
+(52, 'INFO', 'User login: Seko Mwalwen (client@outlook.com)', '{\"last_login\": \"2025-10-27 22:53:27\"}', 7, NULL, '2025-10-27 20:53:27'),
+(53, 'INFO', 'User login: Patience Manguluti (admin@vet.com)', '{\"last_login\": \"2025-10-27 22:54:07\"}', 1, NULL, '2025-10-27 20:54:07'),
+(54, 'INFO', 'User login: Chisomo Banda (dr.banda@vetclinic.mw)', NULL, 32, '::1', '2024-10-27 06:30:00'),
+(55, 'INFO', 'User login: Kondwani Phiri (dr.phiri@vetclinic.mw)', NULL, 33, '::1', '2024-10-27 07:15:00'),
+(56, 'INFO', 'New animal registered: Simba', NULL, 1, '::1', '2024-10-27 08:00:00'),
+(57, 'INFO', 'Appointment scheduled for 2024-10-30', NULL, 1, '::1', '2024-10-27 08:30:00'),
+(58, 'INFO', 'Treatment completed for animal ID: 8', NULL, 33, '::1', '2024-10-25 12:20:00'),
+(59, 'INFO', 'Payment received: MWK 12,500.00 - Mobile Money', NULL, 1, '::1', '2024-10-27 09:00:00'),
+(60, 'INFO', 'Vaccine administered: Rabies', NULL, 32, '::1', '2024-10-20 11:45:00');
 
 -- --------------------------------------------------------
 
@@ -580,7 +766,27 @@ INSERT INTO `treatments` (`treatment_id`, `animal_id`, `veterinary_id`, `diagnos
 (1, 1, 4, 'Vaccination - Rabies', 'Administered rabies vaccine. No adverse reactions observed.', NULL, '2024-01-15', '2025-01-15', 'completed', NULL, 25.00, '2025-10-13 14:07:25', '2025-10-13 14:07:25'),
 (2, 1, 4, 'Skin infection', 'Prescribed antibiotics for skin infection. Apply topical ointment twice daily.', NULL, '2024-02-20', '2024-03-05', 'completed', NULL, 45.50, '2025-10-13 14:07:25', '2025-10-13 14:07:25'),
 (3, 2, 5, 'Spaying', 'Routine spaying procedure. Recovery normal.', NULL, '2024-01-10', '2024-01-24', 'completed', NULL, 120.00, '2025-10-13 14:07:25', '2025-10-13 14:07:25'),
-(4, 3, 4, 'Dental cleaning', 'Professional dental cleaning. Minor tartar buildup removed.', NULL, '2024-03-01', NULL, 'completed', NULL, 85.00, '2025-10-13 14:07:25', '2025-10-13 14:07:25');
+(4, 3, 4, 'Dental cleaning', 'Professional dental cleaning. Minor tartar buildup removed.', NULL, '2024-03-01', NULL, 'completed', NULL, 85.00, '2025-10-13 14:07:25', '2025-10-13 14:07:25'),
+(5, 1, 4, 'Annual wellness check', 'Complete physical examination, all systems normal', 'Multivitamin supplement', '2024-09-15', NULL, 'completed', NULL, 12500.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(6, 2, 5, 'Rabies vaccination', 'Administered rabies vaccine, no adverse reactions', 'Rabies vaccine 1mL', '2024-09-20', '2025-09-20', 'completed', NULL, 8500.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(7, 3, 6, 'Dental prophylaxis', 'Professional teeth cleaning, minor tartar removed', 'Dental chews, antibacterial rinse', '2024-09-25', NULL, 'completed', NULL, 25000.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(8, 4, 4, 'Allergic dermatitis', 'Skin irritation due to environmental allergies', 'Antihistamine tablets, medicated shampoo', '2024-10-01', '2024-10-15', 'completed', NULL, 15000.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(9, 5, 5, 'Vaccination update', 'Complete annual vaccination series', 'DHPP, Bordetella vaccines', '2024-10-05', NULL, 'completed', NULL, 10500.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(10, 6, 6, 'Weight management', 'Obesity assessment, diet plan provided', 'Prescription weight control food', '2024-10-23', '2024-11-23', 'ongoing', NULL, 8000.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(11, 7, 4, 'Grooming service', 'Full grooming including nail trim and bath', 'Flea prevention treatment', '2024-10-24', NULL, 'completed', NULL, 6500.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(12, 8, 5, 'Post-surgical check', 'Follow-up after previous procedure, healing well', 'Continue pain medication', '2024-10-25', NULL, 'completed', NULL, 5000.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(13, 9, 6, 'Upper respiratory infection', 'Diagnosed with URI, started antibiotics', 'Amoxicillin 250mg twice daily', '2024-10-20', '2024-11-05', 'ongoing', NULL, 18000.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(14, 10, 4, 'Ear infection', 'Bacterial ear infection, cleaning required', 'Ear drops, oral antibiotics', '2024-10-22', '2024-11-06', 'follow_up', NULL, 12000.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
+(15, 11, 5, 'Gastrointestinal upset', 'Vomiting and diarrhea, likely dietary indiscretion', 'Metronidazole, probiotic supplement, bland diet', '2024-10-10', '2024-10-17', 'completed', NULL, 16500.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(16, 12, 6, 'Laceration repair', 'Minor wound from altercation, cleaned and sutured', 'Antibiotics, pain medication, E-collar', '2024-10-12', '2024-10-26', 'follow_up', NULL, 22000.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(17, 13, 4, 'Parasite treatment', 'Intestinal parasites detected in fecal exam', 'Deworming medication, follow-up fecal test', '2024-10-15', '2024-11-15', 'ongoing', NULL, 9500.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(18, 14, 5, 'Arthritis management', 'Joint pain in senior dog, started pain management', 'NSAIDs, joint supplement, weight management', '2024-10-18', '2024-11-18', 'ongoing', NULL, 28000.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(19, 15, 6, 'Eye infection', 'Conjunctivitis, bacterial origin', 'Antibiotic eye drops, warm compress', '2024-10-21', '2024-10-28', 'completed', NULL, 11000.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(20, 1, 4, 'Dental examination', 'Routine dental check, no major issues found', 'Dental chew toys recommended', '2024-09-28', NULL, 'completed', NULL, 7500.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(21, 2, 5, 'Skin allergy test', 'Environmental allergy testing performed', 'Antihistamine prescription, diet trial', '2024-10-03', '2024-11-03', 'ongoing', NULL, 35000.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(22, 3, 6, 'Spay surgery', 'Routine ovariohysterectomy procedure', 'Pain medication, antibiotics, rest', '2024-10-08', '2024-10-22', 'follow_up', NULL, 45000.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(23, 4, 4, 'Blood work panel', 'Annual senior wellness blood screening', 'All results within normal range', '2024-10-14', NULL, 'completed', NULL, 32000.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
+(24, 5, 5, 'Microchip insertion', 'Permanent identification microchip implanted', 'No medication required', '2024-10-16', NULL, 'completed', NULL, 8500.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32');
 
 --
 -- Triggers `treatments`
@@ -614,6 +820,22 @@ CREATE TRIGGER `after_treatment_followup` AFTER INSERT ON `treatments` FOR EACH 
 END
 $$
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `treatment_analytics_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `treatment_analytics_view` (
+`month` varchar(7)
+,`total_treatments` bigint(21)
+,`completed_treatments` bigint(21)
+,`ongoing_treatments` bigint(21)
+,`follow_up_treatments` bigint(21)
+,`total_revenue` decimal(32,2)
+,`avg_treatment_cost` decimal(14,6)
+);
 
 -- --------------------------------------------------------
 
@@ -725,16 +947,29 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `email`, `password`, `role`, `is_active`, `created_at`, `first_name`, `last_name`, `phone`, `address`, `profile_picture`, `updated_at`, `last_login`) VALUES
-(1, 'admin', 'admin@vet.com', '$2y$10$qG80YeMrk4kw1kZAzwA62eHkTjjxd2NoVnU.UBHaDqqn.BNDBTmkq', 'admin', 1, '2025-10-13 14:07:16', 'Patience', 'Manguluti', '0882279994', '1759 Blantyre', NULL, '2025-10-27 10:52:00', '2025-10-27 12:52:00'),
+(1, 'admin', 'admin@vet.com', '$2y$10$qG80YeMrk4kw1kZAzwA62eHkTjjxd2NoVnU.UBHaDqqn.BNDBTmkq', 'admin', 1, '2025-10-13 14:07:16', 'Patience', 'Manguluti', '0882279994', '1759 Blantyre', NULL, '2025-10-27 20:54:07', '2025-10-27 22:54:07'),
 (2, 'sethpatience', 'sethpatiencemanguluti@outlook.com', '$2y$10$jf.8Oa9WM0JlPQJbGBM0gOwNfViTQp0IYHegfc/SpNLPaQlu4OJIy', 'client', 1, '2025-10-13 14:07:16', 'Seth', 'Patience', NULL, NULL, NULL, '2025-10-13 14:07:16', NULL),
 (3, 'psmanguluti', 'admin@teampay.com', '$2y$10$ibjeulZJDCn.MQCM/PeTzubASwlWoxbTHH66jDopJGc9ImF5/wtvK', 'client', 1, '2025-10-13 14:07:16', NULL, NULL, NULL, NULL, NULL, '2025-10-13 14:07:16', NULL),
 (4, 'seth', 'patmanseth@gmail.com', '$2y$10$n.F.7y1xPxakPku97NGHnOf/Q.CN0Tkl7Ce8bWAjBnUu9JxSqXfXG', 'veterinary', 1, '2025-10-13 14:07:16', 'Wanangwa', 'Manguluti', '0882279994', 'Area 18A', NULL, '2025-10-13 14:07:16', NULL),
 (5, 'wanagwa', 'sethpatiencemanguluti@outloo6k.com', '$2y$10$iEkcAfGO61u.6jhjaOCdceGSteysvSzw..U0lvX.cvlgKPpe3yUaK', 'veterinary', 1, '2025-10-13 14:07:16', NULL, NULL, NULL, NULL, NULL, '2025-10-13 14:07:16', NULL),
 (6, 'Steve Biko', 'sb@vetelinary.com', '$2y$10$dkzY8/3w1B0E2/l4rRWSEOTttK97u.IxOmOTEEt0v/EttG5zaS6g2', 'veterinary', 1, '2025-10-13 14:42:47', NULL, NULL, NULL, NULL, NULL, '2025-10-27 14:17:13', '2025-10-27 16:17:13'),
-(7, 'client q', 'client@outlook.com', '$2y$10$hza6ztQuQ9pgHMv1IbMb0.ygAjoUSXGWND3XRRx7rgiT7RM3tDb9G', 'client', 1, '2025-10-14 19:26:11', 'Seko', 'Mwalwen', '+265 882 279 996', 'Area 18A', NULL, '2025-10-27 14:17:04', '2025-10-27 16:17:04'),
+(7, 'client q', 'client@outlook.com', '$2y$10$hza6ztQuQ9pgHMv1IbMb0.ygAjoUSXGWND3XRRx7rgiT7RM3tDb9G', 'client', 1, '2025-10-14 19:26:11', 'Seko', 'Mwalwen', '+265 882 279 996', 'Area 18A', NULL, '2025-10-27 20:53:27', '2025-10-27 22:53:27'),
 (8, 'smanguluti', 'smanguluti@vims.com', '$2y$10$BXCn05AbIy2xIyUL/wylh.pTJdGSgXWLLxP.AQ8KrMp9wYpsEcVf2', 'client', 1, '2025-10-15 13:01:45', 'Sam', 'Manguluti', '+265992920181', 'Private Bag B411 Lilongwe 3', NULL, '2025-10-16 14:15:08', '2025-10-16 16:15:08'),
 (9, 'Q banz', 'q@vims.com', '$2y$10$hko2YQy5bBMtgPe/mFwcweiQPY545bjGk3g7mFf8g8vkNSoM11rpi', 'client', 1, '2025-10-16 16:28:30', 'qbanz', 'Manguluti', '+265992920181', 'Private Bag B411 Lilongwe 3', NULL, '2025-10-16 16:29:14', '2025-10-16 18:29:14'),
-(10, 'PSimama', 'sp@outlook.com', '$2y$10$F/01RfTz9AbkrVq/xDqkXuX04BodXLjemNY2phE0hIoO.T0MGEzIS', 'client', 1, '2025-10-18 13:59:56', 'Simama', 'Priscila', '+265882279994', 'Area 18A', NULL, '2025-10-24 06:45:54', '2025-10-24 08:45:54');
+(10, 'PSimama', 'sp@outlook.com', '$2y$10$F/01RfTz9AbkrVq/xDqkXuX04BodXLjemNY2phE0hIoO.T0MGEzIS', 'client', 1, '2025-10-18 13:59:56', 'Simama', 'Priscila', '+265882279994', 'Area 18A', NULL, '2025-10-24 06:45:54', '2025-10-24 08:45:54'),
+(32, 'dr_banda', 'dr.banda@vetclinic.mw', '$2y$10$qG80YeMrk4kw1kZAzwA62eHkTjjxd2NoVnU.UBHaDqqn.BNDBTmkq', 'veterinary', 1, '2024-01-15 07:00:00', 'Chisomo', 'Banda', '+265 991 234 567', '45 Chipembere Highway, Blantyre', NULL, '2025-10-27 21:16:26', NULL),
+(33, 'dr_phiri', 'dr.phiri@vetclinic.mw', '$2y$10$qG80YeMrk4kw1kZAzwA62eHkTjjxd2NoVnU.UBHaDqqn.BNDBTmkq', 'veterinary', 1, '2024-02-20 08:30:00', 'Kondwani', 'Phiri', '+265 992 345 678', '78 Convention Drive, Lilongwe', NULL, '2025-10-27 21:16:26', NULL),
+(34, 'dr_mwale', 'dr.mwale@vetclinic.mw', '$2y$10$qG80YeMrk4kw1kZAzwA62eHkTjjxd2NoVnU.UBHaDqqn.BNDBTmkq', 'veterinary', 1, '2024-03-10 12:15:00', 'Thandiwe', 'Mwale', '+265 993 456 789', '120 Orton Chirwa Ave, Mzuzu', NULL, '2025-10-27 21:16:26', NULL),
+(35, 'client_mbewe', 'tmbewe@gmail.com', '$2y$10$qG80YeMrk4kw1kZAzwA62eHkTjjxd2NoVnU.UBHaDqqn.BNDBTmkq', 'client', 1, '2024-01-20 09:00:00', 'Tawonga', 'Mbewe', '+265 994 567 890', 'Area 47, Sector 3, Lilongwe', NULL, '2025-10-27 21:16:26', NULL),
+(36, 'client_kachali', 'pkachali@yahoo.com', '$2y$10$qG80YeMrk4kw1kZAzwA62eHkTjjxd2NoVnU.UBHaDqqn.BNDBTmkq', 'client', 1, '2024-02-05 11:45:00', 'Pemphero', 'Kachali', '+265 995 678 901', 'Namiwawa, Blantyre', NULL, '2025-10-27 21:16:26', NULL),
+(37, 'client_chirwa', 'gchirwa@outlook.com', '$2y$10$qG80YeMrk4kw1kZAzwA62eHkTjjxd2NoVnU.UBHaDqqn.BNDBTmkq', 'client', 1, '2024-03-15 14:20:00', 'Grace', 'Chirwa', '+265 996 789 012', 'Chirunga, Zomba', NULL, '2025-10-27 21:16:26', NULL),
+(38, 'client_nyirenda', 'mnyirenda@hotmail.com', '$2y$10$qG80YeMrk4kw1kZAzwA62eHkTjjxd2NoVnU.UBHaDqqn.BNDBTmkq', 'client', 1, '2024-04-01 06:30:00', 'Mphatso', 'Nyirenda', '+265 997 890 123', 'Katoto, Mzuzu', NULL, '2025-10-27 21:16:26', NULL),
+(39, 'client_kamanga', 'akamanga@gmail.com', '$2y$10$qG80YeMrk4kw1kZAzwA62eHkTjjxd2NoVnU.UBHaDqqn.BNDBTmkq', 'client', 1, '2024-04-18 13:10:00', 'Alinafe', 'Kamanga', '+265 998 901 234', 'Area 25, Lilongwe', NULL, '2025-10-27 21:16:26', NULL),
+(40, 'client_lungu', 'dlungu@gmail.com', '$2y$10$qG80YeMrk4kw1kZAzwA62eHkTjjxd2NoVnU.UBHaDqqn.BNDBTmkq', 'client', 1, '2024-05-10 07:20:00', 'Dalitso', 'Lungu', '+265 999 012 345', 'Soche West, Blantyre', NULL, '2025-10-27 21:16:26', NULL),
+(41, 'client_tembo', 'ytembo@yahoo.com', '$2y$10$qG80YeMrk4kw1kZAzwA62eHkTjjxd2NoVnU.UBHaDqqn.BNDBTmkq', 'client', 1, '2024-05-25 08:45:00', 'Yamikani', 'Tembo', '+265 991 123 456', 'Ginnery Corner, Zomba', NULL, '2025-10-27 21:16:26', NULL),
+(42, 'client_gondwe', 'cgondwe@outlook.com', '$2y$10$qG80YeMrk4kw1kZAzwA62eHkTjjxd2NoVnU.UBHaDqqn.BNDBTmkq', 'client', 1, '2024-06-08 12:30:00', 'Chimwemwe', 'Gondwe', '+265 992 234 567', 'Area 18, Lilongwe', NULL, '2025-10-27 21:16:26', NULL),
+(43, 'client_mvula', 'kmvula@gmail.com', '$2y$10$qG80YeMrk4kw1kZAzwA62eHkTjjxd2NoVnU.UBHaDqqn.BNDBTmkq', 'client', 1, '2024-06-20 14:15:00', 'Kondwani', 'Mvula', '+265 993 345 678', 'Ndirande, Blantyre', NULL, '2025-10-27 21:16:26', NULL),
+(44, 'client_zulu', 'lzulu@hotmail.com', '$2y$10$qG80YeMrk4kw1kZAzwA62eHkTjjxd2NoVnU.UBHaDqqn.BNDBTmkq', 'client', 1, '2024-07-05 09:00:00', 'Limbikani', 'Zulu', '+265 994 456 789', 'Chibavi, Mzuzu', NULL, '2025-10-27 21:16:26', NULL);
 
 --
 -- Triggers `users`
@@ -761,6 +996,22 @@ CREATE TRIGGER `after_user_login` AFTER UPDATE ON `users` FOR EACH ROW BEGIN
 END
 $$
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Stand-in structure for view `user_analytics_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `user_analytics_view` (
+`month` varchar(7)
+,`total_users` bigint(21)
+,`client_users` bigint(21)
+,`veterinary_users` bigint(21)
+,`admin_users` bigint(21)
+,`active_users` bigint(21)
+,`inactive_users` bigint(21)
+);
 
 -- --------------------------------------------------------
 
@@ -821,7 +1072,29 @@ CREATE TABLE `vaccines` (
 INSERT INTO `vaccines` (`vaccine_id`, `animal_id`, `vaccine_name`, `vaccine_type`, `vaccine_date`, `next_due_date`, `administered_by`, `batch_number`, `manufacturer`, `notes`, `status`, `created_at`, `updated_at`, `dosage`, `route`, `site`, `reaction_notes`, `verified_by`, `verification_date`, `current_weight`, `animal_temperature`, `health_notes`) VALUES
 (1, 1, 'Rabies Vaccine', 'Rabies', '2024-01-15', '2025-01-15', 4, 'RB2024A1', 'VetPharm', NULL, 'completed', '2025-10-13 14:07:25', '2025-10-13 14:07:25', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
 (2, 1, 'DHPP Vaccine', 'Core', '2024-01-15', '2025-01-15', 4, 'DH2024B2', 'AnimalHealth', NULL, 'completed', '2025-10-13 14:07:25', '2025-10-13 14:07:25', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
-(3, 2, 'FVRCP Vaccine', 'Core', '2024-01-10', '2025-01-10', 5, 'FV2024C3', 'CatCare', NULL, 'completed', '2025-10-13 14:07:25', '2025-10-13 14:07:25', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+(3, 2, 'FVRCP Vaccine', 'Core', '2024-01-10', '2025-01-10', 5, 'FV2024C3', 'CatCare', NULL, 'completed', '2025-10-13 14:07:25', '2025-10-13 14:07:25', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(4, 1, 'Rabies Vaccine', 'Core', '2024-09-15', '2025-09-15', 4, 'RB-MW-2024-001', 'Zoetis', NULL, 'completed', '2025-10-27 21:16:30', '2025-10-27 21:16:30', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(5, 2, 'Rabies Vaccine', 'Core', '2024-09-20', '2025-09-20', 5, 'RB-MW-2024-002', 'Merck Animal Health', NULL, 'completed', '2025-10-27 21:16:30', '2025-10-27 21:16:30', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(6, 3, 'Rabies Vaccine', 'Core', '2024-08-10', '2025-08-10', 6, 'RB-MW-2024-003', 'Zoetis', NULL, 'completed', '2025-10-27 21:16:30', '2025-10-27 21:16:30', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(7, 1, 'DHPP Vaccine', 'Core', '2024-09-15', '2025-09-15', 4, 'DH-MW-2024-001', 'Merck Animal Health', NULL, 'completed', '2025-10-27 21:16:30', '2025-10-27 21:16:30', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(8, 2, 'DHPP Vaccine', 'Core', '2024-09-20', '2025-09-20', 5, 'DH-MW-2024-002', 'Boehringer Ingelheim', NULL, 'completed', '2025-10-27 21:16:30', '2025-10-27 21:16:30', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(9, 4, 'DHPP Vaccine', 'Core', '2024-07-15', '2025-07-15', 4, 'DH-MW-2024-003', 'Zoetis', NULL, 'completed', '2025-10-27 21:16:30', '2025-10-27 21:16:30', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(10, 5, 'FVRCP Vaccine', 'Core', '2024-10-05', '2025-10-05', 5, 'FV-MW-2024-001', 'Zoetis', NULL, 'completed', '2025-10-27 21:16:30', '2025-10-27 21:16:30', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(11, 6, 'FVRCP Vaccine', 'Core', '2024-08-20', '2025-08-20', 6, 'FV-MW-2024-002', 'Merck Animal Health', NULL, 'completed', '2025-10-27 21:16:30', '2025-10-27 21:16:30', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(12, 1, 'Bordetella Vaccine', 'Non-core', '2024-09-15', '2025-09-15', 4, 'BD-MW-2024-001', 'Zoetis', NULL, 'completed', '2025-10-27 21:16:30', '2025-10-27 21:16:30', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(13, 2, 'Bordetella Vaccine', 'Non-core', '2024-09-20', '2025-09-20', 5, 'BD-MW-2024-002', 'Merck Animal Health', NULL, 'completed', '2025-10-27 21:16:30', '2025-10-27 21:16:30', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(14, 4, 'Rabies Vaccine', 'Core', '2024-07-15', '2025-07-15', 4, 'RB-MW-2024-004', 'Zoetis', NULL, 'completed', '2025-10-27 21:16:32', '2025-10-27 21:16:32', '1.0 mL', 'intramuscular', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(15, 7, 'FVRCP Vaccine', 'Core', '2024-09-10', '2025-09-10', 5, 'FV-MW-2024-003', 'Merck Animal Health', NULL, 'completed', '2025-10-27 21:16:32', '2025-10-27 21:16:32', '1.0 mL', 'subcutaneous', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(16, 8, 'FVRCP Vaccine', 'Core', '2024-09-12', '2025-09-12', 6, 'FV-MW-2024-004', 'Zoetis', NULL, 'completed', '2025-10-27 21:16:32', '2025-10-27 21:16:32', '1.0 mL', 'subcutaneous', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(17, 9, 'Rabies Vaccine', 'Core', '2024-09-18', '2025-09-18', 4, 'RB-MW-2024-005', 'Merck Animal Health', NULL, 'completed', '2025-10-27 21:16:32', '2025-10-27 21:16:32', '1.0 mL', 'intramuscular', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(18, 10, 'DHPP Vaccine', 'Core', '2024-09-22', '2025-09-22', 5, 'DH-MW-2024-004', 'Boehringer Ingelheim', NULL, 'completed', '2025-10-27 21:16:32', '2025-10-27 21:16:32', '1.0 mL', 'subcutaneous', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(19, 11, 'DHPP Vaccine', 'Core', '2024-09-25', '2025-09-25', 6, 'DH-MW-2024-005', 'Zoetis', NULL, 'completed', '2025-10-27 21:16:32', '2025-10-27 21:16:32', '1.0 mL', 'subcutaneous', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(20, 12, 'Rabies Vaccine', 'Core', '2024-10-01', '2025-10-01', 4, 'RB-MW-2024-006', 'Zoetis', NULL, 'completed', '2025-10-27 21:16:32', '2025-10-27 21:16:32', '1.0 mL', 'intramuscular', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(21, 13, 'DHPP Vaccine', 'Core', '2024-10-03', '2025-10-03', 5, 'DH-MW-2024-006', 'Merck Animal Health', NULL, 'completed', '2025-10-27 21:16:32', '2025-10-27 21:16:32', '1.0 mL', 'subcutaneous', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(22, 14, 'Bordetella Vaccine', 'Non-core', '2024-10-05', '2025-10-05', 6, 'BD-MW-2024-003', 'Zoetis', NULL, 'completed', '2025-10-27 21:16:32', '2025-10-27 21:16:32', '1.0 mL', 'intranasal', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(23, 15, 'Leptospirosis Vaccine', 'Non-core', '2024-10-08', '2025-10-08', 4, 'LP-MW-2024-001', 'Merck Animal Health', NULL, 'completed', '2025-10-27 21:16:32', '2025-10-27 21:16:32', '1.0 mL', 'subcutaneous', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(24, 1, 'Leptospirosis Vaccine', 'Non-core', '2024-09-15', '2025-09-15', 4, 'LP-MW-2024-002', 'Zoetis', NULL, 'completed', '2025-10-27 21:16:32', '2025-10-27 21:16:32', '1.0 mL', 'subcutaneous', NULL, NULL, NULL, NULL, NULL, NULL, NULL),
+(25, 2, 'Canine Influenza Vaccine', 'Non-core', '2024-09-20', '2025-09-20', 5, 'CI-MW-2024-001', 'Merck Animal Health', NULL, 'completed', '2025-10-27 21:16:32', '2025-10-27 21:16:32', '1.0 mL', 'subcutaneous', NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 
 --
 -- Triggers `vaccines`
@@ -915,6 +1188,23 @@ CREATE TABLE `veterinary_assignments_view` (
 -- --------------------------------------------------------
 
 --
+-- Stand-in structure for view `veterinary_performance_view`
+-- (See below for the actual view)
+--
+CREATE TABLE `veterinary_performance_view` (
+`user_id` int(11)
+,`vet_name` varchar(101)
+,`total_treatments` bigint(21)
+,`completed_treatments` bigint(21)
+,`ongoing_treatments` bigint(21)
+,`total_revenue` decimal(32,2)
+,`avg_treatment_cost` decimal(14,6)
+,`unique_patients` bigint(21)
+);
+
+-- --------------------------------------------------------
+
+--
 -- Stand-in structure for view `veterinary_schedule_view`
 -- (See below for the actual view)
 --
@@ -988,6 +1278,15 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- --------------------------------------------------------
 
 --
+-- Structure for view `client_activity_view`
+--
+DROP TABLE IF EXISTS `client_activity_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `client_activity_view`  AS SELECT `c`.`client_id` AS `client_id`, concat(`u`.`first_name`,' ',`u`.`last_name`) AS `client_name`, count(distinct `a`.`animal_id`) AS `total_animals`, count(`t`.`treatment_id`) AS `total_treatments`, sum(`b`.`total_amount`) AS `total_spent`, max(`t`.`treatment_date`) AS `last_visit` FROM ((((`clients` `c` join `users` `u` on(`c`.`user_id` = `u`.`user_id`)) left join `animals` `a` on(`c`.`client_id` = `a`.`client_id`)) left join `treatments` `t` on(`a`.`animal_id` = `t`.`animal_id`)) left join `billings` `b` on(`a`.`animal_id` = `b`.`animal_id`)) WHERE `u`.`is_active` = 1 GROUP BY `c`.`client_id`, `u`.`first_name`, `u`.`last_name` ;
+
+-- --------------------------------------------------------
+
+--
 -- Structure for view `client_details_view`
 --
 DROP TABLE IF EXISTS `client_details_view`;
@@ -1002,6 +1301,33 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 DROP TABLE IF EXISTS `client_treatment_history`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `client_treatment_history`  AS SELECT `c`.`client_id` AS `client_id`, concat(`u`.`first_name`,' ',`u`.`last_name`) AS `client_name`, `a`.`animal_id` AS `animal_id`, `a`.`name` AS `animal_name`, `a`.`species` AS `species`, count(`t`.`treatment_id`) AS `total_treatments`, sum(case when `t`.`status` = 'completed' then 1 else 0 end) AS `completed_treatments`, sum(case when `t`.`status` = 'ongoing' then 1 else 0 end) AS `ongoing_treatments`, sum(`t`.`cost`) AS `total_treatment_cost`, max(`t`.`treatment_date`) AS `last_treatment_date` FROM (((`clients` `c` join `users` `u` on(`c`.`user_id` = `u`.`user_id`)) join `animals` `a` on(`c`.`client_id` = `a`.`client_id`)) left join `treatments` `t` on(`a`.`animal_id` = `t`.`animal_id`)) GROUP BY `c`.`client_id`, `u`.`first_name`, `u`.`last_name`, `a`.`animal_id`, `a`.`name`, `a`.`species` ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `revenue_analytics_view`
+--
+DROP TABLE IF EXISTS `revenue_analytics_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `revenue_analytics_view`  AS SELECT date_format(`billings`.`billing_date`,'%Y-%m') AS `month`, count(0) AS `total_bills`, sum(`billings`.`total_amount`) AS `total_revenue`, sum(case when `billings`.`payment_status` = 'paid' then `billings`.`total_amount` else 0 end) AS `paid_revenue`, sum(case when `billings`.`payment_status` = 'pending' then `billings`.`total_amount` else 0 end) AS `pending_revenue`, avg(`billings`.`total_amount`) AS `avg_bill_amount` FROM `billings` WHERE `billings`.`billing_date` >= current_timestamp() - interval 12 month GROUP BY date_format(`billings`.`billing_date`,'%Y-%m') ORDER BY date_format(`billings`.`billing_date`,'%Y-%m') ASC ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `species_analytics_view`
+--
+DROP TABLE IF EXISTS `species_analytics_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `species_analytics_view`  AS SELECT `animals`.`species` AS `species`, count(0) AS `animal_count`, round(count(0) * 100.0 / (select count(0) from `animals` where `animals`.`status` = 'active'),2) AS `percentage` FROM `animals` WHERE `animals`.`status` = 'active' GROUP BY `animals`.`species` ORDER BY count(0) DESC ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `treatment_analytics_view`
+--
+DROP TABLE IF EXISTS `treatment_analytics_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `treatment_analytics_view`  AS SELECT date_format(`treatments`.`treatment_date`,'%Y-%m') AS `month`, count(0) AS `total_treatments`, count(case when `treatments`.`status` = 'completed' then 1 end) AS `completed_treatments`, count(case when `treatments`.`status` = 'ongoing' then 1 end) AS `ongoing_treatments`, count(case when `treatments`.`status` = 'follow_up' then 1 end) AS `follow_up_treatments`, sum(`treatments`.`cost`) AS `total_revenue`, avg(`treatments`.`cost`) AS `avg_treatment_cost` FROM `treatments` WHERE `treatments`.`treatment_date` >= current_timestamp() - interval 12 month GROUP BY date_format(`treatments`.`treatment_date`,'%Y-%m') ORDER BY date_format(`treatments`.`treatment_date`,'%Y-%m') ASC ;
 
 -- --------------------------------------------------------
 
@@ -1033,6 +1359,15 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 -- --------------------------------------------------------
 
 --
+-- Structure for view `user_analytics_view`
+--
+DROP TABLE IF EXISTS `user_analytics_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `user_analytics_view`  AS SELECT date_format(`users`.`created_at`,'%Y-%m') AS `month`, count(0) AS `total_users`, count(case when `users`.`role` = 'client' then 1 end) AS `client_users`, count(case when `users`.`role` = 'veterinary' then 1 end) AS `veterinary_users`, count(case when `users`.`role` = 'admin' then 1 end) AS `admin_users`, count(case when `users`.`is_active` = 1 then 1 end) AS `active_users`, count(case when `users`.`is_active` = 0 then 1 end) AS `inactive_users` FROM `users` WHERE `users`.`created_at` >= current_timestamp() - interval 12 month GROUP BY date_format(`users`.`created_at`,'%Y-%m') ORDER BY date_format(`users`.`created_at`,'%Y-%m') ASC ;
+
+-- --------------------------------------------------------
+
+--
 -- Structure for view `vaccine_details_view`
 --
 DROP TABLE IF EXISTS `vaccine_details_view`;
@@ -1047,6 +1382,15 @@ CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW 
 DROP TABLE IF EXISTS `veterinary_assignments_view`;
 
 CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `veterinary_assignments_view`  AS SELECT `a`.`animal_id` AS `animal_id`, `a`.`name` AS `animal_name`, `a`.`species` AS `species`, `a`.`breed` AS `breed`, `a`.`status` AS `animal_status`, `u_client`.`first_name` AS `client_first_name`, `u_client`.`last_name` AS `client_last_name`, concat(`u_client`.`first_name`,' ',`u_client`.`last_name`) AS `client_full_name`, `u_client`.`phone` AS `client_phone`, `a`.`assigned_veterinary` AS `assigned_veterinary`, `u_vet`.`first_name` AS `vet_first_name`, `u_vet`.`last_name` AS `vet_last_name`, concat(`u_vet`.`first_name`,' ',`u_vet`.`last_name`) AS `vet_full_name`, `u_vet`.`email` AS `vet_email`, CASE WHEN `a`.`assigned_veterinary` is null THEN 'unassigned' ELSE 'assigned' END AS `assignment_status` FROM (((`animals` `a` join `clients` `c` on(`a`.`client_id` = `c`.`client_id`)) join `users` `u_client` on(`c`.`user_id` = `u_client`.`user_id`)) left join `users` `u_vet` on(`a`.`assigned_veterinary` = `u_vet`.`user_id`)) WHERE `a`.`status` = 'active' ;
+
+-- --------------------------------------------------------
+
+--
+-- Structure for view `veterinary_performance_view`
+--
+DROP TABLE IF EXISTS `veterinary_performance_view`;
+
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` SQL SECURITY DEFINER VIEW `veterinary_performance_view`  AS SELECT `u`.`user_id` AS `user_id`, concat(`u`.`first_name`,' ',`u`.`last_name`) AS `vet_name`, count(`t`.`treatment_id`) AS `total_treatments`, count(case when `t`.`status` = 'completed' then 1 end) AS `completed_treatments`, count(case when `t`.`status` = 'ongoing' then 1 end) AS `ongoing_treatments`, sum(`t`.`cost`) AS `total_revenue`, avg(`t`.`cost`) AS `avg_treatment_cost`, count(distinct `t`.`animal_id`) AS `unique_patients` FROM (`users` `u` left join `treatments` `t` on(`u`.`user_id` = `t`.`veterinary_id`)) WHERE `u`.`role` = 'veterinary' AND `u`.`is_active` = 1 GROUP BY `u`.`user_id`, `u`.`first_name`, `u`.`last_name` ;
 
 -- --------------------------------------------------------
 
@@ -1203,7 +1547,7 @@ ALTER TABLE `vaccines`
 -- AUTO_INCREMENT for table `animals`
 --
 ALTER TABLE `animals`
-  MODIFY `animal_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `animal_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT for table `animal_assignments_history`
@@ -1215,7 +1559,7 @@ ALTER TABLE `animal_assignments_history`
 -- AUTO_INCREMENT for table `appointments`
 --
 ALTER TABLE `appointments`
-  MODIFY `appointment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `appointment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `audit_logs`
@@ -1227,37 +1571,37 @@ ALTER TABLE `audit_logs`
 -- AUTO_INCREMENT for table `billings`
 --
 ALTER TABLE `billings`
-  MODIFY `billing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `billing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `clients`
 --
 ALTER TABLE `clients`
-  MODIFY `client_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `client_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `reminders`
 --
 ALTER TABLE `reminders`
-  MODIFY `reminder_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `reminder_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=67;
 
 --
 -- AUTO_INCREMENT for table `system_logs`
 --
 ALTER TABLE `system_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT for table `treatments`
 --
 ALTER TABLE `treatments`
-  MODIFY `treatment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `treatment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT for table `user_roles`
@@ -1269,7 +1613,7 @@ ALTER TABLE `user_roles`
 -- AUTO_INCREMENT for table `vaccines`
 --
 ALTER TABLE `vaccines`
-  MODIFY `vaccine_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `vaccine_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- Constraints for dumped tables
