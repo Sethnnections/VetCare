@@ -230,6 +230,36 @@
             </li>
             <?php endif; ?>
 
+            <?php if($current_role == 'client'): ?>
+            <!-- Add this to the client menu section -->
+            <li class="nav-item">
+                <a href="<?php echo url('/client/feedback'); ?>" class="nav-link <?php echo ($current_page == 'client_feedback') ? 'active' : ''; ?>">
+                    <i class="fas fa-comments me-2"></i>
+                    <span>My Feedback</span>
+                </a>
+            </li>
+            <?php endif; ?>
+
+            <?php if($current_role == 'veterinary'): ?>
+            <!-- Add this to the veterinary menu section -->
+            <li class="nav-item">
+                <a href="<?php echo url('/veterinary/feedback'); ?>" class="nav-link <?php echo ($current_page == 'veterinary_feedback') ? 'active' : ''; ?>">
+                    <i class="fas fa-comment-medical me-2"></i>
+                    <span>Client Feedback</span>
+                </a>
+            </li>
+            <?php endif; ?>
+
+            <?php if($current_role == 'admin'): ?>
+            <!-- Add this to the admin menu section -->
+            <li class="nav-item">
+                <a href="<?php echo url('/admin/feedback'); ?>" class="nav-link <?php echo ($current_page == 'admin_feedback') ? 'active' : ''; ?>">
+                    <i class="fas fa-comments me-2"></i>
+                    <span>Manage Feedback</span>
+                </a>
+            </li>
+            <?php endif; ?>
+
             <!-- ==================== CLIENT MENU ==================== -->
             <?php if($current_role == 'client'): ?>
             <li class="nav-item sidebar-nav-item">

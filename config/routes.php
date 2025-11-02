@@ -595,5 +595,44 @@ $routes = [
     'controller' => 'Analytics',
     'action' => 'getClientAnalytics'
 ],
+
+// Feedback Routes
+'/feedback/create' => [
+    'controller' => 'Feedback',
+    'action' => 'create'
+],
+'/feedback/store' => [
+    'controller' => 'Feedback',
+    'action' => 'store'
+],
+'/feedback/{id}' => [
+    'controller' => 'Feedback',
+    'action' => 'show'
+],
+'/client/feedback' => [
+    'controller' => 'Feedback',
+    'action' => 'clientIndex'
+],
+'/veterinary/feedback' => [
+    'controller' => 'Feedback',
+    'action' => 'veterinaryIndex'
+],
+'/admin/feedback' => [
+    'controller' => 'Feedback',
+    'action' => 'adminIndex'
+],
+'/feedback/{id}/update-status' => [
+    'controller' => 'Feedback',
+    'action' => 'updateStatus'
+],
+'/feedback/{id}/respond' => [
+    'controller' => 'Feedback',
+    'action' => 'respond'
+],
+'/api/feedback/stats' => [
+    'controller' => 'Feedback',
+    'action' => 'stats'
+],
+
 ];
 ?>

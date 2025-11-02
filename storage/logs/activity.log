@@ -114,3 +114,10 @@
 [2025-10-27 22:53:27] ACTIVITY: System - User logged in: client@outlook.com (ID: 7)
 [2025-10-27 22:53:59] ACTIVITY: System - User logged out: client@outlook.com (ID: 7)
 [2025-10-27 22:54:07] ACTIVITY: System - User logged in: admin@vet.com (ID: 1)
+[2025-11-02 10:32:43] ACTIVITY: System - User logged in: admin@vet.com (ID: 1)
+[2025-11-02 12:24:01] ACTIVITY: System - User logged out: admin@vet.com (ID: 1)
+[2025-11-02 12:24:08] ACTIVITY: System - User logged in: client@outlook.com (ID: 7)
+[2025-11-02 12:26:36] ACTIVITY: User ID: 7 - Feedback submitted: ID 2
+[2025-11-02 12:28:36] ACTIVITY: User ID: 7 - Feedback submitted: ID 3
+[2025-11-02 12:28:57] ACTIVITY: System - User logged out: client@outlook.com (ID: 7)
+[2025-11-02 12:29:03] ACTIVITY: System - User logged in: admin@vet.com (ID: 1)
