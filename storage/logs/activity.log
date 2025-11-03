@@ -121,3 +121,11 @@
 [2025-11-02 12:28:36] ACTIVITY: User ID: 7 - Feedback submitted: ID 3
 [2025-11-02 12:28:57] ACTIVITY: System - User logged out: client@outlook.com (ID: 7)
 [2025-11-02 12:29:03] ACTIVITY: System - User logged in: admin@vet.com (ID: 1)
+[2025-11-03 11:47:14] ACTIVITY: System - User logged out: admin@vet.com (ID: 1)
+[2025-11-03 11:47:20] ACTIVITY: System - User logged in: client@outlook.com (ID: 7)
+[2025-11-03 12:22:46] ACTIVITY: System - User logged out: client@outlook.com (ID: 7)
+[2025-11-03 12:22:52] ACTIVITY: System - User logged in: admin@vet.com (ID: 1)
+[2025-11-03 14:43:38] ACTIVITY: System - User logged out: admin@vet.com (ID: 1)
+[2025-11-03 14:43:44] ACTIVITY: System - User logged in: sb@vetelinary.com (ID: 6)
+[2025-11-03 15:16:05] ACTIVITY: System - User logged out: sb@vetelinary.com (ID: 6)
+[2025-11-03 15:16:14] ACTIVITY: System - User logged in: client@outlook.com (ID: 7)

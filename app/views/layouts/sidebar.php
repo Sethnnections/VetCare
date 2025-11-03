@@ -27,6 +27,112 @@
 
             <?php $current_role = $_SESSION['role'] ?? 'client'; ?>
 
+            <!-- ==================== BILLING & PAYMENTS MENU ==================== -->
+            <?php if ($current_role == 'admin'): ?>
+            <li class="nav-item sidebar-nav-item <?php echo (strpos($current_page, 'payments') !== false || strpos($current_page, 'billings') !== false) ? 'active' : ''; ?>">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Billing & Payments</span>
+                    <i class="fas fa-chevron-down float-end"></i>
+                </a>
+                <ul class="nav sub-group-menu">
+                    <li class="nav-item">
+                        <a href="<?php echo url('/admin/payments/pending'); ?>" class="nav-link <?php echo ($current_page == 'admin_payments_pending') ? 'active' : ''; ?>">
+                            <i class="fas fa-clock"></i>
+                            <span>Pending Verification</span>
+                            <?php if (isset($billing_stats['pending_verification']) && $billing_stats['pending_verification'] > 0): ?>
+                            <span class="badge bg-warning float-end"><?php echo $billing_stats['pending_verification']; ?></span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo url('/admin/payments/verified'); ?>" class="nav-link <?php echo ($current_page == 'admin_payments_verified') ? 'active' : ''; ?>">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Verified Payments</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo url('/billings'); ?>" class="nav-link <?php echo ($current_page == 'billings') ? 'active' : ''; ?>">
+                            <i class="fas fa-list"></i>
+                            <span>All Bills</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo url('/billings/create'); ?>" class="nav-link <?php echo ($current_page == 'billings_create') ? 'active' : ''; ?>">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Create Bill</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <?php elseif ($current_role == 'veterinary'): ?>
+            <li class="nav-item sidebar-nav-item <?php echo (strpos($current_page, 'payments') !== false || strpos($current_page, 'billings') !== false) ? 'active' : ''; ?>">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Client Payments</span>
+                    <i class="fas fa-chevron-down float-end"></i>
+                </a>
+                <ul class="nav sub-group-menu">
+                    <li class="nav-item">
+                        <a href="<?php echo url('/veterinary/payments'); ?>" class="nav-link <?php echo ($current_page == 'veterinary_payments') ? 'active' : ''; ?>">
+                            <i class="fas fa-list"></i>
+                            <span>Payment Status</span>
+                            <?php 
+                            $pendingCount = isset($billing_stats['pending_verification']) ? $billing_stats['pending_verification'] : 0;
+                            if ($pendingCount > 0): ?>
+                            <span class="badge bg-warning float-end"><?php echo $pendingCount; ?></span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo url('/billings'); ?>" class="nav-link <?php echo ($current_page == 'billings') ? 'active' : ''; ?>">
+                            <i class="fas fa-file-invoice"></i>
+                            <span>Treatment Bills</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+
+            <?php elseif ($current_role == 'client'): ?>
+            <li class="nav-item sidebar-nav-item <?php echo (strpos($current_page, 'billings') !== false) ? 'active' : ''; ?>">
+                <a href="#" class="nav-link">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>My Bills & Payments</span>
+                    <i class="fas fa-chevron-down float-end"></i>
+                </a>
+                <ul class="nav sub-group-menu">
+                    <li class="nav-item">
+                        <a href="<?php echo url('/client/billings'); ?>" class="nav-link <?php echo ($current_page == 'client_billings') ? 'active' : ''; ?>">
+                            <i class="fas fa-list"></i>
+                            <span>All Bills</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo url('/client/billings?status=pending'); ?>" class="nav-link <?php echo ($current_page == 'client_billings_pending') ? 'active' : ''; ?>">
+                            <i class="fas fa-clock"></i>
+                            <span>Pending Payments</span>
+                            <?php if (isset($billing_stats['pending_bills']) && $billing_stats['pending_bills'] > 0): ?>
+                            <span class="badge bg-warning float-end"><?php echo $billing_stats['pending_bills']; ?></span>
+                            <?php endif; ?>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo url('/client/billings?status=paid'); ?>" class="nav-link <?php echo ($current_page == 'client_billings_paid') ? 'active' : ''; ?>">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Paid Bills</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="<?php echo url('/client/billings?status=verified'); ?>" class="nav-link <?php echo ($current_page == 'client_billings_verified') ? 'active' : ''; ?>">
+                            <i class="fas fa-receipt"></i>
+                            <span>Verified Payments</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <?php endif; ?>
+
             <!-- ==================== APPOINTMENTS MENU ==================== -->
             <li class="nav-item sidebar-nav-item <?php echo (strpos($current_page, 'appointments') !== false) ? 'active' : ''; ?>">
                 <a href="#" class="nav-link">
@@ -230,8 +336,8 @@
             </li>
             <?php endif; ?>
 
+            <!-- ==================== FEEDBACK MANAGEMENT ==================== -->
             <?php if($current_role == 'client'): ?>
-            <!-- Add this to the client menu section -->
             <li class="nav-item">
                 <a href="<?php echo url('/client/feedback'); ?>" class="nav-link <?php echo ($current_page == 'client_feedback') ? 'active' : ''; ?>">
                     <i class="fas fa-comments me-2"></i>
@@ -241,7 +347,6 @@
             <?php endif; ?>
 
             <?php if($current_role == 'veterinary'): ?>
-            <!-- Add this to the veterinary menu section -->
             <li class="nav-item">
                 <a href="<?php echo url('/veterinary/feedback'); ?>" class="nav-link <?php echo ($current_page == 'veterinary_feedback') ? 'active' : ''; ?>">
                     <i class="fas fa-comment-medical me-2"></i>
@@ -251,7 +356,6 @@
             <?php endif; ?>
 
             <?php if($current_role == 'admin'): ?>
-            <!-- Add this to the admin menu section -->
             <li class="nav-item">
                 <a href="<?php echo url('/admin/feedback'); ?>" class="nav-link <?php echo ($current_page == 'admin_feedback') ? 'active' : ''; ?>">
                     <i class="fas fa-comments me-2"></i>
@@ -352,6 +456,12 @@
 .sub-group-menu .nav-link.active {
     background: rgba(253, 116, 42, 0.8);
     border-left-color: #fff;
+}
+
+/* Badge Styling */
+.badge {
+    font-size: 0.7em;
+    padding: 4px 8px;
 }
 
 /* Dropdown Arrow Animation */

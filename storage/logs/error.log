@@ -51,3 +51,8 @@
                     OR (appointment_time >= :time AND DATE_ADD(appointment_time, INTERVAL duration MINUTE) <= DATE_ADD(:time, INTERVAL :duration MINUTE))
                 )
 [2025-11-02 12:25:54] ERROR: Feedback submission error: Database error: SQLSTATE[23000]: Integrity constraint violation: 1452 Cannot add or update a child row: a foreign key constraint fails (`veterinary_ims`.`feedbacks`, CONSTRAINT `fk_feedbacks_treatment` FOREIGN KEY (`treatment_id`) REFERENCES `treatments` (`treatment_id`) ON DELETE SET NULL)
+[2025-11-03 16:13:01] ERROR: Database fetchOne error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause' | SQL: SELECT client_id FROM clients WHERE user_id = ? AND status = 'active'
+[2025-11-03 16:14:03] ERROR: Database fetchOne error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause' | SQL: SELECT client_id FROM clients WHERE user_id = ? AND status = 'active'
+[2025-11-03 16:14:07] ERROR: Database fetchOne error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause' | SQL: SELECT client_id FROM clients WHERE user_id = ? AND status = 'active'
+[2025-11-03 16:14:29] ERROR: Database fetchOne error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause' | SQL: SELECT client_id FROM clients WHERE user_id = ? AND status = 'active'
+[2025-11-03 16:14:31] ERROR: Database fetchOne error: SQLSTATE[42S22]: Column not found: 1054 Unknown column 'status' in 'where clause' | SQL: SELECT client_id FROM clients WHERE user_id = ? AND status = 'active'

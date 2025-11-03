@@ -404,7 +404,14 @@ function getClientIp() {
     }
 }
 
+// Add this to helpers.php after the existing CSRF functions
+function csrf_field() {
+    return '<input type="hidden" name="csrf_token" value="' . generateCsrfToken() . '">';
+}
 
+function csrf_token() {
+    return generateCsrfToken();
+}
 
 
 

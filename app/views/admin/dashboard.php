@@ -116,6 +116,64 @@ $current_page = 'dashboard';
         </div>
     </div>
 
+    <!-- Billing Statistics -->
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title mb-0">
+                    <i class="fas fa-chart-line me-2"></i>Billing Overview
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="stat-card primary">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value">MWK <?php echo number_format($billing_stats['total_revenue'] ?? 0, 2); ?></div>
+                                <div class="stat-label">Verified Revenue</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card warning">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value"><?php echo $billing_stats['pending_verification'] ?? 0; ?></div>
+                                <div class="stat-label">Pending Verification</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="stat-card info">
+                            <div class="stat-icon">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div>
+                                <div class="stat-value">MWK <?php echo number_format($billing_stats['pending_revenue'] ?? 0, 2); ?></div>
+                                <div class="stat-label">Pending Revenue</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <a href="<?php echo url('/admin/payments/pending'); ?>" class="btn btn-primary w-100 h-100 d-flex align-items-center justify-content-center">
+                            <div class="text-center">
+                                <i class="fas fa-clipboard-check fa-2x mb-2"></i>
+                                <div>Verify Payments</div>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
     <!-- Analytics Charts -->
     <div class="row mt-4">
         <div class="col-xl-8 col-lg-7">

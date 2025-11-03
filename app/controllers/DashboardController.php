@@ -39,30 +39,39 @@ class DashboardController extends Controller {
         }
     }
     
-    public function admin() {
-        requireLogin();
-        $this->authorize(ROLE_ADMIN);
-        
-        // Get comprehensive dashboard data
-        $stats = $this->analyticsModel->getAdminDashboardStats();
-        $recentUsers = $this->getRecentUsers(5);
-        $recentTreatments = $this->getRecentTreatments(5);
-        $upcomingAppointments = $this->appointmentModel->getUpcomingAppointments(7);
-        $systemAlerts = $this->getSystemAlerts();
-        
-        $this->setTitle('Admin Dashboard');
-        $this->setData('stats', $stats);
-        $this->setData('recentUsers', $recentUsers);
-        $this->setData('recentTreatments', $recentTreatments);
-        $this->setData('upcomingAppointments', $upcomingAppointments);
-        $this->setData('systemAlerts', $systemAlerts);
-        $this->setData('current_page', 'dashboard');
-        $this->view('admin/dashboard', 'dashboard');
-    }
+ // In the admin() method, add this:
+public function admin() {
+    requireLogin();
+    $this->authorize(ROLE_ADMIN);
+    
+    // Get comprehensive dashboard data
+    $billingModel = new Billing();
+    $stats = $this->analyticsModel->getAdminDashboardStats();
+    $recentUsers = $this->getRecentUsers(5);
+    $recentTreatments = $this->getRecentTreatments(5);
+    $upcomingAppointments = $this->appointmentModel->getUpcomingAppointments(7);
+    $systemAlerts = $this->getSystemAlerts();
+
+    // Add billing stats
+    $this->setData('billing_stats', $billingModel->getDashboardStats(ROLE_ADMIN, $_SESSION['user_id']));
+    $this->setData('recent_payments', $billingModel->getRecentPayments(ROLE_ADMIN, $_SESSION['user_id']));
+    
+    $this->setTitle('Admin Dashboard');
+    $this->setData('stats', $stats);
+    $this->setData('recentUsers', $recentUsers);
+    $this->setData('recentTreatments', $recentTreatments);
+    $this->setData('upcomingAppointments', $upcomingAppointments);
+    $this->setData('systemAlerts', $systemAlerts);
+    $this->setData('current_page', 'dashboard');
+    $this->view('admin/dashboard', 'dashboard');
+}
+
     
     public function veterinary() {
         requireLogin();
         $this->authorize(ROLE_VETERINARY);
+
+        $billingModel = new Billing();
         
         $veterinaryId = $_SESSION['user_id'];
         
@@ -72,6 +81,10 @@ class DashboardController extends Controller {
         $myAnimals = $this->animalModel->getAnimalsByVeterinary($veterinaryId);
         $followUpTreatments = $this->treatmentModel->getUpcomingFollowUps($veterinaryId);
         $recentTreatments = $this->getVeterinaryRecentTreatments($veterinaryId, 5);
+            // Add billing stats
+        $this->setData('billing_stats', $billingModel->getDashboardStats(ROLE_VETERINARY, $_SESSION['user_id']));
+        $this->setData('recent_payments', $billingModel->getRecentPayments(ROLE_VETERINARY, $_SESSION['user_id']));
+    
         
         $this->setTitle('Veterinary Dashboard');
         $this->setData('stats', $stats);
@@ -89,6 +102,8 @@ class DashboardController extends Controller {
         
         $userId = $_SESSION['user_id'];
         $clientModel = new Client();
+        $billingModel = new Billing();
+
         $client = $clientModel->getClientByUserId($userId);
         
         if (!$client) {
@@ -105,6 +120,10 @@ class DashboardController extends Controller {
         $upcomingAppointments = $this->getClientAppointments($clientId);
         $recentTreatments = $this->clientModel->getClientTreatments($clientId, 5);
         $vaccinationReminders = $this->getClientVaccinationReminders($clientId);
+
+        $this->setData('billing_stats', $billingModel->getDashboardStats(ROLE_VETERINARY, $_SESSION['user_id']));
+        $this->setData('recent_payments', $billingModel->getRecentPayments(ROLE_VETERINARY, $_SESSION['user_id']));
+    
         
         $this->setTitle('Client Dashboard');
         $this->setData('stats', $stats);
@@ -225,5 +244,8 @@ class DashboardController extends Controller {
         
         return $alerts;
     }
+
+    // In DashboardController.php
+
 }
 ?>

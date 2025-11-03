@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 27, 2025 at 10:19 PM
+-- Generation Time: Nov 03, 2025 at 03:25 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -352,8 +352,11 @@ CREATE TABLE `billings` (
   `payment_status` enum('pending','paid','cancelled') DEFAULT 'pending',
   `payment_method` varchar(50) DEFAULT NULL,
   `payment_date` date DEFAULT NULL,
+  `verified_by` int(11) DEFAULT NULL,
+  `verified_at` datetime DEFAULT NULL,
   `notes` text DEFAULT NULL,
   `items` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL CHECK (json_valid(`items`)),
+  `deposit_slip` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
@@ -362,31 +365,41 @@ CREATE TABLE `billings` (
 -- Dumping data for table `billings`
 --
 
-INSERT INTO `billings` (`billing_id`, `animal_id`, `treatment_id`, `billing_date`, `due_date`, `amount`, `tax_amount`, `discount`, `total_amount`, `payment_status`, `payment_method`, `payment_date`, `notes`, `items`, `created_at`, `updated_at`) VALUES
-(1, 1, 1, '2024-01-15', '2024-02-14', 25.00, 2.00, 0.00, 27.00, 'paid', 'cash', NULL, NULL, NULL, '2025-10-13 14:07:26', '2025-10-13 14:07:26'),
-(2, 1, 2, '2024-02-20', '2024-03-21', 45.50, 3.64, 5.00, 44.14, 'paid', 'mobile_money', NULL, NULL, NULL, '2025-10-13 14:07:26', '2025-10-13 14:07:26'),
-(3, 2, 3, '2024-01-10', '2024-02-09', 120.00, 9.60, 0.00, 129.60, 'paid', 'cash', NULL, NULL, NULL, '2025-10-13 14:07:26', '2025-10-13 14:07:26'),
-(4, 3, 4, '2024-03-01', '2024-03-31', 85.00, 6.80, 0.00, 91.80, 'pending', NULL, NULL, NULL, NULL, '2025-10-13 14:07:26', '2025-10-13 14:07:26'),
-(5, 1, 5, '2024-09-15', '2024-10-15', 12500.00, 0.00, 0.00, 12500.00, 'paid', 'mobile_money', '2024-09-15', NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
-(6, 2, 6, '2024-09-20', '2024-10-20', 8500.00, 0.00, 0.00, 8500.00, 'paid', 'cash', '2024-09-20', NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
-(7, 3, 7, '2024-09-25', '2024-10-25', 25000.00, 0.00, 2500.00, 22500.00, 'paid', 'mobile_money', '2024-09-25', NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
-(8, 4, 8, '2024-10-01', '2024-10-31', 15000.00, 0.00, 0.00, 15000.00, 'paid', 'bank_transfer', '2024-10-05', NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
-(9, 5, 9, '2024-10-05', '2024-11-04', 10500.00, 0.00, 0.00, 10500.00, 'paid', 'mobile_money', '2024-10-05', NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
-(10, 6, 10, '2024-10-23', '2024-11-22', 8000.00, 0.00, 0.00, 8000.00, 'paid', 'cash', '2024-10-23', NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
-(11, 7, 11, '2024-10-24', '2024-11-23', 6500.00, 0.00, 0.00, 6500.00, 'paid', 'mobile_money', '2024-10-24', NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
-(12, 8, 12, '2024-10-25', '2024-11-24', 5000.00, 0.00, 0.00, 5000.00, 'paid', 'cash', '2024-10-25', NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
-(13, 9, 13, '2024-10-20', '2024-11-19', 18000.00, 0.00, 0.00, 18000.00, 'pending', NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
-(14, 10, 14, '2024-10-22', '2024-11-21', 12000.00, 0.00, 0.00, 12000.00, 'pending', NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-10-27 21:16:31'),
-(15, 11, 15, '2024-10-10', '2024-11-09', 16500.00, 0.00, 1500.00, 15000.00, 'paid', 'mobile_money', '2024-10-10', NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(16, 12, 16, '2024-10-12', '2024-11-11', 22000.00, 0.00, 0.00, 22000.00, 'paid', 'bank_transfer', '2024-10-15', NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(17, 13, 17, '2024-10-15', '2024-11-14', 9500.00, 0.00, 0.00, 9500.00, 'paid', 'cash', '2024-10-15', NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(18, 14, 18, '2024-10-18', '2024-11-17', 28000.00, 0.00, 3000.00, 25000.00, 'pending', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(19, 15, 19, '2024-10-21', '2024-11-20', 11000.00, 0.00, 0.00, 11000.00, 'paid', 'mobile_money', '2024-10-21', NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(20, 1, 20, '2024-09-28', '2024-10-28', 7500.00, 0.00, 0.00, 7500.00, 'paid', 'cash', '2024-09-28', NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(21, 2, 21, '2024-10-03', '2024-11-02', 35000.00, 0.00, 5000.00, 30000.00, 'pending', NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(22, 3, 22, '2024-10-08', '2024-11-07', 45000.00, 0.00, 0.00, 45000.00, 'paid', 'bank_transfer', '2024-10-08', NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(23, 4, 23, '2024-10-14', '2024-11-13', 32000.00, 0.00, 2000.00, 30000.00, 'paid', 'mobile_money', '2024-10-14', NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(24, 5, 24, '2024-10-16', '2024-11-15', 8500.00, 0.00, 0.00, 8500.00, 'paid', 'cash', '2024-10-16', NULL, NULL, '2025-10-27 21:16:32', '2025-10-27 21:16:32');
+INSERT INTO `billings` (`billing_id`, `animal_id`, `treatment_id`, `billing_date`, `due_date`, `amount`, `tax_amount`, `discount`, `total_amount`, `payment_status`, `payment_method`, `payment_date`, `verified_by`, `verified_at`, `notes`, `items`, `deposit_slip`, `created_at`, `updated_at`) VALUES
+(1, 1, 1, '2024-01-15', '2024-02-14', 30000.00, 2400.00, 0.00, 32400.00, 'paid', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-13 14:07:26', '2025-11-03 09:30:48'),
+(2, 1, 2, '2024-02-20', '2024-03-21', 54600.00, 4368.00, 6000.00, 52968.00, 'paid', 'mobile_money', NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-13 14:07:26', '2025-11-03 09:30:48'),
+(3, 2, 3, '2024-01-10', '2024-02-09', 144000.00, 11520.00, 0.00, 155520.00, 'paid', 'cash', NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-13 14:07:26', '2025-11-03 09:30:48'),
+(4, 3, 4, '2024-03-01', '2024-03-31', 102000.00, 8160.00, 0.00, 110160.00, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-13 14:07:26', '2025-11-03 09:30:48'),
+(5, 1, 5, '2024-09-15', '2024-10-15', 15000000.00, 0.00, 0.00, 15000000.00, 'paid', 'mobile_money', '2024-09-15', NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-11-03 09:30:48'),
+(6, 2, 6, '2024-09-20', '2024-10-20', 10200000.00, 0.00, 0.00, 10200000.00, 'paid', 'cash', '2024-09-20', NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-11-03 09:30:48'),
+(7, 3, 7, '2024-09-25', '2024-10-25', 30000000.00, 0.00, 3000000.00, 27000000.00, 'paid', 'mobile_money', '2024-09-25', NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-11-03 09:30:48'),
+(8, 4, 8, '2024-10-01', '2024-10-31', 18000000.00, 0.00, 0.00, 18000000.00, 'paid', 'bank_transfer', '2024-10-05', NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-11-03 09:30:48'),
+(9, 5, 9, '2024-10-05', '2024-11-04', 12600000.00, 0.00, 0.00, 12600000.00, 'paid', 'mobile_money', '2024-10-05', NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-11-03 09:30:48'),
+(10, 6, 10, '2024-10-23', '2024-11-22', 9600000.00, 0.00, 0.00, 9600000.00, 'paid', 'cash', '2024-10-23', NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-11-03 09:30:48'),
+(11, 7, 11, '2024-10-24', '2024-11-23', 7800000.00, 0.00, 0.00, 7800000.00, 'paid', 'mobile_money', '2024-10-24', NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-11-03 09:30:48'),
+(12, 8, 12, '2024-10-25', '2024-11-24', 6000000.00, 0.00, 0.00, 6000000.00, 'paid', 'cash', '2024-10-25', NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-11-03 09:30:48'),
+(13, 9, 13, '2024-10-20', '2024-11-19', 21600000.00, 0.00, 0.00, 21600000.00, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-11-03 09:30:48'),
+(14, 10, 14, '2024-10-22', '2024-11-21', 14400000.00, 0.00, 0.00, 14400000.00, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:31', '2025-11-03 09:30:48'),
+(15, 11, 15, '2024-10-10', '2024-11-09', 19800000.00, 0.00, 1800000.00, 18000000.00, 'paid', 'mobile_money', '2024-10-10', NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(16, 12, 16, '2024-10-12', '2024-11-11', 26400000.00, 0.00, 0.00, 26400000.00, 'paid', 'bank_transfer', '2024-10-15', NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(17, 13, 17, '2024-10-15', '2024-11-14', 11400000.00, 0.00, 0.00, 11400000.00, 'paid', 'cash', '2024-10-15', NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(18, 14, 18, '2024-10-18', '2024-11-17', 33600000.00, 0.00, 3600000.00, 30000000.00, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(19, 15, 19, '2024-10-21', '2024-11-20', 13200000.00, 0.00, 0.00, 13200000.00, 'paid', 'mobile_money', '2024-10-21', NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(20, 1, 20, '2024-09-28', '2024-10-28', 9000000.00, 0.00, 0.00, 9000000.00, 'paid', 'cash', '2024-09-28', NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(21, 2, 21, '2024-10-03', '2024-11-02', 42000000.00, 0.00, 6000000.00, 36000000.00, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(22, 3, 22, '2024-10-08', '2024-11-07', 54000000.00, 0.00, 0.00, 54000000.00, 'paid', 'bank_transfer', '2024-10-08', NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(23, 4, 23, '2024-10-14', '2024-11-13', 38400000.00, 0.00, 2400000.00, 36000000.00, 'paid', 'mobile_money', '2024-10-14', NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(24, 5, 24, '2024-10-16', '2024-11-15', 10200000.00, 0.00, 0.00, 10200000.00, 'paid', 'cash', '2024-10-16', NULL, NULL, NULL, NULL, NULL, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(25, 1, 5, '2024-11-01', '2024-12-01', 45000.00, 0.00, 0.00, 45000.00, 'pending', NULL, NULL, NULL, NULL, 'Annual checkup and vaccination', NULL, NULL, '2025-11-03 09:30:46', '2025-11-03 09:30:46'),
+(26, 2, 6, '2024-11-02', '2024-12-02', 38000.00, 0.00, 2000.00, 36000.00, 'pending', NULL, NULL, NULL, NULL, 'Dental cleaning procedure', NULL, NULL, '2025-11-03 09:30:46', '2025-11-03 09:30:46'),
+(27, 3, 7, '2024-11-03', '2024-12-03', 75000.00, 0.00, 5000.00, 70000.00, 'pending', NULL, NULL, NULL, NULL, 'Surgery and follow-up care', NULL, NULL, '2025-11-03 09:30:46', '2025-11-03 09:30:46'),
+(28, 4, 8, '2024-11-04', '2024-12-04', 25000.00, 0.00, 0.00, 25000.00, 'paid', 'bank_transfer', '2024-11-05', NULL, NULL, 'Skin treatment medication', NULL, 'deposit_slip_28.jpg', '2025-11-03 09:30:46', '2025-11-03 09:30:46'),
+(29, 5, 9, '2024-11-05', '2024-12-05', 42000.00, 0.00, 0.00, 42000.00, 'paid', 'mobile_money', '2024-11-06', NULL, NULL, 'Emergency consultation', NULL, 'deposit_slip_29.pdf', '2025-11-03 09:30:46', '2025-11-03 09:30:46'),
+(30, 6, 10, '2024-11-06', '2024-12-06', 18000.00, 0.00, 0.00, 18000.00, 'paid', 'cash', '2024-11-07', NULL, NULL, 'Routine vaccination', NULL, 'deposit_slip_30.jpg', '2025-11-03 09:30:46', '2025-11-03 09:30:46'),
+(31, 7, 11, '2024-11-07', '2024-12-07', 55000.00, 0.00, 5000.00, 50000.00, 'paid', 'bank_transfer', '2024-11-08', NULL, NULL, 'Surgical procedure', NULL, 'deposit_slip_31.jpg', '2025-11-03 09:30:46', '2025-11-03 09:30:46'),
+(32, 8, 12, '2024-11-08', '2024-12-08', 32000.00, 0.00, 0.00, 32000.00, '', 'mobile_money', '2024-11-09', 1, '2024-11-10 09:30:00', 'Follow-up treatment', NULL, 'deposit_slip_32.pdf', '2025-11-03 09:30:46', '2025-11-03 09:30:46'),
+(33, 9, 13, '2024-11-09', '2024-12-09', 28000.00, 0.00, 0.00, 28000.00, '', 'bank_transfer', '2024-11-10', 1, '2024-11-11 14:15:00', 'Medication refill', NULL, 'deposit_slip_33.jpg', '2025-11-03 09:30:46', '2025-11-03 09:30:46'),
+(34, 10, 14, '2024-11-10', '2024-12-10', 65000.00, 0.00, 5000.00, 60000.00, '', 'cash', '2024-11-11', 1, '2024-11-12 11:00:00', 'Comprehensive health check', NULL, 'deposit_slip_34.jpg', '2025-11-03 09:30:46', '2025-11-03 09:30:46');
 
 --
 -- Triggers `billings`
@@ -411,6 +424,42 @@ CREATE TRIGGER `before_billing_update` BEFORE UPDATE ON `billings` FOR EACH ROW 
 END
 $$
 DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `billing_items`
+--
+
+CREATE TABLE `billing_items` (
+  `item_id` int(11) NOT NULL,
+  `billing_id` int(11) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `quantity` decimal(10,2) DEFAULT 1.00,
+  `unit_price` decimal(10,2) NOT NULL,
+  `total_price` decimal(10,2) NOT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `billing_items`
+--
+
+INSERT INTO `billing_items` (`item_id`, `billing_id`, `description`, `quantity`, `unit_price`, `total_price`, `created_at`) VALUES
+(1, 25, 'Consultation Fee', 1.00, 15000.00, 15000.00, '2025-11-03 09:30:48'),
+(2, 25, 'Rabies Vaccination', 1.00, 12000.00, 12000.00, '2025-11-03 09:30:48'),
+(3, 25, 'DHPP Vaccination', 1.00, 18000.00, 18000.00, '2025-11-03 09:30:48'),
+(4, 26, 'Dental Examination', 1.00, 8000.00, 8000.00, '2025-11-03 09:30:48'),
+(5, 26, 'Teeth Cleaning', 1.00, 25000.00, 25000.00, '2025-11-03 09:30:48'),
+(6, 26, 'Dental Medication', 1.00, 5000.00, 5000.00, '2025-11-03 09:30:48'),
+(7, 27, 'Surgical Procedure', 1.00, 50000.00, 50000.00, '2025-11-03 09:30:48'),
+(8, 27, 'Anesthesia', 1.00, 15000.00, 15000.00, '2025-11-03 09:30:48'),
+(9, 27, 'Post-op Medication', 1.00, 10000.00, 10000.00, '2025-11-03 09:30:48'),
+(10, 28, 'Skin Treatment Consultation', 1.00, 10000.00, 10000.00, '2025-11-03 09:30:48'),
+(11, 28, 'Medicated Shampoo', 2.00, 7500.00, 15000.00, '2025-11-03 09:30:48'),
+(12, 29, 'Emergency Consultation', 1.00, 20000.00, 20000.00, '2025-11-03 09:30:48'),
+(13, 29, 'Blood Tests', 1.00, 15000.00, 15000.00, '2025-11-03 09:30:48'),
+(14, 29, 'Emergency Medication', 1.00, 7000.00, 7000.00, '2025-11-03 09:30:48');
 
 -- --------------------------------------------------------
 
@@ -530,6 +579,35 @@ CREATE TABLE `client_treatment_history` (
 ,`total_treatment_cost` decimal(32,2)
 ,`last_treatment_date` date
 );
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `feedbacks`
+--
+
+CREATE TABLE `feedbacks` (
+  `feedback_id` int(11) NOT NULL,
+  `client_id` int(11) NOT NULL,
+  `veterinary_id` int(11) DEFAULT NULL,
+  `animal_id` int(11) DEFAULT NULL,
+  `treatment_id` int(11) DEFAULT NULL,
+  `rating` tinyint(1) NOT NULL CHECK (`rating` between 1 and 5),
+  `comments` text DEFAULT NULL,
+  `status` enum('submitted','reviewed','responded') DEFAULT 'submitted',
+  `admin_notes` text DEFAULT NULL,
+  `response` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+
+--
+-- Dumping data for table `feedbacks`
+--
+
+INSERT INTO `feedbacks` (`feedback_id`, `client_id`, `veterinary_id`, `animal_id`, `treatment_id`, `rating`, `comments`, `status`, `admin_notes`, `response`, `created_at`, `updated_at`) VALUES
+(2, 3, 34, 5, 1, 5, 'fcfvgjvg', 'submitted', NULL, NULL, '2025-11-02 10:26:36', '2025-11-02 10:26:36'),
+(3, 3, 4, 5, 2, 5, 'He Knows how to hundle clients', 'submitted', NULL, NULL, '2025-11-02 10:28:36', '2025-11-02 10:28:36');
 
 -- --------------------------------------------------------
 
@@ -734,7 +812,14 @@ INSERT INTO `system_logs` (`log_id`, `level`, `message`, `context`, `user_id`, `
 (57, 'INFO', 'Appointment scheduled for 2024-10-30', NULL, 1, '::1', '2024-10-27 08:30:00'),
 (58, 'INFO', 'Treatment completed for animal ID: 8', NULL, 33, '::1', '2024-10-25 12:20:00'),
 (59, 'INFO', 'Payment received: MWK 12,500.00 - Mobile Money', NULL, 1, '::1', '2024-10-27 09:00:00'),
-(60, 'INFO', 'Vaccine administered: Rabies', NULL, 32, '::1', '2024-10-20 11:45:00');
+(60, 'INFO', 'Vaccine administered: Rabies', NULL, 32, '::1', '2024-10-20 11:45:00'),
+(61, 'INFO', 'User login: Patience Manguluti (admin@vet.com)', '{\"last_login\": \"2025-11-02 10:32:43\"}', 1, NULL, '2025-11-02 08:32:43'),
+(62, 'INFO', 'User login: Seko Mwalwen (client@outlook.com)', '{\"last_login\": \"2025-11-02 12:24:08\"}', 7, NULL, '2025-11-02 10:24:08'),
+(63, 'INFO', 'User login: Patience Manguluti (admin@vet.com)', '{\"last_login\": \"2025-11-02 12:29:03\"}', 1, NULL, '2025-11-02 10:29:03'),
+(64, 'INFO', 'User login: Seko Mwalwen (client@outlook.com)', '{\"last_login\": \"2025-11-03 11:47:20\"}', 7, NULL, '2025-11-03 09:47:20'),
+(65, 'INFO', 'User login: Patience Manguluti (admin@vet.com)', '{\"last_login\": \"2025-11-03 12:22:52\"}', 1, NULL, '2025-11-03 10:22:52'),
+(66, 'INFO', 'User login: Steve Biko (sb@vetelinary.com)', '{\"last_login\": \"2025-11-03 14:43:44\"}', 6, NULL, '2025-11-03 12:43:44'),
+(67, 'INFO', 'User login: Seko Mwalwen (client@outlook.com)', '{\"last_login\": \"2025-11-03 15:16:14\"}', 7, NULL, '2025-11-03 13:16:14');
 
 -- --------------------------------------------------------
 
@@ -763,30 +848,30 @@ CREATE TABLE `treatments` (
 --
 
 INSERT INTO `treatments` (`treatment_id`, `animal_id`, `veterinary_id`, `diagnosis`, `treatment_details`, `medication_prescribed`, `treatment_date`, `follow_up_date`, `status`, `notes`, `cost`, `created_at`, `updated_at`) VALUES
-(1, 1, 4, 'Vaccination - Rabies', 'Administered rabies vaccine. No adverse reactions observed.', NULL, '2024-01-15', '2025-01-15', 'completed', NULL, 25.00, '2025-10-13 14:07:25', '2025-10-13 14:07:25'),
-(2, 1, 4, 'Skin infection', 'Prescribed antibiotics for skin infection. Apply topical ointment twice daily.', NULL, '2024-02-20', '2024-03-05', 'completed', NULL, 45.50, '2025-10-13 14:07:25', '2025-10-13 14:07:25'),
-(3, 2, 5, 'Spaying', 'Routine spaying procedure. Recovery normal.', NULL, '2024-01-10', '2024-01-24', 'completed', NULL, 120.00, '2025-10-13 14:07:25', '2025-10-13 14:07:25'),
-(4, 3, 4, 'Dental cleaning', 'Professional dental cleaning. Minor tartar buildup removed.', NULL, '2024-03-01', NULL, 'completed', NULL, 85.00, '2025-10-13 14:07:25', '2025-10-13 14:07:25'),
-(5, 1, 4, 'Annual wellness check', 'Complete physical examination, all systems normal', 'Multivitamin supplement', '2024-09-15', NULL, 'completed', NULL, 12500.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
-(6, 2, 5, 'Rabies vaccination', 'Administered rabies vaccine, no adverse reactions', 'Rabies vaccine 1mL', '2024-09-20', '2025-09-20', 'completed', NULL, 8500.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
-(7, 3, 6, 'Dental prophylaxis', 'Professional teeth cleaning, minor tartar removed', 'Dental chews, antibacterial rinse', '2024-09-25', NULL, 'completed', NULL, 25000.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
-(8, 4, 4, 'Allergic dermatitis', 'Skin irritation due to environmental allergies', 'Antihistamine tablets, medicated shampoo', '2024-10-01', '2024-10-15', 'completed', NULL, 15000.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
-(9, 5, 5, 'Vaccination update', 'Complete annual vaccination series', 'DHPP, Bordetella vaccines', '2024-10-05', NULL, 'completed', NULL, 10500.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
-(10, 6, 6, 'Weight management', 'Obesity assessment, diet plan provided', 'Prescription weight control food', '2024-10-23', '2024-11-23', 'ongoing', NULL, 8000.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
-(11, 7, 4, 'Grooming service', 'Full grooming including nail trim and bath', 'Flea prevention treatment', '2024-10-24', NULL, 'completed', NULL, 6500.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
-(12, 8, 5, 'Post-surgical check', 'Follow-up after previous procedure, healing well', 'Continue pain medication', '2024-10-25', NULL, 'completed', NULL, 5000.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
-(13, 9, 6, 'Upper respiratory infection', 'Diagnosed with URI, started antibiotics', 'Amoxicillin 250mg twice daily', '2024-10-20', '2024-11-05', 'ongoing', NULL, 18000.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
-(14, 10, 4, 'Ear infection', 'Bacterial ear infection, cleaning required', 'Ear drops, oral antibiotics', '2024-10-22', '2024-11-06', 'follow_up', NULL, 12000.00, '2025-10-27 21:16:30', '2025-10-27 21:16:30'),
-(15, 11, 5, 'Gastrointestinal upset', 'Vomiting and diarrhea, likely dietary indiscretion', 'Metronidazole, probiotic supplement, bland diet', '2024-10-10', '2024-10-17', 'completed', NULL, 16500.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(16, 12, 6, 'Laceration repair', 'Minor wound from altercation, cleaned and sutured', 'Antibiotics, pain medication, E-collar', '2024-10-12', '2024-10-26', 'follow_up', NULL, 22000.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(17, 13, 4, 'Parasite treatment', 'Intestinal parasites detected in fecal exam', 'Deworming medication, follow-up fecal test', '2024-10-15', '2024-11-15', 'ongoing', NULL, 9500.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(18, 14, 5, 'Arthritis management', 'Joint pain in senior dog, started pain management', 'NSAIDs, joint supplement, weight management', '2024-10-18', '2024-11-18', 'ongoing', NULL, 28000.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(19, 15, 6, 'Eye infection', 'Conjunctivitis, bacterial origin', 'Antibiotic eye drops, warm compress', '2024-10-21', '2024-10-28', 'completed', NULL, 11000.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(20, 1, 4, 'Dental examination', 'Routine dental check, no major issues found', 'Dental chew toys recommended', '2024-09-28', NULL, 'completed', NULL, 7500.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(21, 2, 5, 'Skin allergy test', 'Environmental allergy testing performed', 'Antihistamine prescription, diet trial', '2024-10-03', '2024-11-03', 'ongoing', NULL, 35000.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(22, 3, 6, 'Spay surgery', 'Routine ovariohysterectomy procedure', 'Pain medication, antibiotics, rest', '2024-10-08', '2024-10-22', 'follow_up', NULL, 45000.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(23, 4, 4, 'Blood work panel', 'Annual senior wellness blood screening', 'All results within normal range', '2024-10-14', NULL, 'completed', NULL, 32000.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32'),
-(24, 5, 5, 'Microchip insertion', 'Permanent identification microchip implanted', 'No medication required', '2024-10-16', NULL, 'completed', NULL, 8500.00, '2025-10-27 21:16:32', '2025-10-27 21:16:32');
+(1, 1, 4, 'Vaccination - Rabies', 'Administered rabies vaccine. No adverse reactions observed.', NULL, '2024-01-15', '2025-01-15', 'completed', NULL, 30000.00, '2025-10-13 14:07:25', '2025-11-03 09:30:48'),
+(2, 1, 4, 'Skin infection', 'Prescribed antibiotics for skin infection. Apply topical ointment twice daily.', NULL, '2024-02-20', '2024-03-05', 'completed', NULL, 54600.00, '2025-10-13 14:07:25', '2025-11-03 09:30:48'),
+(3, 2, 5, 'Spaying', 'Routine spaying procedure. Recovery normal.', NULL, '2024-01-10', '2024-01-24', 'completed', NULL, 144000.00, '2025-10-13 14:07:25', '2025-11-03 09:30:48'),
+(4, 3, 4, 'Dental cleaning', 'Professional dental cleaning. Minor tartar buildup removed.', NULL, '2024-03-01', NULL, 'completed', NULL, 102000.00, '2025-10-13 14:07:25', '2025-11-03 09:30:48'),
+(5, 1, 4, 'Annual wellness check', 'Complete physical examination, all systems normal', 'Multivitamin supplement', '2024-09-15', NULL, 'completed', NULL, 15000000.00, '2025-10-27 21:16:30', '2025-11-03 09:30:48'),
+(6, 2, 5, 'Rabies vaccination', 'Administered rabies vaccine, no adverse reactions', 'Rabies vaccine 1mL', '2024-09-20', '2025-09-20', 'completed', NULL, 10200000.00, '2025-10-27 21:16:30', '2025-11-03 09:30:48'),
+(7, 3, 6, 'Dental prophylaxis', 'Professional teeth cleaning, minor tartar removed', 'Dental chews, antibacterial rinse', '2024-09-25', NULL, 'completed', NULL, 30000000.00, '2025-10-27 21:16:30', '2025-11-03 09:30:48'),
+(8, 4, 4, 'Allergic dermatitis', 'Skin irritation due to environmental allergies', 'Antihistamine tablets, medicated shampoo', '2024-10-01', '2024-10-15', 'completed', NULL, 18000000.00, '2025-10-27 21:16:30', '2025-11-03 09:30:48'),
+(9, 5, 5, 'Vaccination update', 'Complete annual vaccination series', 'DHPP, Bordetella vaccines', '2024-10-05', NULL, 'completed', NULL, 12600000.00, '2025-10-27 21:16:30', '2025-11-03 09:30:48'),
+(10, 6, 6, 'Weight management', 'Obesity assessment, diet plan provided', 'Prescription weight control food', '2024-10-23', '2024-11-23', 'ongoing', NULL, 9600000.00, '2025-10-27 21:16:30', '2025-11-03 09:30:48'),
+(11, 7, 4, 'Grooming service', 'Full grooming including nail trim and bath', 'Flea prevention treatment', '2024-10-24', NULL, 'completed', NULL, 7800000.00, '2025-10-27 21:16:30', '2025-11-03 09:30:48'),
+(12, 8, 5, 'Post-surgical check', 'Follow-up after previous procedure, healing well', 'Continue pain medication', '2024-10-25', NULL, 'completed', NULL, 6000000.00, '2025-10-27 21:16:30', '2025-11-03 09:30:48'),
+(13, 9, 6, 'Upper respiratory infection', 'Diagnosed with URI, started antibiotics', 'Amoxicillin 250mg twice daily', '2024-10-20', '2024-11-05', 'ongoing', NULL, 21600000.00, '2025-10-27 21:16:30', '2025-11-03 09:30:48'),
+(14, 10, 4, 'Ear infection', 'Bacterial ear infection, cleaning required', 'Ear drops, oral antibiotics', '2024-10-22', '2024-11-06', 'follow_up', NULL, 14400000.00, '2025-10-27 21:16:30', '2025-11-03 09:30:48'),
+(15, 11, 5, 'Gastrointestinal upset', 'Vomiting and diarrhea, likely dietary indiscretion', 'Metronidazole, probiotic supplement, bland diet', '2024-10-10', '2024-10-17', 'completed', NULL, 19800000.00, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(16, 12, 6, 'Laceration repair', 'Minor wound from altercation, cleaned and sutured', 'Antibiotics, pain medication, E-collar', '2024-10-12', '2024-10-26', 'follow_up', NULL, 26400000.00, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(17, 13, 4, 'Parasite treatment', 'Intestinal parasites detected in fecal exam', 'Deworming medication, follow-up fecal test', '2024-10-15', '2024-11-15', 'ongoing', NULL, 11400000.00, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(18, 14, 5, 'Arthritis management', 'Joint pain in senior dog, started pain management', 'NSAIDs, joint supplement, weight management', '2024-10-18', '2024-11-18', 'ongoing', NULL, 33600000.00, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(19, 15, 6, 'Eye infection', 'Conjunctivitis, bacterial origin', 'Antibiotic eye drops, warm compress', '2024-10-21', '2024-10-28', 'completed', NULL, 13200000.00, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(20, 1, 4, 'Dental examination', 'Routine dental check, no major issues found', 'Dental chew toys recommended', '2024-09-28', NULL, 'completed', NULL, 9000000.00, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(21, 2, 5, 'Skin allergy test', 'Environmental allergy testing performed', 'Antihistamine prescription, diet trial', '2024-10-03', '2024-11-03', 'ongoing', NULL, 42000000.00, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(22, 3, 6, 'Spay surgery', 'Routine ovariohysterectomy procedure', 'Pain medication, antibiotics, rest', '2024-10-08', '2024-10-22', 'follow_up', NULL, 54000000.00, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(23, 4, 4, 'Blood work panel', 'Annual senior wellness blood screening', 'All results within normal range', '2024-10-14', NULL, 'completed', NULL, 38400000.00, '2025-10-27 21:16:32', '2025-11-03 09:30:48'),
+(24, 5, 5, 'Microchip insertion', 'Permanent identification microchip implanted', 'No medication required', '2024-10-16', NULL, 'completed', NULL, 10200000.00, '2025-10-27 21:16:32', '2025-11-03 09:30:48');
 
 --
 -- Triggers `treatments`
@@ -947,13 +1032,13 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `email`, `password`, `role`, `is_active`, `created_at`, `first_name`, `last_name`, `phone`, `address`, `profile_picture`, `updated_at`, `last_login`) VALUES
-(1, 'admin', 'admin@vet.com', '$2y$10$qG80YeMrk4kw1kZAzwA62eHkTjjxd2NoVnU.UBHaDqqn.BNDBTmkq', 'admin', 1, '2025-10-13 14:07:16', 'Patience', 'Manguluti', '0882279994', '1759 Blantyre', NULL, '2025-10-27 20:54:07', '2025-10-27 22:54:07'),
+(1, 'admin', 'admin@vet.com', '$2y$10$qG80YeMrk4kw1kZAzwA62eHkTjjxd2NoVnU.UBHaDqqn.BNDBTmkq', 'admin', 1, '2025-10-13 14:07:16', 'Patience', 'Manguluti', '0882279994', '1759 Blantyre', NULL, '2025-11-03 10:22:52', '2025-11-03 12:22:52'),
 (2, 'sethpatience', 'sethpatiencemanguluti@outlook.com', '$2y$10$jf.8Oa9WM0JlPQJbGBM0gOwNfViTQp0IYHegfc/SpNLPaQlu4OJIy', 'client', 1, '2025-10-13 14:07:16', 'Seth', 'Patience', NULL, NULL, NULL, '2025-10-13 14:07:16', NULL),
 (3, 'psmanguluti', 'admin@teampay.com', '$2y$10$ibjeulZJDCn.MQCM/PeTzubASwlWoxbTHH66jDopJGc9ImF5/wtvK', 'client', 1, '2025-10-13 14:07:16', NULL, NULL, NULL, NULL, NULL, '2025-10-13 14:07:16', NULL),
 (4, 'seth', 'patmanseth@gmail.com', '$2y$10$n.F.7y1xPxakPku97NGHnOf/Q.CN0Tkl7Ce8bWAjBnUu9JxSqXfXG', 'veterinary', 1, '2025-10-13 14:07:16', 'Wanangwa', 'Manguluti', '0882279994', 'Area 18A', NULL, '2025-10-13 14:07:16', NULL),
 (5, 'wanagwa', 'sethpatiencemanguluti@outloo6k.com', '$2y$10$iEkcAfGO61u.6jhjaOCdceGSteysvSzw..U0lvX.cvlgKPpe3yUaK', 'veterinary', 1, '2025-10-13 14:07:16', NULL, NULL, NULL, NULL, NULL, '2025-10-13 14:07:16', NULL),
-(6, 'Steve Biko', 'sb@vetelinary.com', '$2y$10$dkzY8/3w1B0E2/l4rRWSEOTttK97u.IxOmOTEEt0v/EttG5zaS6g2', 'veterinary', 1, '2025-10-13 14:42:47', NULL, NULL, NULL, NULL, NULL, '2025-10-27 14:17:13', '2025-10-27 16:17:13'),
-(7, 'client q', 'client@outlook.com', '$2y$10$hza6ztQuQ9pgHMv1IbMb0.ygAjoUSXGWND3XRRx7rgiT7RM3tDb9G', 'client', 1, '2025-10-14 19:26:11', 'Seko', 'Mwalwen', '+265 882 279 996', 'Area 18A', NULL, '2025-10-27 20:53:27', '2025-10-27 22:53:27'),
+(6, 'Steve Biko', 'sb@vetelinary.com', '$2y$10$dkzY8/3w1B0E2/l4rRWSEOTttK97u.IxOmOTEEt0v/EttG5zaS6g2', 'veterinary', 1, '2025-10-13 14:42:47', NULL, NULL, NULL, NULL, NULL, '2025-11-03 12:43:44', '2025-11-03 14:43:44'),
+(7, 'client q', 'client@outlook.com', '$2y$10$hza6ztQuQ9pgHMv1IbMb0.ygAjoUSXGWND3XRRx7rgiT7RM3tDb9G', 'client', 1, '2025-10-14 19:26:11', 'Seko', 'Mwalwen', '+265 882 279 996', 'Area 18A', NULL, '2025-11-03 13:16:14', '2025-11-03 15:16:14'),
 (8, 'smanguluti', 'smanguluti@vims.com', '$2y$10$BXCn05AbIy2xIyUL/wylh.pTJdGSgXWLLxP.AQ8KrMp9wYpsEcVf2', 'client', 1, '2025-10-15 13:01:45', 'Sam', 'Manguluti', '+265992920181', 'Private Bag B411 Lilongwe 3', NULL, '2025-10-16 14:15:08', '2025-10-16 16:15:08'),
 (9, 'Q banz', 'q@vims.com', '$2y$10$hko2YQy5bBMtgPe/mFwcweiQPY545bjGk3g7mFf8g8vkNSoM11rpi', 'client', 1, '2025-10-16 16:28:30', 'qbanz', 'Manguluti', '+265992920181', 'Private Bag B411 Lilongwe 3', NULL, '2025-10-16 16:29:14', '2025-10-16 18:29:14'),
 (10, 'PSimama', 'sp@outlook.com', '$2y$10$F/01RfTz9AbkrVq/xDqkXuX04BodXLjemNY2phE0hIoO.T0MGEzIS', 'client', 1, '2025-10-18 13:59:56', 'Simama', 'Priscila', '+265882279994', 'Area 18A', NULL, '2025-10-24 06:45:54', '2025-10-24 08:45:54'),
@@ -1468,7 +1553,15 @@ ALTER TABLE `billings`
   ADD KEY `idx_animal_id` (`animal_id`),
   ADD KEY `idx_billing_date` (`billing_date`),
   ADD KEY `idx_payment_status` (`payment_status`),
-  ADD KEY `idx_due_date` (`due_date`);
+  ADD KEY `idx_due_date` (`due_date`),
+  ADD KEY `fk_billings_verified_by` (`verified_by`);
+
+--
+-- Indexes for table `billing_items`
+--
+ALTER TABLE `billing_items`
+  ADD PRIMARY KEY (`item_id`),
+  ADD KEY `billing_id` (`billing_id`);
 
 --
 -- Indexes for table `clients`
@@ -1477,6 +1570,19 @@ ALTER TABLE `clients`
   ADD PRIMARY KEY (`client_id`),
   ADD UNIQUE KEY `user_id` (`user_id`),
   ADD KEY `idx_user_id` (`user_id`);
+
+--
+-- Indexes for table `feedbacks`
+--
+ALTER TABLE `feedbacks`
+  ADD PRIMARY KEY (`feedback_id`),
+  ADD KEY `idx_client_id` (`client_id`),
+  ADD KEY `idx_veterinary_id` (`veterinary_id`),
+  ADD KEY `idx_animal_id` (`animal_id`),
+  ADD KEY `idx_treatment_id` (`treatment_id`),
+  ADD KEY `idx_status` (`status`),
+  ADD KEY `idx_rating` (`rating`),
+  ADD KEY `idx_created_at` (`created_at`);
 
 --
 -- Indexes for table `reminders`
@@ -1571,13 +1677,25 @@ ALTER TABLE `audit_logs`
 -- AUTO_INCREMENT for table `billings`
 --
 ALTER TABLE `billings`
-  MODIFY `billing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `billing_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+
+--
+-- AUTO_INCREMENT for table `billing_items`
+--
+ALTER TABLE `billing_items`
+  MODIFY `item_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT for table `clients`
 --
 ALTER TABLE `clients`
   MODIFY `client_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+
+--
+-- AUTO_INCREMENT for table `feedbacks`
+--
+ALTER TABLE `feedbacks`
+  MODIFY `feedback_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT for table `reminders`
@@ -1589,7 +1707,7 @@ ALTER TABLE `reminders`
 -- AUTO_INCREMENT for table `system_logs`
 --
 ALTER TABLE `system_logs`
-  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `log_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
 
 --
 -- AUTO_INCREMENT for table `treatments`
@@ -1648,13 +1766,29 @@ ALTER TABLE `appointments`
 --
 ALTER TABLE `billings`
   ADD CONSTRAINT `billings_ibfk_1` FOREIGN KEY (`animal_id`) REFERENCES `animals` (`animal_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `billings_ibfk_2` FOREIGN KEY (`treatment_id`) REFERENCES `treatments` (`treatment_id`) ON DELETE SET NULL;
+  ADD CONSTRAINT `billings_ibfk_2` FOREIGN KEY (`treatment_id`) REFERENCES `treatments` (`treatment_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_billings_verified_by` FOREIGN KEY (`verified_by`) REFERENCES `users` (`user_id`);
+
+--
+-- Constraints for table `billing_items`
+--
+ALTER TABLE `billing_items`
+  ADD CONSTRAINT `billing_items_ibfk_1` FOREIGN KEY (`billing_id`) REFERENCES `billings` (`billing_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `clients`
 --
 ALTER TABLE `clients`
   ADD CONSTRAINT `clients_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `feedbacks`
+--
+ALTER TABLE `feedbacks`
+  ADD CONSTRAINT `fk_feedbacks_animal` FOREIGN KEY (`animal_id`) REFERENCES `animals` (`animal_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_feedbacks_client` FOREIGN KEY (`client_id`) REFERENCES `clients` (`client_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_feedbacks_treatment` FOREIGN KEY (`treatment_id`) REFERENCES `treatments` (`treatment_id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_feedbacks_veterinary` FOREIGN KEY (`veterinary_id`) REFERENCES `users` (`user_id`) ON DELETE SET NULL;
 
 --
 -- Constraints for table `reminders`

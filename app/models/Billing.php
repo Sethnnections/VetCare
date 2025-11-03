@@ -1,364 +1,529 @@
 <?php
-// app/models/Billing.php
-
 class Billing extends Model {
     protected $table = 'billings';
     protected $primaryKey = 'billing_id';
     protected $fillable = [
-        'animal_id', 'treatment_id', 'billing_date', 'due_date', 
-        'amount', 'tax_amount', 'discount', 'total_amount', 
-        'payment_status', 'payment_method', 'payment_date', 
-        'notes', 'items'
+        'animal_id', 'treatment_id', 'billing_date', 'due_date', 'amount', 
+        'tax_amount', 'discount', 'total_amount', 'payment_status', 
+        'payment_method', 'payment_date', 'notes', 'items', 'deposit_slip',
+        'verified_by', 'verified_at'
     ];
     
-    // Billing properties
-    private $billingId;
-    private $animalId;
-    private $treatmentId;
-    private $billingDate;
-    private $dueDate;
-    private $amount;
-    private $taxAmount;
-    private $discount;
-    private $totalAmount;
-    private $paymentStatus;
-    private $paymentMethod;
-    private $paymentDate;
-    private $notes;
-    private $items;
-    private $createdAt;
-    private $updatedAt;
-    
-    // Getters
-    public function getBillingId() { return $this->billingId; }
-    public function getAnimalId() { return $this->animalId; }
-    public function getTreatmentId() { return $this->treatmentId; }
-    public function getBillingDate() { return $this->billingDate; }
-    public function getDueDate() { return $this->dueDate; }
-    public function getAmount() { return $this->amount; }
-    public function getTaxAmount() { return $this->taxAmount; }
-    public function getDiscount() { return $this->discount; }
-    public function getTotalAmount() { return $this->totalAmount; }
-    public function getPaymentStatus() { return $this->paymentStatus; }
-    public function getPaymentMethod() { return $this->paymentMethod; }
-    public function getPaymentDate() { return $this->paymentDate; }
-    public function getNotes() { return $this->notes; }
-    public function getItems() { return $this->items; }
-    public function getCreatedAt() { return $this->createdAt; }
-    public function getUpdatedAt() { return $this->updatedAt; }
-    
-    // Setters
-    public function setBillingId($billingId) { $this->billingId = $billingId; }
-    public function setAnimalId($animalId) { $this->animalId = (int)$animalId; }
-    public function setTreatmentId($treatmentId) { $this->treatmentId = (int)$treatmentId; }
-    public function setBillingDate($billingDate) { $this->billingDate = $billingDate; }
-    public function setDueDate($dueDate) { $this->dueDate = $dueDate; }
-    public function setAmount($amount) { $this->amount = (float)$amount; }
-    public function setTaxAmount($taxAmount) { $this->taxAmount = (float)$taxAmount; }
-    public function setDiscount($discount) { $this->discount = (float)$discount; }
-    public function setTotalAmount($totalAmount) { $this->totalAmount = (float)$totalAmount; }
-    public function setPaymentStatus($paymentStatus) { $this->paymentStatus = sanitize($paymentStatus); }
-    public function setPaymentMethod($paymentMethod) { $this->paymentMethod = sanitize($paymentMethod); }
-    public function setPaymentDate($paymentDate) { $this->paymentDate = $paymentDate; }
-    public function setNotes($notes) { $this->notes = sanitize($notes); }
-    public function setItems($items) { $this->items = $items; }
-    public function setCreatedAt($createdAt) { $this->createdAt = $createdAt; }
-    public function setUpdatedAt($updatedAt) { $this->updatedAt = $updatedAt; }
-    
-    // Business logic methods
+    public function getTable() {
+        return $this->table;
+    }
+    // Get billing with full details
     public function getBillingWithDetails($billingId) {
         $sql = "SELECT b.*, 
                        a.name as animal_name, a.species, a.breed,
-                       c.name as client_name, c.phone as client_phone, c.email as client_email,
-                       t.diagnosis, t.treatment_details
+                       CONCAT(u.first_name, ' ', u.last_name) as client_name,
+                       u.email as client_email, u.phone as client_phone,
+                       t.diagnosis, t.treatment_date, t.treatment_details,
+                       vet.first_name as vet_first_name, vet.last_name as vet_last_name,
+                       CONCAT(vet.first_name, ' ', vet.last_name) as vet_name,
+                       verified.first_name as verified_by_first_name,
+                       verified.last_name as verified_by_last_name
                 FROM {$this->table} b
                 JOIN animals a ON b.animal_id = a.animal_id
                 JOIN clients c ON a.client_id = c.client_id
+                JOIN users u ON c.user_id = u.user_id
                 LEFT JOIN treatments t ON b.treatment_id = t.treatment_id
-                WHERE b.billing_id = :billing_id";
-        return fetchOne($sql, ['billing_id' => $billingId]);
+                LEFT JOIN users vet ON t.veterinary_id = vet.user_id
+                LEFT JOIN users verified ON b.verified_by = verified.user_id
+                WHERE b.billing_id = ?";
+        return fetchOne($sql, [$billingId]);
     }
     
-    public function getBillingsByAnimal($animalId) {
-        $sql = "SELECT b.*, t.diagnosis
-                FROM {$this->table} b
-                LEFT JOIN treatments t ON b.treatment_id = t.treatment_id
-                WHERE b.animal_id = :animal_id
-                ORDER BY b.billing_date DESC";
-        return fetchAll($sql, ['animal_id' => $animalId]);
+    // Get billing items
+    public function getBillingItems($billingId) {
+        $sql = "SELECT * FROM billing_items WHERE billing_id = ? ORDER BY item_id";
+        return fetchAll($sql, [$billingId]);
     }
     
-    public function getBillingsByClient($clientId) {
-        $sql = "SELECT b.*, 
-                       a.name as animal_name, a.species,
-                       t.diagnosis
+    // Get billings by client
+            // Fix getBillingsByClient method
+    public function getBillingsByClient($clientId, $status = null, $page = 1, $perPage = 15) {
+        $offset = ($page - 1) * $perPage;
+        
+        $sql = "SELECT b.*, a.name as animal_name, a.species,
+                    t.diagnosis, t.treatment_date
                 FROM {$this->table} b
                 JOIN animals a ON b.animal_id = a.animal_id
                 LEFT JOIN treatments t ON b.treatment_id = t.treatment_id
-                WHERE a.client_id = :client_id
-                ORDER BY b.billing_date DESC";
-        return fetchAll($sql, ['client_id' => $clientId]);
+                WHERE a.client_id = ?";
+        
+        $params = [$clientId];
+        
+        if ($status) {
+            $sql .= " AND b.payment_status = ?";
+            $params[] = $status;
+        }
+        
+        $sql .= " ORDER BY b.billing_date DESC LIMIT ? OFFSET ?";
+        $params[] = $perPage;
+        $params[] = $offset;
+        
+        $data = fetchAll($sql, $params);
+        
+        // Get total count
+        $countSql = "SELECT COUNT(*) as total 
+                    FROM {$this->table} b
+                    JOIN animals a ON b.animal_id = a.animal_id
+                    WHERE a.client_id = ?";
+        $countParams = [$clientId];
+        
+        if ($status) {
+            $countSql .= " AND b.payment_status = ?";
+            $countParams[] = $status;
+        }
+        
+        $totalResult = fetchOne($countSql, $countParams);
+        $total = $totalResult['total'] ?? 0;
+        
+        return [
+            'data' => $data,
+            'total' => $total,
+            'total_pages' => ceil($total / $perPage)
+        ];
     }
-    
-    public function getPendingBillings() {
-        $sql = "SELECT b.*, 
-                       a.name as animal_name, a.species,
-                       c.name as client_name, c.phone as client_phone
+
+    // Fix getOverdueBills method for clients
+    public function getOverdueBills($userRole = null, $userId = null, $clientId = null) {
+        $sql = "SELECT b.*, a.name as animal_name,
+                    CONCAT(u.first_name, ' ', u.last_name) as client_name,
+                    u.phone as client_phone
                 FROM {$this->table} b
                 JOIN animals a ON b.animal_id = a.animal_id
                 JOIN clients c ON a.client_id = c.client_id
-                WHERE b.payment_status = 'pending'
-                ORDER BY b.due_date ASC";
-        return fetchAll($sql);
+                JOIN users u ON c.user_id = u.user_id
+                WHERE b.payment_status = 'pending' 
+                AND b.due_date < CURDATE()";
+        
+        $params = [];
+        
+        // Add client filter if client role
+        if ($userRole === ROLE_CLIENT && $clientId) {
+            $sql .= " AND a.client_id = ?";
+            $params[] = $clientId;
+        }
+        
+        // Add veterinary filter if veterinary role
+        if ($userRole === ROLE_VETERINARY) {
+            $sql .= " AND EXISTS (
+                SELECT 1 FROM treatments t 
+                WHERE t.treatment_id = b.treatment_id 
+                AND t.veterinary_id = ?
+            )";
+            $params[] = $userId;
+        }
+        
+        $sql .= " ORDER BY b.due_date ASC";
+        
+        return fetchAll($sql, $params);
+    }
+
+    // Fix getBillingStats method for clients
+    public function getBillingStats($userRole, $userId, $clientId = null) {
+        $stats = [];
+        
+        switch ($userRole) {
+            case ROLE_ADMIN:
+                $sql = "SELECT 
+                        COUNT(*) as total_bills,
+                        SUM(CASE WHEN payment_status = 'paid' THEN 1 ELSE 0 END) as paid_bills,
+                        SUM(CASE WHEN payment_status = 'pending' THEN 1 ELSE 0 END) as pending_bills,
+                        SUM(CASE WHEN payment_status = 'verified' THEN 1 ELSE 0 END) as verified_bills,
+                        COALESCE(SUM(total_amount), 0) as total_amount,
+                        COALESCE(SUM(CASE WHEN payment_status = 'paid' THEN total_amount ELSE 0 END), 0) as paid_amount,
+                        COALESCE(SUM(CASE WHEN payment_status = 'verified' THEN total_amount ELSE 0 END), 0) as verified_amount,
+                        COALESCE(SUM(CASE WHEN payment_status = 'pending' THEN total_amount ELSE 0 END), 0) as pending_amount
+                    FROM {$this->table}";
+                $stats = fetchOne($sql);
+                break;
+                
+            case ROLE_VETERINARY:
+                $sql = "SELECT 
+                        COUNT(*) as total_bills,
+                        SUM(CASE WHEN b.payment_status = 'paid' THEN 1 ELSE 0 END) as paid_bills,
+                        SUM(CASE WHEN b.payment_status = 'pending' THEN 1 ELSE 0 END) as pending_bills,
+                        SUM(CASE WHEN b.payment_status = 'verified' THEN 1 ELSE 0 END) as verified_bills,
+                        COALESCE(SUM(b.total_amount), 0) as total_amount,
+                        COALESCE(SUM(CASE WHEN b.payment_status = 'paid' THEN b.total_amount ELSE 0 END), 0) as paid_amount,
+                        COALESCE(SUM(CASE WHEN b.payment_status = 'verified' THEN b.total_amount ELSE 0 END), 0) as verified_amount,
+                        COALESCE(SUM(CASE WHEN b.payment_status = 'pending' THEN b.total_amount ELSE 0 END), 0) as pending_amount
+                    FROM {$this->table} b
+                    JOIN treatments t ON b.treatment_id = t.treatment_id
+                    WHERE t.veterinary_id = ?";
+                $stats = fetchOne($sql, [$userId]);
+                break;
+                
+            case ROLE_CLIENT:
+                if ($clientId) {
+                    $sql = "SELECT 
+                            COUNT(*) as total_bills,
+                            SUM(CASE WHEN b.payment_status = 'paid' THEN 1 ELSE 0 END) as paid_bills,
+                            SUM(CASE WHEN b.payment_status = 'pending' THEN 1 ELSE 0 END) as pending_bills,
+                            SUM(CASE WHEN b.payment_status = 'verified' THEN 1 ELSE 0 END) as verified_bills,
+                            COALESCE(SUM(b.total_amount), 0) as total_amount,
+                            COALESCE(SUM(CASE WHEN b.payment_status = 'paid' THEN b.total_amount ELSE 0 END), 0) as paid_amount,
+                            COALESCE(SUM(CASE WHEN b.payment_status = 'verified' THEN b.total_amount ELSE 0 END), 0) as verified_amount,
+                            COALESCE(SUM(CASE WHEN b.payment_status = 'pending' THEN b.total_amount ELSE 0 END), 0) as pending_amount
+                        FROM {$this->table} b
+                        JOIN animals a ON b.animal_id = a.animal_id
+                        WHERE a.client_id = ?";
+                    $stats = fetchOne($sql, [$clientId]);
+                }
+                break;
+        }
+        
+        return $stats ?: [
+            'total_bills' => 0, 'paid_bills' => 0, 'pending_bills' => 0, 'verified_bills' => 0,
+            'total_amount' => 0, 'paid_amount' => 0, 'verified_amount' => 0, 'pending_amount' => 0
+        ];
     }
     
-    public function getOverdueBillings() {
-        $sql = "SELECT b.*, 
-                       a.name as animal_name, a.species,
-                       c.name as client_name, c.phone as client_phone
+    // Get billings by veterinary
+    public function getBillingsByVeterinary($veterinaryId, $status = null, $page = 1, $perPage = 15) {
+        $offset = ($page - 1) * $perPage;
+        
+        $sql = "SELECT b.*, a.name as animal_name, a.species,
+                       CONCAT(u.first_name, ' ', u.last_name) as client_name,
+                       t.diagnosis, t.treatment_date
+                FROM {$this->table} b
+                JOIN treatments t ON b.treatment_id = t.treatment_id
+                JOIN animals a ON b.animal_id = a.animal_id
+                JOIN clients c ON a.client_id = c.client_id
+                JOIN users u ON c.user_id = u.user_id
+                WHERE t.veterinary_id = ?";
+        
+        $params = [$veterinaryId];
+        
+        if ($status) {
+            $sql .= " AND b.payment_status = ?";
+            $params[] = $status;
+        }
+        
+        $sql .= " ORDER BY b.billing_date DESC LIMIT ? OFFSET ?";
+        $params[] = $perPage;
+        $params[] = $offset;
+        
+        $data = fetchAll($sql, $params);
+        
+        // Get total count
+        $countSql = "SELECT COUNT(*) as total 
+                    FROM {$this->table} b
+                    JOIN treatments t ON b.treatment_id = t.treatment_id
+                    WHERE t.veterinary_id = ?";
+        $countParams = [$veterinaryId];
+        
+        if ($status) {
+            $countSql .= " AND b.payment_status = ?";
+            $countParams[] = $status;
+        }
+        
+        $totalResult = fetchOne($countSql, $countParams);
+        $total = $totalResult['total'] ?? 0;
+        
+        return [
+            'data' => $data,
+            'total' => $total,
+            'total_pages' => ceil($total / $perPage)
+        ];
+    }
+    
+    // Get all billings for admin
+    public function getAllBillings($status = null, $page = 1, $perPage = 15) {
+        $offset = ($page - 1) * $perPage;
+        
+        $sql = "SELECT b.*, a.name as animal_name, a.species,
+                       CONCAT(u.first_name, ' ', u.last_name) as client_name,
+                       t.diagnosis, t.treatment_date
                 FROM {$this->table} b
                 JOIN animals a ON b.animal_id = a.animal_id
                 JOIN clients c ON a.client_id = c.client_id
-                WHERE b.payment_status = 'pending'
-                AND b.due_date < CURDATE()
-                ORDER BY b.due_date ASC";
-        return fetchAll($sql);
+                JOIN users u ON c.user_id = u.user_id
+                LEFT JOIN treatments t ON b.treatment_id = t.treatment_id
+                WHERE 1=1";
+        
+        $params = [];
+        
+        if ($status) {
+            $sql .= " AND b.payment_status = ?";
+            $params[] = $status;
+        }
+        
+        $sql .= " ORDER BY b.billing_date DESC LIMIT ? OFFSET ?";
+        $params[] = $perPage;
+        $params[] = $offset;
+        
+        $data = fetchAll($sql, $params);
+        
+        // Get total count
+        $countSql = "SELECT COUNT(*) as total FROM {$this->table} WHERE 1=1";
+        $countParams = [];
+        
+        if ($status) {
+            $countSql .= " AND payment_status = ?";
+            $countParams[] = $status;
+        }
+        
+        $totalResult = fetchOne($countSql, $countParams);
+        $total = $totalResult['total'] ?? 0;
+        
+        return [
+            'data' => $data,
+            'total' => $total,
+            'total_pages' => ceil($total / $perPage)
+        ];
     }
     
-    public function markAsPaid($billingId, $paymentMethod = null, $paymentDate = null) {
-        $updateData = [
+    // Update payment status with deposit slip
+    public function updatePayment($billingId, $paymentData) {
+        $data = [
             'payment_status' => 'paid',
-            'payment_date' => $paymentDate ?? getCurrentDate()
+            'payment_method' => $paymentData['payment_method'],
+            'payment_date' => date('Y-m-d'),
+            'deposit_slip' => $paymentData['deposit_slip'] ?? null,
+            'notes' => $paymentData['notes'] ?? null
         ];
         
-        if ($paymentMethod) {
-            $updateData['payment_method'] = $paymentMethod;
+        return $this->update($billingId, $data);
+    }
+    
+    
+    // Create billing with items
+    public function createBillingWithItems($billingData, $items = []) {
+        try {
+            $this->db->beginTransaction();
+            
+            // Create billing
+            $billingId = $this->create($billingData);
+            
+            // Create billing items
+            if (!empty($items)) {
+                foreach ($items as $item) {
+                    $item['billing_id'] = $billingId;
+                    $this->createBillingItem($item);
+                }
+            }
+            
+            $this->db->commit();
+            return $billingId;
+            
+        } catch (Exception $e) {
+            $this->db->rollBack();
+            throw $e;
         }
-        
-        return $this->update($billingId, $updateData);
     }
     
-    public function createBilling($billingData) {
-        // Set default values
-        $billingData['billing_date'] = $billingData['billing_date'] ?? getCurrentDate();
-        $billingData['payment_status'] = $billingData['payment_status'] ?? 'pending';
-        
-        // Calculate total amount if not provided
-        if (!isset($billingData['total_amount'])) {
-            $amount = $billingData['amount'] ?? 0;
-            $taxAmount = $billingData['tax_amount'] ?? 0;
-            $discount = $billingData['discount'] ?? 0;
-            $billingData['total_amount'] = $amount + $taxAmount - $discount;
-        }
-        
-        return $this->create($billingData);
+    // Create billing item
+    public function createBillingItem($itemData) {
+        $sql = "INSERT INTO billing_items (billing_id, description, quantity, unit_price, total_price) 
+                VALUES (?, ?, ?, ?, ?)";
+        return execute($sql, [
+            $itemData['billing_id'],
+            $itemData['description'],
+            $itemData['quantity'] ?? 1,
+            $itemData['unit_price'],
+            $itemData['total_price']
+        ]);
     }
     
-    public function getRevenueByPeriod($startDate, $endDate) {
-        $sql = "SELECT 
-                    SUM(total_amount) as total_revenue,
-                    COUNT(*) as billing_count,
-                    SUM(CASE WHEN payment_status = 'paid' THEN total_amount ELSE 0 END) as paid_revenue,
-                    SUM(CASE WHEN payment_status = 'pending' THEN total_amount ELSE 0 END) as pending_revenue
-                FROM {$this->table}
-                WHERE billing_date BETWEEN :start_date AND :end_date";
-        
-        return fetchOne($sql, ['start_date' => $startDate, 'end_date' => $endDate]);
-    }
-    
-    public function getClientOutstandingBalance($clientId) {
-        $sql = "SELECT SUM(b.total_amount) as outstanding_balance
-                FROM {$this->table} b
-                JOIN animals a ON b.animal_id = a.animal_id
-                WHERE a.client_id = :client_id 
-                AND b.payment_status = 'pending'";
-        
-        $result = fetchOne($sql, ['client_id' => $clientId]);
-        return $result['outstanding_balance'] ?? 0;
-    }
+  
+ 
     
     // Validation
     public function validate($data, $id = null) {
         $errors = [];
         
-        // Required fields
         $required = ['animal_id', 'billing_date', 'amount'];
-        $errors = array_merge($errors, validateRequired($required, $data));
-        
-        // Validate animal exists
-        if (!empty($data['animal_id'])) {
-            $animalModel = new Animal();
-            if (!$animalModel->exists($data['animal_id'])) {
-                $errors['animal_id'] = 'Invalid animal selected';
+        foreach ($required as $field) {
+            if (empty($data[$field])) {
+                $errors[$field] = 'This field is required';
             }
         }
         
-        // Validate treatment exists if provided
-        if (!empty($data['treatment_id'])) {
-            $treatmentModel = new Treatment();
-            if (!$treatmentModel->exists($data['treatment_id'])) {
-                $errors['treatment_id'] = 'Invalid treatment selected';
-            }
-        }
-        
-        // Validate billing date
-        if (!empty($data['billing_date'])) {
-            $billingDate = strtotime($data['billing_date']);
-            if (!$billingDate) {
-                $errors['billing_date'] = 'Invalid billing date';
-            }
-        }
-        
-        // Validate due date
-        if (!empty($data['due_date'])) {
-            $dueDate = strtotime($data['due_date']);
-            if (!$dueDate) {
-                $errors['due_date'] = 'Invalid due date';
-            }
-        }
-        
-        // Validate amounts
-        if (!empty($data['amount']) && (!is_numeric($data['amount']) || $data['amount'] < 0)) {
+        if (!empty($data['amount']) && (!is_numeric($data['amount']) || $data['amount'] <= 0)) {
             $errors['amount'] = 'Amount must be a positive number';
         }
         
-        if (!empty($data['tax_amount']) && (!is_numeric($data['tax_amount']) || $data['tax_amount'] < 0)) {
-            $errors['tax_amount'] = 'Tax amount must be a positive number';
+        if (!empty($data['billing_date']) && !strtotime($data['billing_date'])) {
+            $errors['billing_date'] = 'Invalid billing date';
         }
         
-        if (!empty($data['discount']) && (!is_numeric($data['discount']) || $data['discount'] < 0)) {
-            $errors['discount'] = 'Discount must be a positive number';
-        }
-        
-        // Validate payment status
-        if (!empty($data['payment_status'])) {
-            $allowedStatuses = ['pending', 'paid', 'cancelled'];
-            if (!in_array($data['payment_status'], $allowedStatuses)) {
-                $errors['payment_status'] = 'Invalid payment status';
-            }
+        if (!empty($data['due_date']) && !strtotime($data['due_date'])) {
+            $errors['due_date'] = 'Invalid due date';
         }
         
         return $errors;
     }
-    
-    // Search billings
-    public function searchBillings($term) {
-        $sql = "SELECT b.*, 
-                       a.name as animal_name, a.species,
-                       c.name as client_name
+
+        // Get pending payments for veterinary
+    public function getPendingPaymentsForVeterinary($veterinaryId) {
+        $sql = "SELECT b.*, a.name as animal_name,
+                    CONCAT(u.first_name, ' ', u.last_name) as client_name,
+                    u.phone as client_phone
                 FROM {$this->table} b
                 JOIN animals a ON b.animal_id = a.animal_id
                 JOIN clients c ON a.client_id = c.client_id
-                WHERE b.notes LIKE :term
-                OR a.name LIKE :term
-                OR c.name LIKE :term
-                ORDER BY b.billing_date DESC";
+                JOIN users u ON c.user_id = u.user_id
+                WHERE b.payment_status = 'paid'
+                AND b.deposit_slip IS NOT NULL
+                AND EXISTS (
+                    SELECT 1 FROM treatments t 
+                    WHERE t.treatment_id = b.treatment_id 
+                    AND t.veterinary_id = ?
+                )
+                ORDER BY b.payment_date DESC";
         
-        return fetchAll($sql, ['term' => "%{$term}%"]);
+        return fetchAll($sql, [$veterinaryId]);
     }
-    
-    // Get billing statistics
-    public function getStats() {
-        $stats = [
-            'total' => $this->count(),
-            'pending' => $this->count(['payment_status' => 'pending']),
-            'paid' => $this->count(['payment_status' => 'paid']),
-            'cancelled' => $this->count(['payment_status' => 'cancelled'])
+
+    // Get payments needing verification for admin
+    public function getPaymentsNeedingVerification() {
+        $sql = "SELECT b.*, a.name as animal_name,
+                    CONCAT(u.first_name, ' ', u.last_name) as client_name,
+                    u.phone as client_phone,
+                    CONCAT(vet.first_name, ' ', vet.last_name) as vet_name
+                FROM {$this->table} b
+                JOIN animals a ON b.animal_id = a.animal_id
+                JOIN clients c ON a.client_id = c.client_id
+                JOIN users u ON c.user_id = u.user_id
+                LEFT JOIN treatments t ON b.treatment_id = t.treatment_id
+                LEFT JOIN users vet ON t.veterinary_id = vet.user_id
+                WHERE b.payment_status = 'paid'
+                AND b.deposit_slip IS NOT NULL
+                AND b.verified_by IS NULL
+                ORDER BY b.payment_date DESC";
+        
+        return fetchAll($sql);
+    }
+
+    // Verify payment
+    public function verifyPayment($billingId, $verifiedBy) {
+        $data = [
+            'verified_by' => $verifiedBy,
+            'verified_at' => date('Y-m-d H:i:s'),
+            'payment_status' => 'verified'
         ];
         
-        // Get total revenue
-        $sql = "SELECT SUM(total_amount) as total_revenue FROM {$this->table} WHERE payment_status = 'paid'";
-        $revenue = fetchOne($sql);
-        $stats['total_revenue'] = $revenue['total_revenue'] ?? 0;
-        
-        // Get pending revenue
-        $sql = "SELECT SUM(total_amount) as pending_revenue FROM {$this->table} WHERE payment_status = 'pending'";
-        $pending = fetchOne($sql);
-        $stats['pending_revenue'] = $pending['pending_revenue'] ?? 0;
-        
-        // Get revenue this month
-        $startOfMonth = date('Y-m-01');
-        $endOfMonth = date('Y-m-t');
-        $sql = "SELECT SUM(total_amount) as monthly_revenue FROM {$this->table} 
-                WHERE payment_status = 'paid' AND billing_date BETWEEN :start AND :end";
-        $monthly = fetchOne($sql, ['start' => $startOfMonth, 'end' => $endOfMonth]);
-        $stats['monthly_revenue'] = $monthly['monthly_revenue'] ?? 0;
-        
-        return $stats;
+        return $this->update($billingId, $data);
     }
-    
-    // Load billing data into object properties
-    public function load($billingData) {
-        if (is_array($billingData)) {
-            $this->setBillingId($billingData['billing_id'] ?? null);
-            $this->setAnimalId($billingData['animal_id'] ?? null);
-            $this->setTreatmentId($billingData['treatment_id'] ?? null);
-            $this->setBillingDate($billingData['billing_date'] ?? null);
-            $this->setDueDate($billingData['due_date'] ?? null);
-            $this->setAmount($billingData['amount'] ?? 0);
-            $this->setTaxAmount($billingData['tax_amount'] ?? 0);
-            $this->setDiscount($billingData['discount'] ?? 0);
-            $this->setTotalAmount($billingData['total_amount'] ?? 0);
-            $this->setPaymentStatus($billingData['payment_status'] ?? 'pending');
-            $this->setPaymentMethod($billingData['payment_method'] ?? '');
-            $this->setPaymentDate($billingData['payment_date'] ?? null);
-            $this->setNotes($billingData['notes'] ?? '');
-            $this->setItems($billingData['items'] ?? '');
-            $this->setCreatedAt($billingData['created_at'] ?? null);
-            $this->setUpdatedAt($billingData['updated_at'] ?? null);
-        }
-        return $this;
-    }
-    
-    // Convert object to array
-    public function toArray() {
-        return [
-            'billing_id' => $this->billingId,
-            'animal_id' => $this->animalId,
-            'treatment_id' => $this->treatmentId,
-            'billing_date' => $this->billingDate,
-            'due_date' => $this->dueDate,
-            'amount' => $this->amount,
-            'tax_amount' => $this->taxAmount,
-            'discount' => $this->discount,
-            'total_amount' => $this->totalAmount,
-            'payment_status' => $this->paymentStatus,
-            'payment_method' => $this->paymentMethod,
-            'payment_date' => $this->paymentDate,
-            'notes' => $this->notes,
-            'items' => $this->items,
-            'created_at' => $this->createdAt,
-            'updated_at' => $this->updatedAt
+
+    // Reject payment
+    public function rejectPayment($billingId, $rejectedBy, $notes = null) {
+        $data = [
+            'verified_by' => $rejectedBy,
+            'verified_at' => date('Y-m-d H:i:s'),
+            'payment_status' => 'pending',
+            'notes' => $notes ?: 'Payment rejected - please verify deposit slip'
         ];
+        
+        return $this->update($billingId, $data);
+    }
+
+
+// Calculate sum of a column with conditions
+private function calculateSum($column, $conditions = []) {
+    $sql = "SELECT COALESCE(SUM({$column}), 0) as total FROM {$this->table} WHERE 1=1";
+    $params = [];
+    
+    foreach ($conditions as $field => $value) {
+        $sql .= " AND {$field} = ?";
+        $params[] = $value;
     }
     
-    public function isPaid() {
-        return $this->paymentStatus === 'paid';
+    $result = fetchOne($sql, $params);
+    return $result['total'] ?? 0;
+}
+
+// Get recent payments for dashboard
+public function getRecentPayments($userRole, $userId, $limit = 5) {
+    switch ($userRole) {
+        case ROLE_ADMIN:
+            $sql = "SELECT b.*, a.name as animal_name, 
+                           CONCAT(u.first_name, ' ', u.last_name) as client_name
+                    FROM {$this->table} b
+                    JOIN animals a ON b.animal_id = a.animal_id
+                    JOIN clients c ON a.client_id = c.client_id
+                    JOIN users u ON c.user_id = u.user_id
+                    WHERE b.payment_status IN ('paid', 'verified')
+                    ORDER BY b.payment_date DESC LIMIT ?";
+            return fetchAll($sql, [$limit]);
+            
+        case ROLE_VETERINARY:
+            $sql = "SELECT b.*, a.name as animal_name, 
+                           CONCAT(u.first_name, ' ', u.last_name) as client_name
+                    FROM {$this->table} b
+                    JOIN treatments t ON b.treatment_id = t.treatment_id
+                    JOIN animals a ON b.animal_id = a.animal_id
+                    JOIN clients c ON a.client_id = c.client_id
+                    JOIN users u ON c.user_id = u.user_id
+                    WHERE t.veterinary_id = ? 
+                    AND b.payment_status IN ('paid', 'verified')
+                    ORDER BY b.payment_date DESC LIMIT ?";
+            return fetchAll($sql, [$userId, $limit]);
+            
+        case ROLE_CLIENT:
+            $clientId = (new Client())->getClientIdByUserId($userId);
+            if ($clientId) {
+                $sql = "SELECT b.*, a.name as animal_name
+                        FROM {$this->table} b
+                        JOIN animals a ON b.animal_id = a.animal_id
+                        WHERE a.client_id = ? 
+                        AND b.payment_status IN ('paid', 'verified')
+                        ORDER BY b.payment_date DESC LIMIT ?";
+                return fetchAll($sql, [$clientId, $limit]);
+            }
+            break;
     }
     
-    public function isOverdue() {
-        return !$this->isPaid() && $this->dueDate && strtotime($this->dueDate) < time();
+    return [];
+}
+
+
+public function getDashboardStats($userRole, $userId) {
+    $stats = [];
+    
+    switch ($userRole) {
+        case ROLE_ADMIN:
+            $stats['pending_verification'] = $this->count([
+                'payment_status' => 'paid', 
+                'verified_by' => null
+            ]);
+            $stats['total_revenue'] = $this->calculateSum('total_amount', ['payment_status' => 'verified']);
+            $stats['pending_revenue'] = $this->calculateSum('total_amount', ['payment_status' => 'paid']);
+            break;
+            
+        case ROLE_VETERINARY:
+            $sql = "SELECT COUNT(*) as pending_verification, 
+                           COALESCE(SUM(b.total_amount), 0) as pending_revenue
+                    FROM {$this->table} b
+                    JOIN treatments t ON b.treatment_id = t.treatment_id
+                    WHERE b.payment_status = 'paid' 
+                    AND b.verified_by IS NULL
+                    AND t.veterinary_id = ?";
+            $result = fetchOne($sql, [$userId]);
+            $stats['pending_verification'] = $result['pending_verification'] ?? 0;
+            $stats['pending_revenue'] = $result['pending_revenue'] ?? 0;
+            break;
+            
+        case ROLE_CLIENT:
+            $clientId = (new Client())->getClientIdByUserId($userId);
+            if ($clientId) {
+                $sql = "SELECT COUNT(*) as pending_bills,
+                               COALESCE(SUM(total_amount), 0) as total_pending
+                        FROM {$this->table} b
+                        JOIN animals a ON b.animal_id = a.animal_id
+                        WHERE a.client_id = ? AND b.payment_status = 'pending'";
+                $result = fetchOne($sql, [$clientId]);
+                $stats['pending_bills'] = $result['pending_bills'] ?? 0;
+                $stats['total_pending'] = $result['total_pending'] ?? 0;
+            }
+            break;
     }
     
-    public function getStatusBadge() {
-        switch ($this->paymentStatus) {
-            case 'paid':
-                return '<span class="badge bg-success">Paid</span>';
-            case 'pending':
-                if ($this->isOverdue()) {
-                    return '<span class="badge bg-danger">Overdue</span>';
-                }
-                return '<span class="badge bg-warning">Pending</span>';
-            case 'cancelled':
-                return '<span class="badge bg-secondary">Cancelled</span>';
-            default:
-                return '<span class="badge bg-secondary">Unknown</span>';
-        }
-    }
-    
-    public function calculateTotal() {
-        $this->totalAmount = $this->amount + $this->taxAmount - $this->discount;
-        return $this->totalAmount;
-    }
+    return $stats;
+}
 }
 ?>
